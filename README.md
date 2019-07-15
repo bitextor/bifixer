@@ -3,6 +3,7 @@ Massively scalable, frugal corpora fixer &amp; deduper.
 
 ![License](https://img.shields.io/badge/License-GPLv3-blue.svg)
 
+## What can BIFIXER  do ##
 * Fixes several text issues:
   * Fixes mojibake
   * Turns HTML entities into the character they represent 
@@ -351,6 +352,40 @@ Note that hashes starting with  "1ab2" and "14d8" contain four URLs each, corres
 
 ## BENCHMARKS ##
 
+Running on a 28-core (Intel(R) Core(TM) i9-9940X CPU @ 3.30GHz) machine:
+
+* Pairs of sentences processed (fixing and deduplicating) per second:
+
+|  | 8 jobs  |  16 jobs |  28 jobs  |
+|---|---|---|---|
+| 3M sent | 91K | 143K | 166K |
+| 6M sent | 39K | 130K | 150K |
+| 9M sent | 26K | 128K | 160K | 
+
+RAM consumption: 3GB (max)
+
+* Time to process a 100 million sentences corpus (28 jobs):
+```
+real    8m18,519s
+user    210m4,782s
+sys     6m26,084s
+```
+(201K sentences/sec)
+
+RAM consumption: 20GB (max)
+
+* Time to deduplicate (`--ignore_characters --ignore_empty --ignore_segmentation`) a 100 million sentences corpus (28 jobs):
+
+```
+real    3m15,022s
+user    42m32,779s
+sys     2m12,951s
+```
+(513K sent/seg)
+
+RAM consumption: 20GB (max)
+
+(*NOTE: Bifixer Setup & Bifixer Lite. Bifixer Teardown is omitted because it's independent and optional, and can be run afterwards.)
 ___
 
 ![Connecting Europe Facility](https://www.paracrawl.eu/images/logo_en_cef273x39.png)
