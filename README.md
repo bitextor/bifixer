@@ -1,5 +1,5 @@
 # bifixer
-Massively scalable, frugal corpora fixer &amp; deduper.
+Massively scalable & frugal parallel corpora fixer &amp; deduper.
 
 ![License](https://img.shields.io/badge/License-GPLv3-blue.svg)
 
