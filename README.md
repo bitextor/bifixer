@@ -3,7 +3,7 @@ Massively scalable & frugal parallel corpora fixer &amp; deduper.
 
 ![License](https://img.shields.io/badge/License-GPLv3-blue.svg)
 
-## What can BIFIXER  do ##
+## What can BIFIXER do to your parallel corpora ##
 * Fixes several text issues:
   * Fixes mojibake
   * Turns HTML entities into the character they represent 
