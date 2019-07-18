@@ -18,7 +18,7 @@ import string
 
 from tempfile import gettempdir
 from timeit import default_timer
-
+from xxhash import xxh64
 
 try:
     from . import util
@@ -154,9 +154,11 @@ def fix_sentences(args, hashes):
                     if args.aggressive_dedup:
                         normalized_src = unidecode.unidecode(segment["source_segment"].lower().replace(" ", "").translate(str.maketrans('', '', string.punctuation)))
                         normalized_trg = unidecode.unidecode(segment["target_segment"].lower().replace(" ", "").translate(str.maketrans('', '', string.punctuation)))   
-                        hash = hashlib.md5((normalized_src+"\t"+normalized_trg).encode()).hexdigest()
+                        #hash = hashlib.md5((normalized_src+"\t"+normalized_trg).encode()).hexdigest()
+                        hash = xxh64(normalized_src+"\t"+normalized_trg).hexdigest()
                     else:
-                        hash = hashlib.md5((segment["source_segment"]+"\t"+segment["target_segment"]).encode()).hexdigest()
+                        #hash = hashlib.md5((segment["source_segment"]+"\t"+segment["target_segment"]).encode()).hexdigest()
+                        hash = xxh64(segment["source_segment"]+"\t"+segment["target_segment"]).hexdigest()
                 #if  dedupping: put source, target, hash, extra in output file, and store hashes and urls in the urls object
                 #Restored parts object, with the fixed segment, overwritten for each pair of extra segments,
                 #the idea is to keep the order the columns came in
@@ -194,7 +196,7 @@ def fix_sentences(args, hashes):
         else:
         #source and/or target is empty
             continue
-        if args.dedup and ilines % 1000 == 0:
+        if args.dedup and olines >= 3500:  #ilines % 1000 == 0:
             responses = pipeline.execute()
             for sentence, urls_size in zip(batch,responses):
                 if urls_size <= 2 :  #source+target: only one parallel sentence
