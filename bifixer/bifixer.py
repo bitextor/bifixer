@@ -2,17 +2,15 @@
 
 __author__ = "Marta Bañón (mbanon)"
 __version__ = "Version 0.1 # 21/06/2019 # Initial release # Marta Bañón"
+__version__ = "Version 0.2 # 23/07/2019 # Non-Redis Bifixer # Marta Bañón"
+
 
 import os
 import sys
 import argparse
-import subprocess
-import shutil
 import time
 import traceback
 import logging 
-import hashlib
-import redis    
 import unidecode
 import string
 
@@ -52,27 +50,20 @@ def initialization():
 
     #Mandatory parameters
     groupM = parser.add_argument_group('Mandatory')
-    #Redis DB index
-    groupM.add_argument('--redis_db',required=True, help="Redis database index")
 
     # Options group
     groupO = parser.add_argument_group('Optional')
     #Format
     groupO.add_argument("--scol", default=3, type=util.check_positive, help ="Source sentence column (starting in 1)")
     groupO.add_argument("--tcol", default=4, type=util.check_positive, help ="Target sentence column (starting in 1)")    
-    groupO.add_argument("--sucol", default=1, type=util.check_positive, help ="Source URL column (starting in 1)")    
-    groupO.add_argument("--tucol", default=2, type=util.check_positive, help ="Target URL column (starting in 1)")    
+
     #Character fixing
     groupO.add_argument('--ignore_characters', default=False, action='store_true', help="Doesn't fix mojibake, orthography, or other character issues")
     #Deduplication
-    groupO.add_argument('--ignore_duplicates', default=False, action='store_true', help="Doesn't remove duplicated parallel sentences")    
+    groupO.add_argument('--ignore_duplicates', default=False, action='store_true', help="Doesn't obtain the hashes of parallel sentences")    
     groupO.add_argument('--ignore_empty', default=False, action='store_true', help="Doesn't remove sentences with empty source or target")    
-    groupO.add_argument('--ignore_urls' , default=False, action='store_true', help="Doesn't save an URLs file when deduplicating")
-    groupO.add_argument('--aggressive_dedup', default=False, action='store_true', help="Treats similar sentences as duplicates (removing them)")
-    #Redis
-    groupO.add_argument('--redis_host', default="localhost", help="Redis host")
-    groupO.add_argument('--redis_port', default="6379", help="Redis port")
-    groupO.add_argument('--redis_password', default="", help="Redis password")
+    groupO.add_argument('--aggressive_dedup', default=False, action='store_true', help="Treats similar sentences as duplicates (marking them with the same hash)")
+
     #Segmentation
     groupO.add_argument('--ignore_segmentation' , default=False, action='store_true', help="Doesn't change segmentation of long sentences")
     groupO.add_argument('--words_before_segmenting', default=40, type=util.check_positive, help="Max words allowed in one side of a parallel sentence before trying to segmentate it. Set to 0 to applicate segmentation on everything.")
@@ -90,9 +81,8 @@ def initialization():
     args = parser.parse_args()
     util.logging_setup(args)
     args.dedup = not args.ignore_duplicates  #more friendly usage of the ignore_duplicates flag
-    args.save_urls = not args.ignore_urls #more friendly usage of the ignore_urls flag
-        
-    
+
+
     logging.debug("Arguments processed: {}".format(str(args)))
  
     logging.info("Arguments processed.")
@@ -101,7 +91,7 @@ def initialization():
     return args
 
 
-def fix_sentences(args, hashes):
+def fix_sentences(args):
     global ilines
     global olines
 
@@ -113,9 +103,6 @@ def fix_sentences(args, hashes):
 
         replacements_slang = restorative_cleaning.getReplacements(args.srclang)
         replacements_tlang = restorative_cleaning.getReplacements(args.trglang)
-    if args.dedup:
-        batch = []
-        pipeline = hashes.pipeline(transaction=False)
             
     for i in args.input:
         ilines += 1
@@ -124,9 +111,6 @@ def fix_sentences(args, hashes):
         try:
             source_sentence = parts[args.scol-1]
             target_sentence = parts[args.tcol-1]
-            if args.dedup and args.save_urls:            
-                source_url = parts[args.sucol-1]
-                target_url = parts[args.tucol-1]
         except IndexError:
             logging.error(traceback.format_exc())
             logging.error("Wrong column index")
@@ -141,7 +125,6 @@ def fix_sentences(args, hashes):
                 fixed_source = source_sentence
                 fixed_target = target_sentence    
 
-
             if not args.ignore_segmentation and (len(fixed_source.split()) > args.words_before_segmenting or len(fixed_target.split()) > args.words_before_segmenting):
                 #The naive_segmenter must return an array of tuples (source sentence, target sentence)             
                 segments = segmenter.naive_segmenter(fixed_source, fixed_target)                
@@ -154,14 +137,16 @@ def fix_sentences(args, hashes):
                     if args.aggressive_dedup:
                         normalized_src = unidecode.unidecode(segment["source_segment"].lower().replace(" ", "").translate(str.maketrans('', '', string.punctuation)))
                         normalized_trg = unidecode.unidecode(segment["target_segment"].lower().replace(" ", "").translate(str.maketrans('', '', string.punctuation)))   
-                        #hash = hashlib.md5((normalized_src+"\t"+normalized_trg).encode()).hexdigest()
+                        
                         hash = xxh64(normalized_src+"\t"+normalized_trg).hexdigest()
+                        #TO DO
+                        ranking = 1
                     else:
-                        #hash = hashlib.md5((segment["source_segment"]+"\t"+segment["target_segment"]).encode()).hexdigest()
                         hash = xxh64(segment["source_segment"]+"\t"+segment["target_segment"]).hexdigest()
-                #if  dedupping: put source, target, hash, extra in output file, and store hashes and urls in the urls object
+                        #TO DO
+                        ranking = 1
+                #if  dedupping: Add extra columsn with hash and ranking in output file
                 #Restored parts object, with the fixed segment, overwritten for each pair of extra segments,
-                #the idea is to keep the order the columns came in
                 new_parts = parts
                 
                 new_parts[args.scol-1] = segment["source_segment"]
@@ -171,65 +156,27 @@ def fix_sentences(args, hashes):
                     #Remove the "/n" at the end of the last item
                     new_parts[-1]= new_parts[-1].strip("\n")
                 
-                    new_parts.append(hash) #hash is added at the end           
-
-
-                    new_parts.pop(max(args.sucol-1, args.tucol-1)) #remove first the one with the greater index, so it doesn't affect to the other index
-                    new_parts.pop(min(args.sucol-1, args.tucol-1)) #and then remove the other
-
-                    if args.save_urls:
-                        url_pair=[source_url,target_url]
-                    else:
-                        url_pair = ["SRC URL", "TRG URL"]  #Even when not saving urls, Redis must contain something associated for the hash.
-                    
-                        
-                    #rpush: Returns the length of the list after the push
-                    #operation.  
-                    batch.append(new_parts)
-                    pipeline.rpush(hash, *url_pair)
-
+                    new_parts.append(hash) #hash and ranking are added at the end           
+                    new_parts.append(ranking)
+                    args.output.write("\t".join(str(v) for v in new_parts)+"\n")  #Convert to strings
                 else:                   
                     #When no deduplicating:
-                    args.output.write("\t".join(new_parts))
-                    olines += 1
+                    args.output.write("\t".join(str(v) for v in new_parts))
+                olines += 1
                     
         else:
         #source and/or target is empty
             continue
-        if args.dedup and olines >= 3500:  #ilines % 1000 == 0:
-            responses = pipeline.execute()
-            for sentence, urls_size in zip(batch,responses):
-                if urls_size <= 2 :  #source+target: only one parallel sentence
-                #It's not a duplicate: put it in the output
-                    args.output.write("\t".join(sentence))
-                    args.output.write("\n")
-                    olines += 1
-
-            batch.clear()
-            pipeline.reset()
-    else:
-    #End of the for loop
-        if args.dedup and len(batch) > 0:
-            responses = pipeline.execute()
-            for sentence, urls_size in zip(batch, responses):
-                if urls_size <= 2 : 
-                    args.output.write("\t".join(sentence))
-                    args.output.write("\n")
-                    olines += 1
-            batch.clear()
-            pipeline.reset()        
+  
             
 def perform_fixing(args):
     global ilines
     global olines
-    hashes = None
     
-    if args.dedup:
-        hashes = util.connect_redis(args)
     
     time_start=default_timer()
     logging.info("Starting fixing text")    
-    fix_sentences(args, hashes)
+    fix_sentences(args)
     logging.info("Text fixing finished")
 
     # Stats

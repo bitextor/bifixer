@@ -1,4 +1,3 @@
-redis
 regex
 ftfy
 unidecode
