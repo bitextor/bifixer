@@ -27,7 +27,7 @@ Tool to fix bitexts and tag near-duplicates for removal.
 
 ### Bifixer ###
 
-```bash
+```
 usage: bifixer.py [-h] [--scol SCOL] [--tcol TCOL] [--ignore_characters]
                   [--ignore_duplicates] [--ignore_empty] [--aggressive_dedup]
                   [--ignore_segmentation]
