@@ -99,8 +99,6 @@ def fix_sentences(args):
         chars_replacements_slang, charsRe_slang = restorative_cleaning.getCharsReplacements(args.srclang)
         chars_replacements_tlang, charsRe_tlang = restorative_cleaning.getCharsReplacements(args.trglang)
 
-        commonRegexs = restorative_cleaning.getCommonRegexs()
-
         replacements_slang = restorative_cleaning.getReplacements(args.srclang)
         replacements_tlang = restorative_cleaning.getReplacements(args.trglang)
             
@@ -119,8 +117,8 @@ def fix_sentences(args):
         #None of source or target sentences is empty:
         if args.ignore_empty or (source_sentence and target_sentence):
             if not args.ignore_characters:        
-                fixed_source = restorative_cleaning.fix(source_sentence, args.srclang, chars_replacements_slang, charsRe_slang, commonRegexs, replacements_slang)
-                fixed_target = restorative_cleaning.fix(target_sentence, args.trglang, chars_replacements_tlang, charsRe_tlang, commonRegexs, replacements_tlang)
+                fixed_source = restorative_cleaning.fix(source_sentence, args.srclang, chars_replacements_slang, charsRe_slang, replacements_slang)
+                fixed_target = restorative_cleaning.fix(target_sentence, args.trglang, chars_replacements_tlang, charsRe_tlang, replacements_tlang)
             else:
                 fixed_source = source_sentence
                 fixed_target = target_sentence    
@@ -139,10 +137,12 @@ def fix_sentences(args):
                         normalized_trg = unidecode.unidecode(segment["target_segment"].lower().replace(" ", "").translate(str.maketrans('', '', string.punctuation)))   
                         
                         hash = xxh64(normalized_src+"\t"+normalized_trg).hexdigest()
+                        
                         #TO DO
                         ranking = 1
                     else:
                         hash = xxh64(segment["source_segment"]+"\t"+segment["target_segment"]).hexdigest()
+                        
                         #TO DO
                         ranking = 1
                 #if  dedupping: Add extra columsn with hash and ranking in output file

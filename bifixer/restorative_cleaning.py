@@ -558,15 +558,6 @@ def getCharsReplacements(lang):
     
     return chars, charsRe
     
-def getCommonRegexs():
-    htmlEntity=regex.compile(r'[&][[:space:]]*[#][[:space:]]*[0-9]{2,4}[[:space:]]*[;]?',regex.U)
-    chars3Re=re.compile("[\uE000-\uFFFF]")
-    chars3Re2=re.compile("[\u2000-\u200F]")
-    chars3Re3=re.compile("\u007F|[\u0080-\u00A0]")
-    quotesRegex=regex.compile("(?P<start>[[:alpha:]])\'\'(?P<end>(s|S|t|T|m|M|d|D|re|RE|ll|LL|ve|VE|em|EM)\W)")        
-
-    return {"htmlEntity": htmlEntity, "chars3Re": chars3Re,  "chars3Re2": chars3Re2, "chars3Re3": chars3Re3, "quotesRegex": quotesRegex}
-
 #Orthographic corrections
 def getReplacements(lang):
     replacements = {}
@@ -594,7 +585,7 @@ def replace_chars3(match):
     char = match.group(0)
     return ""
   
-def fix(text, lang, chars_lang, charsRe, commonRegexs, replacements):
+def fix(text, lang, chars_lang, charsRe, replacements):
     global global_chars_lang 
     global_chars_lang= chars_lang
     
@@ -605,8 +596,8 @@ def fix(text, lang, chars_lang, charsRe, commonRegexs, replacements):
     quotesRegex=regex.compile("(?P<start>[[:alpha:]])\'\'(?P<end>(s|S|t|T|m|M|d|D|re|RE|ll|LL|ve|VE|em|EM)\W)")
     
     
-    stripped_text = text.strip(" \n")
-
+    stripped_text =re.sub(' +', ' ', text.strip()).strip(" \n")  #Collapse multiple spaces
+    
     #Test encode: fix mojibake
     #nicely_encoded_text = " ".join([ftfy.fix_text_segment(word,fix_entities=True,uncurl_quotes=False,fix_latin_ligatures=False) for word in stripped_text.split()])
     nicely_encoded_text= ftfy.fix_text_segment(stripped_text, fix_entities=True,uncurl_quotes=False,fix_latin_ligatures=False) 
