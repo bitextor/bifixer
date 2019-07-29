@@ -133,19 +133,19 @@ def fix_sentences(args):
             for segment in segments:
                 if args.dedup:
                     if args.aggressive_dedup:
-                        normalized_src = unidecode.unidecode(segment["source_segment"].lower().replace(" ", "").translate(str.maketrans('', '', string.punctuation)))
-                        normalized_trg = unidecode.unidecode(segment["target_segment"].lower().replace(" ", "").translate(str.maketrans('', '', string.punctuation)))   
+                        normalized_src = unidecode.unidecode(segment["source_segment"].lower().replace(" ", "").translate(str.maketrans('', '', string.punctuation+string.digits)))
+                        normalized_trg = unidecode.unidecode(segment["target_segment"].lower().replace(" ", "").translate(str.maketrans('', '', string.punctuation+string.digits)))   
                         
                         hash = xxh64(normalized_src+"\t"+normalized_trg).hexdigest()
                         
-                        #TO DO
-                        ranking = 1
+                        charsum = sum(ord(ch) for ch in segment["source_segment"]+segment["target_segment"])
+                                                
+                        ranking = round(charsum/len(segment["source_segment"]+segment["target_segment"]),2)
+
                     else:
                         hash = xxh64(segment["source_segment"]+"\t"+segment["target_segment"]).hexdigest()
-                        
-                        #TO DO
                         ranking = 1
-                #if  dedupping: Add extra columsn with hash and ranking in output file
+                #if  dedupping: Add extra columnsn with hash and ranking in output file
                 #Restored parts object, with the fixed segment, overwritten for each pair of extra segments,
                 new_parts = parts
                 
