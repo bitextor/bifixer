@@ -650,4 +650,4 @@ def fix(text, lang, chars_lang, charsRe, replacements):
     else:
         fixed_text = normalized_text
 
-    return normalized_text
+    return fixed_text
