@@ -111,8 +111,9 @@ def fix_sentences(args):
             target_sentence = parts[args.tcol-1]
         except IndexError:
             logging.error(traceback.format_exc())
-            logging.error("Wrong column index")
-            sys.exit(1)
+            logging.error("Wrong column index on " + i)
+            continue
+            
         
         #None of source or target sentences is empty:
         if args.ignore_empty or (source_sentence and target_sentence):

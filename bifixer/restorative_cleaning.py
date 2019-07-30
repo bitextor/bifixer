@@ -589,34 +589,37 @@ def fix(text, lang, chars_lang, charsRe, replacements):
     global global_chars_lang 
     global_chars_lang= chars_lang
     
-    htmlEntity=regex.compile(r'[&][[:space:]]*[#][[:space:]]*[0-9]{2,4}[[:space:]]*[;]?',regex.U)
+    #htmlEntity=regex.compile(r'[&][[:space:]]*[#][[:space:]]*[0-9]{2,4}[[:space:]]*[;]?',regex.U)
     chars3Re=regex.compile("[\uE000-\uFFFF]")
     chars3Re2=regex.compile("[\u2000-\u200F]")
     chars3Re3=regex.compile("\u007F|[\u0080-\u00A0]")
     quotesRegex=regex.compile("(?P<start>[[:alpha:]])\'\'(?P<end>(s|S|t|T|m|M|d|D|re|RE|ll|LL|ve|VE|em|EM)\W)")
-    
+    collapse_spaced_entities=regex.compile('([&][ ]*[#][ ]*)([0-9]{2,6})([ ]*[;])')
     
     stripped_text =re.sub(' +', ' ', text.strip()).strip(" \n")  #Collapse multiple spaces
+    collapsed_entities = collapse_spaced_entities.sub("&#\\2;", stripped_text)
     
     #Test encode: fix mojibake
-    #nicely_encoded_text = " ".join([ftfy.fix_text_segment(word,fix_entities=True,uncurl_quotes=False,fix_latin_ligatures=False) for word in stripped_text.split()])
-    nicely_encoded_text= ftfy.fix_text_segment(stripped_text, fix_entities=True,uncurl_quotes=False,fix_latin_ligatures=False) 
-
-
-    nicely_encoded_text = htmlEntity.sub(html.unescape, nicely_encoded_text)
+    ftfy_fixed_text = " ".join([ftfy.fix_text_segment(word,fix_entities=True,uncurl_quotes=False,fix_latin_ligatures=False) for word in collapsed_entities.split()])
+    #ftfy_fixed_text= ftfy.fix_text_segment(stripped_text, fix_entities=True,uncurl_quotes=False,fix_latin_ligatures=False) 
+    
+    #nicely_encoded_text = htmlEntity.sub(html.unescape, nicely_encoded_text)
+    nicely_encoded_text = html.unescape(ftfy_fixed_text)
+    
+    
+    
     #First replacing all HTML entities
-    ##for substring in htmlEntity.findall(nicely_encoded_text):
-    ##    code=substring.replace(' ','')[2:].replace(';','')
-    ##    newChar=chr(int(code))
-    ##    if newChar != "\n":
-    ##        #print(nicely_encoded_text)
-    ##        nicely_encoded_text = nicely_encoded_text.replace(substring,newChar)
-    ##        #print(nicely_encoded_text)
+    #for substring in htmlEntity.findall(nicely_encoded_text):
+    #    code=substring.replace(' ','')[2:].replace(';','')
+    #    try:
+    #        newChar=chr(int(code))
+    #    except ValueError:
+    #        newChar=code    
+    #    if newChar != "\n":
+    #        nicely_encoded_text = nicely_encoded_text.replace(substring,newChar)
 
     normalized_text = charsRe.sub(replace_chars, nicely_encoded_text)
-    #if (nicely_encoded_text != normalized_text):
-    #    print(nicely_encoded_text)
-    #    print(normalized_text)
+
     if lang.lower() != "ja":
         normalized_text = chars3Re.sub(replace_chars3, normalized_text) 
     normalized_text = chars3Re2.sub(replace_chars3, normalized_text)
