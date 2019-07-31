@@ -12,7 +12,7 @@ Tool to fix bitexts and tag near-duplicates for removal.
   * Deactivate this feature with `--ignore_characters`
 * Removes sentences with empty source or target (deactivate this feature with `--ignore_empty`)
 * Obtains hahes of parallel sentences, in order to ease the later removal of duplicates (deactivate this feature with `--ignore_duplicates`)
-  * Want stronger deduplication? Make this feature to find near-duplicated sentences (ignoring casing, accents and diacritics) by using the  `--aggressive_dedup` flag
+  * Want stronger deduplication? Make this feature to find near-duplicated sentences (ignoring casing, accents, diacritics and digits) by using the  `--aggressive_dedup` flag
   * Learn more in the "Duplicated and near-duplicated sentences" section below.
 * COMING SOON: Provides better segmentation of long sentences (deactivate this feature with `--ignore_segmentation`)
 

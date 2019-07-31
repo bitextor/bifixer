@@ -61,8 +61,18 @@ def getCharsReplacements(lang):
 
     #Annoying characters, common for all languages
     chars = {
-        '\u2028': ' ',      # line separator
-        '\u000D'     : "",         # \r
+        '\u2028': ' ',      # line separators (\n)
+        '&#10;' : "", #\n
+        '\n': "",
+        '&#xa' : "",
+        '&#xA' : "",
+        
+        '\u000D'     : "",         # carriage returns (\r)
+        '&#13;' : " ",	
+        '\r' : " ",        
+        '&#xd;' : " ",
+        '&#xD;' : " ",
+
 
         #unicode ligatures
         '\uFB00': 'ff',
@@ -596,6 +606,7 @@ def fix(text, lang, chars_lang, charsRe, replacements):
     quotesRegex=regex.compile("(?P<start>[[:alpha:]])\'\'(?P<end>(s|S|t|T|m|M|d|D|re|RE|ll|LL|ve|VE|em|EM)\W)")
     collapse_spaced_entities=regex.compile('([&][ ]*[#][ ]*)([0-9]{2,6})([ ]*[;])')
     
+
     stripped_text =re.sub(' +', ' ', text.strip()).strip(" \n")  #Collapse multiple spaces
     collapsed_entities = collapse_spaced_entities.sub("&#\\2;", stripped_text)
     
