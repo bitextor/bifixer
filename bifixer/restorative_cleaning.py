@@ -573,9 +573,9 @@ def getReplacements(lang):
     replacements = {}
     input_replacements = None
     
-    if lang.lower() == "en":
+    if lang.lower() in ["da", "de", "en", "es", "nb", "nl", "pt", "tr"]:
 
-        input_replacements = open(os.path.dirname(os.path.realpath(__file__)) + "/replacements.hunspell.en", "r")
+        input_replacements = open(os.path.dirname(os.path.realpath(__file__)) + "/replacements/replacements."+lang.lower(), "r")
     
     if input_replacements != None:    
         for i in input_replacements:
