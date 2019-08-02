@@ -59,9 +59,16 @@ def initialization():
 
     #Character fixing
     groupO.add_argument('--ignore_characters', default=False, action='store_true', help="Doesn't fix mojibake, orthography, or other character issues")
+    
+    #Empty sides
+    groupO.add_argument('--ignore_empty', default=False, action='store_true', help="Doesn't remove sentences with empty source or target")        
+
+    #Orthography
+    groupO.add_argument('--ignore_orthography', default=False, action='store_true', help="Doesn't apply orthography fixing")
+    
     #Deduplication
     groupO.add_argument('--ignore_duplicates', default=False, action='store_true', help="Doesn't obtain the hashes of parallel sentences")    
-    groupO.add_argument('--ignore_empty', default=False, action='store_true', help="Doesn't remove sentences with empty source or target")    
+
     groupO.add_argument('--aggressive_dedup', default=False, action='store_true', help="Treats similar sentences as duplicates (marking them with the same hash)")
 
     #Segmentation
@@ -98,7 +105,8 @@ def fix_sentences(args):
     if not args.ignore_characters:
         chars_replacements_slang, charsRe_slang = restorative_cleaning.getCharsReplacements(args.srclang)
         chars_replacements_tlang, charsRe_tlang = restorative_cleaning.getCharsReplacements(args.trglang)
-
+    
+    if not args.ignore_orthography:    
         replacements_slang = restorative_cleaning.getReplacements(args.srclang)
         replacements_tlang = restorative_cleaning.getReplacements(args.trglang)
             
@@ -118,18 +126,25 @@ def fix_sentences(args):
         #None of source or target sentences is empty:
         if args.ignore_empty or (source_sentence and target_sentence):
             if not args.ignore_characters:        
-                fixed_source = restorative_cleaning.fix(source_sentence, args.srclang, chars_replacements_slang, charsRe_slang, replacements_slang)
-                fixed_target = restorative_cleaning.fix(target_sentence, args.trglang, chars_replacements_tlang, charsRe_tlang, replacements_tlang)
+                fixed_source = restorative_cleaning.fix(source_sentence, args.srclang, chars_replacements_slang, charsRe_slang)
+                fixed_target = restorative_cleaning.fix(target_sentence, args.trglang, chars_replacements_tlang, charsRe_tlang)
             else:
                 fixed_source = source_sentence
                 fixed_target = target_sentence    
-
+                
+            if not args.ignore_orthography:    
+                corrected_source = restorative_cleaning.orthofix(fixed_source, replacements_slang)
+                corrected_target = restorative_cleaning.orthofix(fixed_target, replacements_tlang)
+            else:
+                corrected_source = fixed_source
+                corrected_target = fixed_target
+                
             if not args.ignore_segmentation and (len(fixed_source.split()) > args.words_before_segmenting or len(fixed_target.split()) > args.words_before_segmenting):
                 #The naive_segmenter must return an array of tuples (source sentence, target sentence)             
-                segments = segmenter.naive_segmenter(fixed_source, fixed_target)                
+                segments = segmenter.naive_segmenter(corrected_source, corrected_target) 
             else:
                 #keep original segmentation    
-                segments = [{"source_segment": fixed_source, "target_segment": fixed_target}]
+                segments = [{"source_segment": corrected_source, "target_segment": corrected_target}]
                 
             for segment in segments:
                 if args.dedup:

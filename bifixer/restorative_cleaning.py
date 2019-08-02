@@ -595,7 +595,7 @@ def replace_chars3(match):
     char = match.group(0)
     return ""
   
-def fix(text, lang, chars_lang, charsRe, replacements):
+def fix(text, lang, chars_lang, charsRe):
     global global_chars_lang 
     global_chars_lang= chars_lang
     
@@ -637,18 +637,22 @@ def fix(text, lang, chars_lang, charsRe, replacements):
     normalized_text = chars3Re3.sub(replace_chars3, normalized_text)
     normalized_text = quotesRegex.sub( "\g<start>\'\g<end>", normalized_text)
     
+    return normalized_text
+    
+def orthofix(text, replacements):
+    
     if len(replacements) > 0:
         last = 0
-        line = [] #???
+        line = [] 
 
-        for j in regex.finditer(r"([^-'[:alpha:]](?:[^-[:alpha:]']*[^-'[:alpha:]])?)", normalized_text):
+        for j in regex.finditer(r"([^-'[:alpha:]](?:[^-[:alpha:]']*[^-'[:alpha:]])?)", text):
             if last != j.start():
-                line.append((normalized_text[last:j.start()], "w"))
-            line.append((normalized_text[j.start():j.end()], "s"))
+                line.append((text[last:j.start()], "w"))
+            line.append((text[j.start():j.end()], "s"))
             last = j.end()
         else:
-            if last != len(normalized_text):
-                line.append((normalized_text[last:], "w"))
+            if last != len(text):
+                line.append((text[last:], "w"))
         fixed_text = ""
         for j in line:
             if j[1] == "w":
@@ -659,6 +663,6 @@ def fix(text, lang, chars_lang, charsRe, replacements):
             else:
               fixed_text += j[0]
     else:
-        fixed_text = normalized_text
+        fixed_text = text
 
     return fixed_text
