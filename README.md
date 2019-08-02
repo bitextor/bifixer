@@ -55,6 +55,7 @@ Optional:
                         (default: False)
   --ignore_empty        Doesn't remove sentences with empty source or target
                         (default: False)
+  --ignore_orthography  Doesn't apply orthography fixing (default: False)                        
   --aggressive_dedup    Treats similar sentences as duplicates (marking them
                         with the same hash) (default: False)
   --ignore_segmentation
@@ -90,7 +91,8 @@ Logging:
     * --ignore_empty : Doesn't remove sentences with empty source or target
     * --ignore_segmentation : Deactivates segmentation of long sentences
     * --words_before_segmenting : Maximum allowed amount of words in a sentence, before trying to segment it. Default: 40
-    * --ignore_characters : Deactivates text fixing
+    * --ignore_characters : Deactivates text fixing (characters, encoding...)
+    * --ignore_orthography  Deactivates orthography fixing
     * --aggressive_dedup : Treats near-duplicated sentences as duplicates (normalizes sentences before hashing)
     * --tmp_dir TMP_DIR : Directory for temporary files
     * -q, --quiet : Silent logging mode
