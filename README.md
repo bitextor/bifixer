@@ -8,8 +8,10 @@ Tool to fix bitexts and tag near-duplicates for removal.
   * Fixes mojibake
   * Turns HTML entities into the character they represent 
   * Replaces characters from wrong alphabets with the correct ones
-  * Fixes common orthographic errors for some languages (currently, only English)
-  * Deactivate this feature with `--ignore_characters`
+  * Deactivate this feature with `--ignore_characters`  
+* Fixes common orthographic errors for some languages:
+  * Currently: Danish, German, English, Spanish, Dutch, Norwegian, Portuguese and Turkish
+  * Deactivate this feature with `--ignore_orthography`
 * Removes sentences with empty source or target (deactivate this feature with `--ignore_empty`)
 * Obtains hahes of parallel sentences, in order to ease the later removal of duplicates (deactivate this feature with `--ignore_duplicates`)
   * Want stronger deduplication? Make this feature to find near-duplicated sentences (ignoring casing, accents, diacritics and digits) by using the  `--aggressive_dedup` flag
