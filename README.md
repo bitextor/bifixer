@@ -142,28 +142,33 @@ In order to ease the later removal of duplicated parallel sentences, Bifixer app
 
 The hash is obtained by using the [XXHash](http://www.xxhash.com) algorithm, applied to fixed source and target  (`fixed_source+"\t"+fixed_target`). This way, sentences that after fixing are equal (see example below), get the same hash. 
 
-When using the `--aggressive_dedup` feature, parallel sentences are normalized after being fixed (ignoring casing, accents and diacritics) in order to get their hashes. This way, sentences that are near-duplicates (i.e. they only differ in casing or accents) get the same hash. Please note that, in the output file, these sentences will not be normalized, only fixed. A `ranking` column is added at the end of each line, in order to give a sense on how good or bad is the fixed parallel sentence (this way, on a later deduplication step, the deduplication algorithm can choose the best sentence of all sentences having the same hash)
+When using the `--aggressive_dedup` feature, parallel sentences are normalized after being fixed (ignoring casing, accents and diacritics) in order to get their hashes. This way, sentences that are near-duplicates (i.e. they only differ in casing or accents) get the same hash. Please note that, in the output file, these sentences will not be normalized, only fixed. 
+
+A `ranking` column is added at the end of each line. When not using the `--aggressive_dedup` feature, the number is set to 0 by default. When using the `--aggressive_dedup` feature, a float number between 0 and 1 is provided. This number will be used as a hint at a later step to help the deduplication algorithm to choose the best sentence from those sharing the same hash. 
 
 ## EXAMPLE ##
 
 Input file:
 
 ```
-http://www.ehyz.com/2.html.tmp     http://www.ehyz.com/2.html.tmp     1 year ago NuVid        Hace 1 aÃ±o NuVid   
-http://pandafoundation.com/index.php?page=7       http://pandafoundation.com/index.php?page=26     ©2007 Chengdu Research Base of Giant Panda Breeding ! All Rights Reserved      ©2017 Fundación para la Investigación de Cría del Panda Gigante de Chengdu/ ¡Todos los derechos reservados!     
-http://www.boliviamall.com/4520.html  http://www.boliviamall.com/4520.html   Welcome Guest ! Would you like to log in ?      Bienvenido Invitado! ¿Le gustaria entrar ?    
-http://pandafoundation.com/index.php?page=157      http://pandafoundation.com/index.php?page=76    ©2007 Chengdu Research Base of Giant Panda Breeding ! All Rights Reserved      ©2017 Fundación para la Investigación de Cría del Panda Gigante de Chengdu/ ¡Todos los derechos reservados!    
-http://www.ehyz.com/6.html.tmp     http://www.ehyz.com/6.html.tmp     1 year ago NuVid        Hace 1 año NuVid 
+http://www.ehyz.com/2.html.tmp	http://www.ehyz.com/2.html.tmp	1 year ago NuVid	Hace 1 aÃ±o NuVid
+http://pandafoundation.com/index.php?page=7	http://pandafoundation.com/index.php?page=26	©2007 Chengdu Research Base of Giant Panda Breeding ! All Rights Reserved	©2017 Fundación para la Investigación de Cría del Panda Gigante de Chengdu/ ¡Todos los derechos reservados!     
+http://www.boliviamall.com/4520.html	http://www.boliviamall.com/4520.html	Welcome Guest 1! Would you like to log in ?	Bienvenido Invitado 1! ¿Le gustaria entrar ?    
+http://pandafoundation.com/index.php?page=157	http://pandafoundation.com/index.php?page=76	©2007 Chengdu Research Base of Giant Panda Breeding ! All Rights Reserved	©2017 Fundación para la Investigación de Cría del Panda Gigante de Chengdu/ ¡Todos los derechos reservados!
+http://www.ehyz.com/6.html.tmp	http://www.ehyz.com/6.html.tmp	1 year ago NuVid	Hace 1 año NuVid
+http://www.boliviamall.com/4305.html	http://www.boliviamall.com/4305.html	Welcome Guest 12! Would you like to log in?	¡Bienvenido invitado 12! ¿Le gustaria entrar? 
 ```
 
-Output file:
+Output file (using the '--aggressive_dedup' feature, otherwise ranking number would be 1 in all cases):
 
 ```
-http://www.ehyz.com/2.html.tmp     http://www.ehyz.com/2.html.tmp     1 year ago NuVid        Hace 1 año NuVid   14d8115c65f1948891f6b77402a43cb2
-http://pandafoundation.com/index.php?page=7       http://pandafoundation.com/index.php?page=26     ©2007 Chengdu Research Base of Giant Panda Breeding ! All Rights Reserved      ©2017 Fundación para la Investigación de Cría del Panda Gigante de Chengdu/ ¡Todos los derechos reservados!     1ab206ab29fd0b002851d5c8e926c5bd
-http://www.boliviamall.com/4520.html  http://www.boliviamall.com/4520.html   Welcome Guest ! Would you like to log in ?      Bienvenido Invitado! ¿Le gustaria entrar ?    8dac8335e37a3b6d1eb41f882b15b799
-http://pandafoundation.com/index.php?page=157      http://pandafoundation.com/index.php?page=76    ©2007 Chengdu Research Base of Giant Panda Breeding ! All Rights Reserved      ©2017 Fundación para la Investigación de Cría del Panda Gigante de Chengdu/ ¡Todos los derechos reservados!    1ab206ab29fd0b002851d5c8e926c5bd
-http://www.ehyz.com/6.html.tmp     http://www.ehyz.com/6.html.tmp     1 year ago NuVid        Hace 1 año NuVid       14d8115c65f1948891f6b77402a43cb2
+ 
+http://www.ehyz.com/2.html.tmp	http://www.ehyz.com/2.html.tmp	1 year ago NuVid	Hace 1 año NuVid	9f1f7c6fc775a23a	88.25
+http://pandafoundation.com/index.php?page=7	http://pandafoundation.com/index.php?page=26	©2007 Chengdu Research Base of Giant Panda Breeding ! All Rights Reserved	©2017 Fundación para la Investigación de Cría del Panda Gigante de Chengdu/ ¡Todos los derechos reservados!	d0278d1279f06823	91.93
+http://www.boliviamall.com/4520.html	http://www.boliviamall.com/4520.html	Welcome Guest 1! Would you like to log in ?	Bienvenido Invitado 1! ¿Le gustaría entrar ?	e8f129b1624b9f5d	91.22
+http://pandafoundation.com/index.php?page=157	http://pandafoundation.com/index.php?page=76	©2007 Chengdu Research Base of Giant Panda Breeding ! All Rights Reserved	©2017 Fundación para la Investigación de Cría del Panda Gigante de Chengdu/ ¡Todos los derechos reservados!	d0278d1279f06823	91.93
+http://www.ehyz.com/6.html.tmp	http://www.ehyz.com/6.html.tmp	1 year ago NuVid	Hace 1 año NuVid	9f1f7c6fc775a23a	88.25
+http://www.boliviamall.com/4305.html	http://www.boliviamall.com/4305.html	Welcome Guest 12! Would you like to log in?	¡Bienvenido invitado 12! ¿Le gustaría entrar?	422aeefd8f056b30	92.78
 ```
 
 
