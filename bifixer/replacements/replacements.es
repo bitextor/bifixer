@@ -50,11 +50,11 @@ arbol	árbol
 Arbol	Árbol
 area	área
 Area	Área
-articulación	articulación
+articulacion	articulación
 asi	así
 Asi	Así
-atención	atención
-Atención	Atención
+atencion	atención
+Atencion	Atención
 atlantico	atlántico
 Atlantico	Atlántico
 atrabesado	atravesado
@@ -64,7 +64,7 @@ atrabesar	atravesar
 atrabezar	atravesar
 atravezar	atravesar
 automovil	automóvil
-avión	avión
+avion	avión
 azucar	azúcar
 bibliografia	bibliografía
 Bibliografia	Bibliografía
@@ -138,8 +138,8 @@ desenrredar	desenredar
 desovediente	desobediente
 deshechar	desechar
 deshechando	desechando
-después	después
-Después	Después
+despues	después
+Despues	Después
 dia	día
 dias	días
 dieciseis	dieciséis
@@ -180,7 +180,7 @@ enlaze	enlace
 Enlaze	Enlace
 eolico	eólico
 enrredado	enredado
-enredar	enredar
+enrredar	enredar
 equalización	ecualización
 equalizador	ecualizador
 equalizar	ecualizar
@@ -260,7 +260,7 @@ hibridización	hibridación
 hinduísmo	hinduismo
 hinduísta	hinduista
 homogenea	homogénea
-homogéneo	homogéneo
+homogeneo	homogéneo
 hormigon	hormigón
 ideologia	ideología
 idiologia	ideología
@@ -278,7 +278,7 @@ indice	índice
 Indice	Índice
 interface	interfaz
 interperie	intemperie
-instrumento	instrumento
+intrumento	instrumento
 intrumentos	instrumentos
 inutil	inútil
 invasion	invasión
@@ -460,7 +460,7 @@ Solucion	Solución
 substituir	sustituir
 subrraya	subraya
 subrrayado	subrayado
-subrayar	subrayar
+subrrayar	subrayar
 superfície	superficie
 supérflua	superflua
 tagea	tajea
@@ -486,7 +486,6 @@ tradució	tradujo
 tradución	traducción
 traducion	traducción
 traduccion	traducción
-traf	tráf	RM
 tunel	túnel
 ubicacion	ubicación
 Ubicacion	Ubicación
