@@ -63,7 +63,7 @@ Optional:
                         (default: False)
   --words_before_segmenting WORDS_BEFORE_SEGMENTING
                         Max words allowed in one side of a parallel sentence
-                        before trying to segmentate it. Set to 0 to applicate
+                        before trying to segment it. Set to 0 to applicate
                         segmentation on everything. (default: 40)
   --tmp_dir TMP_DIR     Temporary directory where creating the temporary files
                         of this program (default: /tmp)
