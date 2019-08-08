@@ -144,7 +144,7 @@ The hash is obtained by using the [XXHash](http://www.xxhash.com) algorithm, app
 
 When using the `--aggressive_dedup` feature, parallel sentences are normalized after being fixed (ignoring casing, accents and diacritics) in order to get their hashes. This way, sentences that are near-duplicates (i.e. they only differ in casing or accents) get the same hash. Please note that, in the output file, these sentences will not be normalized, only fixed. 
 
-A `ranking` column is added at the end of each line. When not using the `--aggressive_dedup` feature, the number is set to 0 by default. When using the `--aggressive_dedup` feature, a float number between 0 and 1 is provided. This number will be used as a hint at a later step to help the deduplication algorithm to choose the best sentence from those sharing the same hash. 
+A `ranking` column is added at the end of each line. When not using the `--aggressive_dedup` feature, the number is set to 0 by default. When using the `--aggressive_dedup` feature, a float number is provided. This number (the higher the better) will be used as a hint at a later step to help the deduplication algorithm to choose the best sentence from those sharing the same hash. 
 
 ## EXAMPLE ##
 
