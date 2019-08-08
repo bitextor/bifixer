@@ -15,7 +15,7 @@ Tool to fix bitexts and tag near-duplicates for removal.
 * Removes sentences with empty source or target (deactivate this feature with `--ignore_empty`)
 * Obtains hahes of parallel sentences, in order to ease the later removal of duplicates (deactivate this feature with `--ignore_duplicates`)
   * Want stronger deduplication? Make this feature to find near-duplicated sentences (ignoring casing, accents, diacritics and digits) by using the  `--aggressive_dedup` flag
-  * Learn more in the "Duplicated and near-duplicated sentences" section below.
+  * Learn more in the "Tagging duplicated and near-duplicated sentences" section below.
 * COMING SOON: Provides better segmentation of long sentences (deactivate this feature with `--ignore_segmentation`)
 
  
@@ -136,7 +136,7 @@ cat ${INPUT_FILE}.o
 rm -Rf $INPUT_FILE ${INPUT_FILE}.o
 ```
 
-## DUPLICATED AND NEAR-DUPLICATED SENTENCES ##
+## TAGGING DUPLICATED AND NEAR-DUPLICATED SENTENCES ##
 
 In order to ease the later removal of duplicated or near-duplicated parallel sentences, Bifixer appends each parallel sentence two new fields: `hash`and `ranking`.
 
