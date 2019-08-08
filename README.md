@@ -138,13 +138,13 @@ rm -Rf $INPUT_FILE ${INPUT_FILE}.o
 
 ## DUPLICATED AND NEAR-DUPLICATED SENTENCES ##
 
-In order to ease the later removal of duplicated parallel sentences, Bifixer appends each parallel sentence two new fields being `hash`and `ranking`.
+In order to ease the later removal of duplicated or near-duplicated parallel sentences, Bifixer appends each parallel sentence two new fields: `hash`and `ranking`.
 
-The hash is obtained by using the [XXHash](http://www.xxhash.com) algorithm, applied to fixed source and target  (`fixed_source+"\t"+fixed_target`). This way, sentences that after fixing are equal (see example below), get the same hash. 
+The hash is obtained by using the [XXHash](http://www.xxhash.com) algorithm, applied after fixing source and target sentences  (`fixed_source+"\t"+fixed_target`). Sentences that are identical at this step (see example below) will get the same hash. 
 
-When using the `--aggressive_dedup` feature, parallel sentences are normalized after being fixed (ignoring casing, accents and diacritics) in order to get their hashes. This way, sentences that are near-duplicates (i.e. they only differ in casing or accents) get the same hash. Please note that, in the output file, these sentences will not be normalized, only fixed. 
+When using the `--aggressive_dedup` feature, fixed parallel sentences are also normalized (ignoring casing, accents and diacritics) before their hash is computed. Doing so, sentences that are near-duplicates (i.e. they only differ in casing or accents) will also get the same hash. Normalization is only used internally: the output sentences will not be normalized after Bifixer is applied. 
 
-A `ranking` column is added at the end of each line. When not using the `--aggressive_dedup` feature, the number is set to 0 by default. When using the `--aggressive_dedup` feature, a float number is provided. This number (the higher the better) will be used as a hint at a later step to help the deduplication algorithm to choose the best sentence from those sharing the same hash. 
+A `ranking` column is added at the end of each line. When not using the `--aggressive_dedup` feature, the number is set to 1 by default. When using the `--aggressive_dedup` feature, a float number is provided. This number (interpreted as the higher the better) will be used at later step to help the deduplication algorithm to choose the best sentence from those sharing the same hash. If the ranking number is exactly the same for a group of sentences sharing the same hash, only a random one should be kept. Otherwise, the one with the highest ranking number should be kept. 
 
 ## EXAMPLE ##
 
