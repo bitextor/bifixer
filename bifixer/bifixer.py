@@ -141,7 +141,7 @@ def fix_sentences(args):
                 
             if not args.ignore_segmentation and (len(fixed_source.split()) > args.words_before_segmenting or len(fixed_target.split()) > args.words_before_segmenting):
                 #The naive_segmenter must return an array of tuples (source sentence, target sentence)             
-                segments = segmenter.naive_segmenter(corrected_source, corrected_target) 
+                segments = segmenter.naive_segmenter(corrected_source, corrected_target, args.srclang, args.trglang) 
             else:
                 #keep original segmentation    
                 segments = [{"source_segment": corrected_source, "target_segment": corrected_target}]
