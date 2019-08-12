@@ -3,6 +3,7 @@
 __author__ = "Marta Bañón (mbanon)"
 __version__ = "Version 0.1 # 03/07/2019 # Initial release # Marta Bañón"
 
+import json
 from toolwrapper import ToolWrapper
 
 
@@ -11,10 +12,10 @@ class LoomchildSegmenter(ToolWrapper):
     
     def __init__(self,lang="en"):
         self.lang = lang
-        program =  "/home/mbanon/project/segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:/home/mbanon/project/segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/* net.loomchild.segment.ui.console.Segment"
+        program =  "/home/motagirl2/projects/segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:/home/motagirl2/projects/segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/* net.loomchild.segment.ui.console.Segment"
 #        argv = ["/user/bin/java", "-cp", "/home/mbanon/project/segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:/home/mbanon/project/segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment",  "-c"]
 #        argv = ["/usr/bin/rev"]
-        argv = ["java", "-cp",  "/home/mbanon/project/segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:/home/mbanon/project/segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment", "-c"]
+        argv = ["java", "-cp",  "/home/motagirl2/projects/segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:/home/motagirl2/projects/segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment", "-c"]
         
         super().__init__(argv)
 
@@ -34,21 +35,17 @@ class LoomchildSegmenter(ToolWrapper):
 def naive_segmenter(source, target, slang, tlang):
 
     #TO DO: Do this only once, on a setup step    
-#    source_segmenter = LoomchildSegmenter(slang)
-#    target_segmenter = LoomchildSegmenter(tlang)
+    source_segmenter = LoomchildSegmenter(slang)
+    target_segmenter = LoomchildSegmenter(tlang)
 
-#    source_segments = source_segmenter(source+"\n")
-#    target_segments = target_segmenter(target)
+    source_segments = json.loads(source_segmenter(source))
+    target_segments = json.loads(target_segmenter(target))
      
-
-    
-    print("SOURCE SEGMENTS: " + str(source_segments))
-#    print("TARGET SEGMENTS: " + str(target_segments))
             
     if len(source_segments) == len(target_segments):
         segments = []
         for segment_pair in zip(source_segments, target_segments):
-            segment = {"source_segment": segment_pair.get(0), "target_segment": segment_pair.get(1)}
+            segment = {"source_segment": segment_pair[0], "target_segment": segment_pair[1]}
             segments.append(segment)
         return segments    
     else:            

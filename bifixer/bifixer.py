@@ -165,12 +165,13 @@ def fix_sentences(args):
                 #Restored parts object, with the fixed segment, overwritten for each pair of extra segments,
                 new_parts = parts
                 
+                
                 new_parts[args.scol-1] = segment["source_segment"]
                 new_parts[args.tcol-1] = segment["target_segment"]
                 
                 if (args.dedup):
                     #Remove the "/n" at the end of the last item
-                    new_parts[-1]= new_parts[-1].strip("\n")
+                    new_parts[-1]= str(new_parts[-1]).strip("\n")
                 
                     new_parts.append(hash) #hash and ranking are added at the end           
                     new_parts.append(ranking)
