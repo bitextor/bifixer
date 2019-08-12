@@ -119,7 +119,7 @@ def fix_sentences(args):
             target_sentence = parts[args.tcol-1]
         except IndexError:
             logging.error(traceback.format_exc())
-            logging.error("Wrong column index on line " + ilines)
+            logging.error("Wrong column index on line " + str(ilines))
             continue
             
         

@@ -5,18 +5,21 @@ __version__ = "Version 0.1 # 03/07/2019 # Initial release # Marta Bañón"
 
 from toolwrapper import ToolWrapper
 
+
 class LoomchildSegmenter(ToolWrapper):
     """A module for interfacing with a Java sentence segmenter. """
     
-    def __init__(self,text,lang="en"):
+    def __init__(self,lang="en"):
         self.lang = lang
-        self.text = text
-        program =  "/home/motagirl2/projects/segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:./segment-2.0.2-SNAPSHOT/lib/* net.loomchild.segment.ui.console.Segment"
-        argv = ["java", "-cp", program, "-l", self.lang]
+        program =  "/home/mbanon/project/segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:/home/mbanon/project/segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/* net.loomchild.segment.ui.console.Segment"
+#        argv = ["/user/bin/java", "-cp", "/home/mbanon/project/segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:/home/mbanon/project/segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment",  "-c"]
+#        argv = ["/usr/bin/rev"]
+        argv = ["java", "-cp",  "/home/mbanon/project/segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:/home/mbanon/project/segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment", "-c"]
+        
         super().__init__(argv)
 
     def __str__(self):
-        return "LoomchildSegmenter(lang=\"{lang}\")".format(lang=self.lang)
+        return "LoomchildSegmenter()".format()
 
     def __call__(self, sentence):
         assert isinstance(sentence, str)
@@ -25,19 +28,22 @@ class LoomchildSegmenter(ToolWrapper):
         if not sentence:
             return []
         self.writeline(sentence)
-        return self.readline().split()
+
+        return self.readline()
 
 def naive_segmenter(source, target, slang, tlang):
 
     #TO DO: Do this only once, on a setup step    
-    source_segmenter = LoomchildSegmenter(slang)
-    target_segmenter = LoomchildSegmenter(tlang)
+#    source_segmenter = LoomchildSegmenter(slang)
+#    target_segmenter = LoomchildSegmenter(tlang)
 
-    source_segments = source_segmenter(source)
-    target_segments = target_segmenter(target)
+#    source_segments = source_segmenter(source+"\n")
+#    target_segments = target_segmenter(target)
+     
+
     
     print("SOURCE SEGMENTS: " + str(source_segments))
-    print("TARGET SEGMENTS: " + str(target_segments))
+#    print("TARGET SEGMENTS: " + str(target_segments))
             
     if len(source_segments) == len(target_segments):
         segments = []
