@@ -109,6 +109,10 @@ def fix_sentences(args):
     if not args.ignore_orthography:    
         replacements_slang = restorative_cleaning.getReplacements(args.srclang)
         replacements_tlang = restorative_cleaning.getReplacements(args.trglang)
+        
+    if not args.ignore_segmentation:
+        source_segmenter = segmenter.NaiveSegmenter(args.srclang)
+        target_segmenter = segmenter.NaiveSegmenter(args.trglang)
             
     for i in args.input:
         ilines += 1
@@ -141,7 +145,7 @@ def fix_sentences(args):
                 
             if not args.ignore_segmentation and (len(fixed_source.split()) > args.words_before_segmenting or len(fixed_target.split()) > args.words_before_segmenting):
                 #The naive_segmenter must return an array of tuples (source sentence, target sentence)             
-                segments = segmenter.naive_segmenter(corrected_source, corrected_target, args.srclang, args.trglang) 
+                segments = segmenter.naive_segmenter(source_segmenter, target_segmenter, corrected_source, corrected_target) 
             else:
                 #keep original segmentation    
                 segments = [{"source_segment": corrected_source, "target_segment": corrected_target}]
@@ -176,6 +180,9 @@ def fix_sentences(args):
                     new_parts.append(hash) #hash and ranking are added at the end           
                     new_parts.append(ranking)
                     args.output.write("\t".join(str(v) for v in new_parts)+"\n")  #Convert to strings
+                    #Remove hash and ranking for next iterations of loop
+                    new_parts.pop()
+                    new_parts.pop()
                 else:                   
                     #When no deduplicating:
                     args.output.write("\t".join(str(v) for v in new_parts))

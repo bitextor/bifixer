@@ -4,6 +4,8 @@ __author__ = "Marta Bañón (mbanon)"
 __version__ = "Version 0.1 # 03/07/2019 # Initial release # Marta Bañón"
 
 import json
+import os
+
 from toolwrapper import ToolWrapper
 
 
@@ -11,12 +13,9 @@ class LoomchildSegmenter(ToolWrapper):
     """A module for interfacing with a Java sentence segmenter. """
     
     def __init__(self,lang="en"):
+        curpath = os.path.dirname(os.path.abspath(__file__))+"/"
         self.lang = lang
-        program =  "/home/motagirl2/projects/segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:/home/motagirl2/projects/segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/* net.loomchild.segment.ui.console.Segment"
-#        argv = ["/user/bin/java", "-cp", "/home/mbanon/project/segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:/home/mbanon/project/segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment",  "-c"]
-#        argv = ["/usr/bin/rev"]
-        argv = ["java", "-cp",  "/home/motagirl2/projects/segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:/home/motagirl2/projects/segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment", "-c"]
-        
+        argv = ["java", "-cp",  curpath+"../segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:"+curpath+"../segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment", "-c"]
         super().__init__(argv)
 
     def __str__(self):
@@ -31,17 +30,21 @@ class LoomchildSegmenter(ToolWrapper):
         self.writeline(sentence)
 
         return self.readline()
+class  NaiveSegmenter:
+    def __init__(self, lang):
+        self.segmenter = LoomchildSegmenter(lang)
+        
+    def __call__(self, sentence):
+        return get_segmentation(sentence)
 
-def naive_segmenter(source, target, slang, tlang):
+    def get_segmentation(self, sentence):
+        sentence_segments = json.loads(self.segmenter(sentence))
+        return sentence_segments
 
-    #TO DO: Do this only once, on a setup step    
-    source_segmenter = LoomchildSegmenter(slang)
-    target_segmenter = LoomchildSegmenter(tlang)
+def naive_segmenter(source_segmenter, target_segmenter, source, target):
+    source_segments = source_segmenter.get_segmentation(source)
+    target_segments = target_segmenter.get_segmentation(target)   
 
-    source_segments = json.loads(source_segmenter(source))
-    target_segments = json.loads(target_segmenter(target))
-     
-            
     if len(source_segments) == len(target_segments):
         segments = []
         for segment_pair in zip(source_segments, target_segments):

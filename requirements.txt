@@ -3,4 +3,3 @@ ftfy
 unidecode
 xxhash
 toolwrapper
-json
