@@ -181,6 +181,8 @@ Enlaze	Enlace
 eolico	eólico
 enrredado	enredado
 enrredar	enredar
+envio	envío
+Envio	Envío
 equalización	ecualización
 equalizador	ecualizador
 equalizar	ecualizar
@@ -244,6 +246,7 @@ Había	Había
 haiga	haya
 habian	habían
 Habian	Habían 
+habitacion	habitación
 hechar	echar
 Hechar	Echar
 hechado	echado
@@ -519,6 +522,9 @@ ventitres	veintitrés
 Ventitres	Veintitrés
 ventitrés	veintitrés
 Ventitrés	Veintitrés
+vendra	vendrá
+Vendra	Vendrá
+versatil	versátil
 vision	visión
 Vision	Visión
 vizión	visión
