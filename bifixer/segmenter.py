@@ -15,7 +15,7 @@ class LoomchildSegmenter(ToolWrapper):
     def __init__(self,lang="en"):
         curpath = os.path.dirname(os.path.abspath(__file__))+"/"
         self.lang = lang
-        argv = ["java", "-cp",  curpath+"../segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:"+curpath+"../segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment", "-c"]
+        argv = ["java", "-cp",  curpath+"../segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:"+curpath+"../segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment", "-l", lang, "-c"]
         super().__init__(argv)
 
     def __str__(self):
