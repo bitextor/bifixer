@@ -15,8 +15,15 @@ class LoomchildSegmenter(ToolWrapper):
     def __init__(self,lang="en"):
         curpath = os.path.dirname(os.path.abspath(__file__))+"/"
         self.lang = lang
-        argv = ["java", "-cp",  curpath+"../segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:"+curpath+"../segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment", "-c"]
+        self.rules = self.getBestRules(lang)        
+
+        if self.rules != "DEFAULT":    
+            argv = ["java", "-cp",  curpath+"../segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:"+curpath+"../segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment", "-l", self.lang, "-s", curpath+"../segment/srx/"+self.rules, "-c"]
+        else:            
+            argv = ["java", "-cp",  curpath+"../segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:"+curpath+"../segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment", "-l", lang,"-c"]
+
         super().__init__(argv)
+        
 
     def __str__(self):
         return "LoomchildSegmenter()".format()
@@ -30,6 +37,26 @@ class LoomchildSegmenter(ToolWrapper):
         self.writeline(sentence)
 
         return self.readline()
+        
+    def getBestRules(self, lang):
+        #Based on benchmarks: https://docs.google.com/spreadsheets/d/1mGJ9MSyMlsK0EUDRC2J50uxApiti3ggnlrzAWn8rkMg/edit?usp=sharing
+        
+        omegaTLangs = ["bg", "cs", "sl", "sv"]
+        ptdrLangs = ["el", "et", "fi", "hr", "hu", "lt", "lv"]
+        nonAggressiveLangs = ["es", "it", "nb", "nn"]
+        languageToolLangs = ["da", "de", "en", "fr", "nl", "pl", "pt", "ro", "sk", "sr", "uk"]
+
+        if lang in omegaTLangs:
+            return "OmegaT.srx"
+        elif lang in ptdrLangs:
+            return "PTDR.srx"
+        elif lang in nonAggressiveLangs:
+            return "NonAggressive.srx"
+        elif lang in languageToolLangs:
+            return "language_tools.segment.srx"
+        else:
+            return "DEFAULT"
+                
 class  NaiveSegmenter:
     def __init__(self, lang):
         self.segmenter = LoomchildSegmenter(lang)
@@ -41,6 +68,10 @@ class  NaiveSegmenter:
         sentence_segments = json.loads(self.segmenter(sentence))
         return sentence_segments
 
+#class NLTKSegmenter():
+#    def __init__(self, lang):
+#        return 
+    
 def naive_segmenter(source_segmenter, target_segmenter, source, target):
     source_segments = source_segmenter.get_segmentation(source)
     target_segments = target_segmenter.get_segmentation(target)   
