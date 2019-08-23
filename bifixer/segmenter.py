@@ -2,11 +2,15 @@
 
 __author__ = "Marta Bañón (mbanon)"
 __version__ = "Version 0.1 # 03/07/2019 # Initial release # Marta Bañón"
+__version__ = "Version 0.2 # 23/08/2019 # Included NLTK segmenter # Marta Bañón"
+
 
 import json
 import os
+import nltk
 
 from toolwrapper import ToolWrapper
+from nltk import load
 
 
 class LoomchildSegmenter(ToolWrapper):
@@ -57,25 +61,109 @@ class LoomchildSegmenter(ToolWrapper):
             return "language_tools.segment.srx"
         else:
             return "DEFAULT"
-                
-class  NaiveSegmenter:
-    def __init__(self, lang):
-        self.segmenter = LoomchildSegmenter(lang)
-        
-    def __call__(self, sentence):
-        return get_segmentation(sentence)
 
     def get_segmentation(self, sentence):
-        sentence_segments = json.loads(self.segmenter(sentence))
+        sentence_segments = json.loads(self(sentence))
         return sentence_segments
 
-#class NLTKSegmenter():
-#    def __init__(self, lang):
-#        return 
+
+
+class NLTKSegmenter:
+    def __init__(self, lang):
+        try:
+            nltk.data.find('tokenizer/punkt')
+        except:
+            nltk.download('punkt', quiet=True)
+        
+        langname = self.getLanguageName(lang.lower()) 
+                 
+        try:
+            self.segmenter = load('tokenizers/punkt/{0}.pickle'.format(langname))            
+        except:
+            self.segmenter = load('tokenizers/punkt/english.pickle')    
+
+    
+    def get_segmentation(self, sentence):
+        sentence_segments = json.loads(json.dumps(self.segmenter.tokenize(sentence)))
+        return sentence_segments
+        
+            
+    def getLanguageName(self, lang):
+        #Returns NLTK *.pickle file for the language, if exists. If not, returns the default (english.pickle)
+        
+        if lang == "cs":
+            return "czech"
+
+        elif lang == "da":
+            return "danish"            
+        
+        elif lang == "de":
+            return "german"
+
+        elif lang == "el":
+            return "greek"        
+
+        elif lang == "en":
+            return "english"
+
+        elif lang == "es":
+            return "spanish"
+            
+        elif lang == "et":
+            return "estonian"    
+        
+        elif lang == "fi":
+            return "finnish"
+                
+        elif lang == "fr":
+            return "frech"
+ 
+        elif lang == "it":
+            return "italian"
+            
+        elif lang == "nb":
+            return "norwegian"
+            
+        elif lang == "nl":
+            return "dutch"        
+        
+        elif lang == "nn":
+            return "norwegian"
+
+        elif lang == "pl":
+            return "polish"
+                        
+        elif lang == "pt":
+            return "portuguese"
+        
+        elif lang == "ru":
+            return "russian"
+                
+        elif lang == "sl":
+            return "slovene"
+         
+        elif lang == "sv":
+            return "swedish"                
+        
+        elif lang == "tr":
+            return "turkish"
+            
+        else:
+            return "english"        
+
+
+class  NaiveSegmenter:
+    def __init__(self, lang):
+        #self.segmenter = LoomchildSegmenter(lang)
+        self.segmenter = NLTKSegmenter(lang)
+        
+    def __call__(self, sentence):
+        return self.segmenter.get_segmentation(sentence)
+
     
 def naive_segmenter(source_segmenter, target_segmenter, source, target):
-    source_segments = source_segmenter.get_segmentation(source)
-    target_segments = target_segmenter.get_segmentation(target)   
+    source_segments = source_segmenter(source)
+    target_segments = target_segmenter(target)   
 
     if len(source_segments) == len(target_segments):
         segments = []
