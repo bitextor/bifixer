@@ -15,6 +15,7 @@ class LoomchildSegmenter(ToolWrapper):
     def __init__(self,lang="en"):
         curpath = os.path.dirname(os.path.abspath(__file__))+"/"
         self.lang = lang
+
         self.rules = self.getBestRules(lang)        
 
         if self.rules != "DEFAULT":    
