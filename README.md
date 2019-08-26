@@ -16,7 +16,10 @@ Tool to fix bitexts and tag near-duplicates for removal.
 * Obtains hahes of parallel sentences, in order to ease the later removal of duplicates (deactivate this feature with `--ignore_duplicates`)
   * Want stronger deduplication? Make this feature to find near-duplicated sentences (ignoring casing, accents, diacritics and digits) by using the  `--aggressive_dedup` flag
   * Learn more in the "Tagging duplicated and near-duplicated sentences" section below.
-* COMING SOON: Provides better segmentation of long sentences (deactivate this feature with `--ignore_segmentation`)
+* Provides better segmentation of long sentences:
+  * Choose between [NLTK](https://www.nltk.org/)  or [Loomchild](https://github.com/mbanon/segment) (SRX-rules based) segmenter modules with `--segmenter`  (default is NLTK)
+  * Choose the minimum length (in words) you want to start segmenting at (default is 15) with `--words_before_segmenting`. Set it to 1 to try to segment all sentences.
+  * Deactivate this feature with `--ignore_segmentation`
 
  
 ## INSTALLATION ##
@@ -25,17 +28,43 @@ Tool to fix bitexts and tag near-duplicates for removal.
  python3.6 -m pip install -r bifixer/requirements.txt
 ```
 
+### Loomchild segmenter ###
+
+Please note that, in order to use the optional `loomchild` segmenter module in Java, it has to be installed separatelly. Please follow [this](https://github.com/mbanon/segment#installation) extra instructions:
+
+```bash
+git submodule foreach git pull
+cd segment/segment
+mvn clean install
+cd ../segment-ui
+mvn clean install
+cd target
+unzip segment-2.0.2-SNAPSHOT.zip
+```
+
+In case you are not using Java 8 as default, download it and overwrite the 'JAVA_HOME' variable before installing, for example:
+
+```
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
+```
+
 ## USAGE ##
 
 ### Bifixer ###
 
 ```
-usage: bifixer.py [-h] [--scol SCOL] [--tcol TCOL] [--ignore_characters]
-                  [--ignore_duplicates] [--ignore_empty] [--aggressive_dedup]
-                  [--ignore_segmentation]
-                  [--words_before_segmenting WORDS_BEFORE_SEGMENTING]
-                  [--tmp_dir TMP_DIR] [-q] [--debug] [--logfile LOGFILE] [-v]
+usage: bifixer.py [-h] [--scol SCOL] [--tcol TCOL] 
+                  [--ignore_characters]
+                  [--ignore_empty] 
+                  [--ignore_orthography]
+                  [--ignore_duplicates] [--aggressive_dedup]
+                  [--ignore_segmentation] [--words_before_segmenting WORDS_BEFORE_SEGMENTING] [--segmenter {nltk,loomchild}]
+                  [--tmp_dir TMP_DIR] 
+                  [-q]
+                  [--debug] [--logfile LOGFILE]
+                  [-v]
                   input output srclang trglang
+
 
 positional arguments:
   input                 Tab-separated files to be bifixed
@@ -51,11 +80,11 @@ Optional:
   --tcol TCOL           Target sentence column (starting in 1) (default: 4)
   --ignore_characters   Doesn't fix mojibake, orthography, or other character
                         issues (default: False)
-  --ignore_duplicates   Doesn't obtain the hashes of parallel sentences
-                        (default: False)
   --ignore_empty        Doesn't remove sentences with empty source or target
                         (default: False)
-  --ignore_orthography  Doesn't apply orthography fixing (default: False)                        
+  --ignore_orthography  Doesn't apply orthography fixing (default: False)
+  --ignore_duplicates   Doesn't obtain the hashes of parallel sentences
+                        (default: False)
   --aggressive_dedup    Treats similar sentences as duplicates (marking them
                         with the same hash) (default: False)
   --ignore_segmentation
@@ -63,10 +92,13 @@ Optional:
                         (default: False)
   --words_before_segmenting WORDS_BEFORE_SEGMENTING
                         Max words allowed in one side of a parallel sentence
-                        before trying to segment it. Set to 0 to applicate
-                        segmentation on everything. (default: 40)
+                        before trying to segmentate it. Set to 0 to applicate
+                        segmentation on everything. (default: 15)
+  --segmenter {nltk,loomchild} 
+                        Segmenter module. (default: nltk)
   --tmp_dir TMP_DIR     Temporary directory where creating the temporary files
                         of this program (default: /tmp)
+
 Logging:
   -q, --quiet           Silent logging mode (default: False)
   --debug               Debug logging mode (default: False)
@@ -90,7 +122,8 @@ Logging:
     * --ignore_duplicates : Deactivates deduplication (won't add hash or ranking)
     * --ignore_empty : Doesn't remove sentences with empty source or target
     * --ignore_segmentation : Deactivates segmentation of long sentences
-    * --words_before_segmenting : Maximum allowed amount of words in a sentence, before trying to segment it. Default: 40
+    * --segmenter: Segmenter module (`nltk` or `loomchild`)
+    * --words_before_segmenting : Maximum allowed amount of words in a sentence, before trying to segment it. Default: 15
     * --ignore_characters : Deactivates text fixing (characters, encoding...)
     * --ignore_orthography  Deactivates orthography fixing
     * --aggressive_dedup : Treats near-duplicated sentences as duplicates (normalizes sentences before hashing)
