@@ -103,8 +103,8 @@ def fix_sentences(args):
     global olines
 
     if not args.ignore_characters:
-        charsRe_slang = restorative_cleaning.getCharsReplacements(args.srclang)
-        charsRe_tlang = restorative_cleaning.getCharsReplacements(args.trglang)
+        chars_slang, charsRe_slang = restorative_cleaning.getCharsReplacements(args.srclang)
+        chars_tlang, charsRe_tlang = restorative_cleaning.getCharsReplacements(args.trglang)
         
         punctChars_slang, punctRe_slang = restorative_cleaning.getNormalizedPunctReplacements(args.srclang)
         punctChars_tlang, punctRe_tlang = restorative_cleaning.getNormalizedPunctReplacements(args.trglang)
@@ -133,8 +133,8 @@ def fix_sentences(args):
         #None of source or target sentences is empty:
         if args.ignore_empty or (source_sentence and target_sentence):
             if not args.ignore_characters:        
-                fixed_source = restorative_cleaning.fix(source_sentence, args.srclang, charsRe_slang, punctChars_slang, punctRe_slang)
-                fixed_target = restorative_cleaning.fix(target_sentence, args.trglang, charsRe_tlang, punctChars_tlang, punctRe_tlang)
+                fixed_source = restorative_cleaning.fix(source_sentence, args.srclang, chars_slang, charsRe_slang, punctChars_slang, punctRe_slang)
+                fixed_target = restorative_cleaning.fix(target_sentence, args.trglang, chars_tlang, charsRe_tlang, punctChars_tlang, punctRe_tlang)
             else:
                 fixed_source = source_sentence
                 fixed_target = target_sentence    

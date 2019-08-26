@@ -5,7 +5,7 @@ import regex
 import re
 import html
 
-norm_punct_replacements = {}
+global_chars_lang = {}
 
 def getCharsReplacements(lang):
     
@@ -563,7 +563,7 @@ def getCharsReplacements(lang):
 
     charsRe=re.compile("(\\" + '|\\'.join(chars.keys()) + ")")
     
-    return charsRe
+    return chars,charsRe
 
 
 def getNormalizedPunctReplacements(lang):
@@ -632,8 +632,10 @@ def replace_chars3(match):
     char = match.group(0)
     return ""
   
-def fix(text, lang, charsRe, punct_rep, punct_pattern):
-
+def fix(text, lang, chars_rep, chars_pattern,  punct_rep, punct_pattern):
+    global global_chars_lang 	
+    global_chars_lang = chars_rep
+    
     #htmlEntity=regex.compile(r'[&][[:space:]]*[#][[:space:]]*[0-9]{2,4}[[:space:]]*[;]?',regex.U)
     chars3Re=regex.compile("[\uE000-\uFFFF]")
     chars3Re2=regex.compile("[\u2000-\u200F]")
@@ -665,7 +667,7 @@ def fix(text, lang, charsRe, punct_rep, punct_pattern):
     #    if newChar != "\n":
     #        nicely_encoded_text = nicely_encoded_text.replace(substring,newChar)
 
-    normalized_text = charsRe.sub(replace_chars, nicely_encoded_text)
+    normalized_text = chars_pattern.sub(replace_chars, nicely_encoded_text)
 
     if lang.lower() != "ja":
         normalized_text = chars3Re.sub(replace_chars3, normalized_text) 
