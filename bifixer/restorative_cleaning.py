@@ -676,7 +676,7 @@ def fix(text, lang, chars_rep, chars_pattern,  punct_rep, punct_pattern):
     normalized_text = quotesRegex.sub( "\g<start>\'\g<end>", normalized_text)
     normalized_text_with_normalized_punct = punct_pattern.sub(lambda m: punct_rep[re.escape(m.group(0))], normalized_text)
     
-    return normalized_text_with_normalized_punct
+    return normalized_text_with_normalized_punct.strip()
     
 
 def orthofix(text, replacements):
