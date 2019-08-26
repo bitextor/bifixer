@@ -2,3 +2,4 @@ regex
 ftfy
 unidecode
 xxhash
+toolwrapper

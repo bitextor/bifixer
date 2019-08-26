@@ -3,7 +3,7 @@
 __author__ = "Marta Bañón (mbanon)"
 __version__ = "Version 0.1 # 21/06/2019 # Initial release # Marta Bañón"
 __version__ = "Version 0.2 # 23/07/2019 # Non-Redis Bifixer # Marta Bañón"
-
+__version__ = "Version 0.3 # 20/08/2019 # New feature: Segmentation # Marta Bañón"
 
 import os
 import sys
@@ -73,8 +73,8 @@ def initialization():
 
     #Segmentation
     groupO.add_argument('--ignore_segmentation' , default=False, action='store_true', help="Doesn't change segmentation of long sentences")
-    groupO.add_argument('--words_before_segmenting', default=40, type=util.check_positive, help="Max words allowed in one side of a parallel sentence before trying to segmentate it. Set to 0 to applicate segmentation on everything.")
-    
+    groupO.add_argument('--words_before_segmenting', default=15, type=util.check_positive, help="Max words allowed in one side of a parallel sentence before trying to segmentate it. Set to 0 to applicate segmentation on everything.")
+    groupO.add_argument('--segmenter', default="nltk", type=str, choices=["nltk", "loomchild"], help="Segmenter module.")    
     groupO.add_argument('--tmp_dir', default=gettempdir(), help="Temporary directory where creating the temporary files of this program")
     
     # Logging group
@@ -109,6 +109,10 @@ def fix_sentences(args):
     if not args.ignore_orthography:    
         replacements_slang = restorative_cleaning.getReplacements(args.srclang)
         replacements_tlang = restorative_cleaning.getReplacements(args.trglang)
+        
+    if not args.ignore_segmentation:
+        source_segmenter = segmenter.NaiveSegmenter(args.srclang, args.segmenter)
+        target_segmenter = segmenter.NaiveSegmenter(args.trglang, args.segmenter)
             
     for i in args.input:
         ilines += 1
@@ -119,7 +123,7 @@ def fix_sentences(args):
             target_sentence = parts[args.tcol-1]
         except IndexError:
             logging.error(traceback.format_exc())
-            logging.error("Wrong column index on " + i)
+            logging.error("Wrong column index on line " + str(ilines))
             continue
             
         
@@ -141,7 +145,7 @@ def fix_sentences(args):
                 
             if not args.ignore_segmentation and (len(fixed_source.split()) > args.words_before_segmenting or len(fixed_target.split()) > args.words_before_segmenting):
                 #The naive_segmenter must return an array of tuples (source sentence, target sentence)             
-                segments = segmenter.naive_segmenter(corrected_source, corrected_target) 
+                segments = segmenter.naive_segmenter(source_segmenter, target_segmenter, corrected_source, corrected_target) 
             else:
                 #keep original segmentation    
                 segments = [{"source_segment": corrected_source, "target_segment": corrected_target}]
@@ -165,16 +169,20 @@ def fix_sentences(args):
                 #Restored parts object, with the fixed segment, overwritten for each pair of extra segments,
                 new_parts = parts
                 
+                
                 new_parts[args.scol-1] = segment["source_segment"]
                 new_parts[args.tcol-1] = segment["target_segment"]
                 
                 if (args.dedup):
                     #Remove the "/n" at the end of the last item
-                    new_parts[-1]= new_parts[-1].strip("\n")
+                    new_parts[-1]= str(new_parts[-1]).strip("\n")
                 
                     new_parts.append(hash) #hash and ranking are added at the end           
                     new_parts.append(ranking)
                     args.output.write("\t".join(str(v) for v in new_parts)+"\n")  #Convert to strings
+                    #Remove hash and ranking for next iterations of loop
+                    new_parts.pop()
+                    new_parts.pop()
                 else:                   
                     #When no deduplicating:
                     args.output.write("\t".join(str(v) for v in new_parts))
