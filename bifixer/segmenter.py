@@ -153,9 +153,13 @@ class NLTKSegmenter:
 
 
 class  NaiveSegmenter:
-    def __init__(self, lang):
-        #self.segmenter = LoomchildSegmenter(lang)
-        self.segmenter = NLTKSegmenter(lang)
+    def __init__(self, lang, module="nltk"):
+        if module == "loomchild":
+            self.segmenter = LoomchildSegmenter(lang)
+        elif module =="nltk":    
+            self.segmenter = NLTKSegmenter(lang)
+        else:
+            self.segmenter = NLTKSegmenter(lang)    
         
     def __call__(self, sentence):
         return self.segmenter.get_segmentation(sentence)

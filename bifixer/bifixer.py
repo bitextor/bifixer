@@ -73,8 +73,8 @@ def initialization():
 
     #Segmentation
     groupO.add_argument('--ignore_segmentation' , default=False, action='store_true', help="Doesn't change segmentation of long sentences")
-    groupO.add_argument('--words_before_segmenting', default=40, type=util.check_positive, help="Max words allowed in one side of a parallel sentence before trying to segmentate it. Set to 0 to applicate segmentation on everything.")
-    
+    groupO.add_argument('--words_before_segmenting', default=15, type=util.check_positive, help="Max words allowed in one side of a parallel sentence before trying to segmentate it. Set to 0 to applicate segmentation on everything.")
+    groupO.add_argument('--segmenter', default="nltk", type=str, choices=["nltk", "loomchild"], help="Segmenter module.")    
     groupO.add_argument('--tmp_dir', default=gettempdir(), help="Temporary directory where creating the temporary files of this program")
     
     # Logging group
@@ -111,8 +111,8 @@ def fix_sentences(args):
         replacements_tlang = restorative_cleaning.getReplacements(args.trglang)
         
     if not args.ignore_segmentation:
-        source_segmenter = segmenter.NaiveSegmenter(args.srclang)
-        target_segmenter = segmenter.NaiveSegmenter(args.trglang)
+        source_segmenter = segmenter.NaiveSegmenter(args.srclang, args.segmenter)
+        target_segmenter = segmenter.NaiveSegmenter(args.trglang, args.segmenter)
             
     for i in args.input:
         ilines += 1
