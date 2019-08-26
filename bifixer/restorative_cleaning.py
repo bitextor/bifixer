@@ -5,7 +5,7 @@ import regex
 import re
 import html
 
-global_chars_lang = {}
+norm_punct_replacements = {}
 
 def getCharsReplacements(lang):
     
@@ -561,12 +561,49 @@ def getCharsReplacements(lang):
         chars['_'] = '\uFF3F' #＿
         chars["'"] = '\uFF40' #｀
 
-
-    
-    
     charsRe=re.compile("(\\" + '|\\'.join(chars.keys()) + ")")
     
-    return chars, charsRe
+    return charsRe
+
+
+def getNormalizedPunctReplacements(lang):
+    if lang.lower() == "fr":    
+        replacements ={
+            " ,"	:	",",
+            " )"	:	")",
+            " }"	:	"}",
+            " ]"	:	"]",
+            #            " \""      :       "\"",          
+            " ..."	:	"...",
+            
+            "( "	:	"(",
+            "{ "	:	"{",
+            "[ "	:	"["
+        }        
+
+    else:
+        replacements ={
+            " !"	:	"!",
+            " ?"	:	"?",
+            " :"	:	":",
+            " ;"	:	";",
+            " ,"	:	",",
+            " )"	:	")",
+            " }"	:	"}",
+            " ]"	:	"]",
+#            " \""	:	"\"",
+            " ..."	:	"...",
+            " º"	:	"º",
+            
+            "( "	:	"(",
+            "{ "	:	"{",
+            "[ "	:	"[",
+            "¿ "	:	"¿",
+            "¡ "	:	"¡"
+         }         
+    rep = dict((re.escape(k), v) for k, v in replacements.items())          
+    pattern = re.compile("|".join(rep.keys()))
+    return rep, pattern
     
 #Orthographic corrections
 def getReplacements(lang):
@@ -595,10 +632,8 @@ def replace_chars3(match):
     char = match.group(0)
     return ""
   
-def fix(text, lang, chars_lang, charsRe):
-    global global_chars_lang 
-    global_chars_lang= chars_lang
-    
+def fix(text, lang, charsRe, punct_rep, punct_pattern):
+
     #htmlEntity=regex.compile(r'[&][[:space:]]*[#][[:space:]]*[0-9]{2,4}[[:space:]]*[;]?',regex.U)
     chars3Re=regex.compile("[\uE000-\uFFFF]")
     chars3Re2=regex.compile("[\u2000-\u200F]")
@@ -609,6 +644,7 @@ def fix(text, lang, chars_lang, charsRe):
 
     stripped_text =re.sub(' +', ' ', text.strip()).strip(" \n")  #Collapse multiple spaces
     collapsed_entities = collapse_spaced_entities.sub("&#\\2;", stripped_text)
+
     
     #Test encode: fix mojibake
     ftfy_fixed_text = " ".join([ftfy.fix_text_segment(word,fix_entities=True,uncurl_quotes=False,fix_latin_ligatures=False) for word in collapsed_entities.split()])
@@ -636,9 +672,11 @@ def fix(text, lang, chars_lang, charsRe):
     normalized_text = chars3Re2.sub(replace_chars3, normalized_text)
     normalized_text = chars3Re3.sub(replace_chars3, normalized_text)
     normalized_text = quotesRegex.sub( "\g<start>\'\g<end>", normalized_text)
+    normalized_text_with_normalized_punct = punct_pattern.sub(lambda m: punct_rep[re.escape(m.group(0))], normalized_text)
     
-    return normalized_text
+    return normalized_text_with_normalized_punct
     
+
 def orthofix(text, replacements):
     
     if len(replacements) > 0:
