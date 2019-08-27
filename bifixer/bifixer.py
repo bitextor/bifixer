@@ -99,8 +99,12 @@ def initialization():
 
 
 def fix_sentences(args):
-    global ilines
-    global olines
+    if ('ilines' in globals() and 'olines' in globals()):
+        global ilines
+        global olines        
+    else:
+        ilines = 0
+        olines = 0    
 
     if not args.ignore_characters:
         chars_slang, charsRe_slang = restorative_cleaning.getCharsReplacements(args.srclang)

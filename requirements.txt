@@ -3,3 +3,4 @@ ftfy
 unidecode
 xxhash
 toolwrapper
+unittest
