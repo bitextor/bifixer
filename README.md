@@ -27,7 +27,12 @@ Tool to fix bitexts and tag near-duplicates for removal.
  ```bash
  python3.6 -m pip install -r bifixer/requirements.txt
 ```
+Automatic testing was added to ensure that everything is working fine in Bifixer:
 
+```bash
+cd bifixer/tests
+pytest
+```
 ### Loomchild segmenter ###
 
 Please note that, in order to use the optional `loomchild` segmenter module in Java, it has to be installed separatelly. Please follow [this](https://github.com/mbanon/segment#installation) extra instructions:
