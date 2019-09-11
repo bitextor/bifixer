@@ -148,19 +148,19 @@ class TestSegmenters:
           assert len(segments) == 7
                 
       def test_Loomchild(self, capsys):
+
           try:
-              segmenter_es = segmenter.NaiveSegmenter("es", "loomchild")
+              segmenter_es = segmenter.NaiveSegmenter("es", "loomchild")              
               segmenter_en = segmenter.NaiveSegmenter("en", "loomchild")
+              segments = segmenter.naive_segmenter(segmenter_es, segmenter_en, self.text_src, self.text_trg)
 
-
-                           
           except Exception as ex:
               with capsys.disabled():
                  print(ex)
-                 print("\nWarning: The optional Loomchild Segmenter is not installed. Skipping test.\n")
-              return     
-               
-          segments = segmenter.naive_segmenter(segmenter_es, segmenter_en, self.text_src, self.text_trg)
+                 print("\n************** Warning: The optional Loomchild Segmenter is not installed. Skipping test.******************\n")
+              return                       
+
+
           assert len(segments) == 7   
 '''
 class TestDedup:

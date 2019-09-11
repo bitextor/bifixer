@@ -192,7 +192,7 @@ def fix_sentences(args):
                     new_parts.pop()
                 else:                   
                     #When no deduplicating:
-                    args.output.write("\t".join(str(v) for v in new_parts))
+                    args.output.write("\t".join(str(v) for v in new_parts)+"\n")
                 olines += 1
                     
         else:
