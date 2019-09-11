@@ -25,7 +25,7 @@ Tool to fix bitexts and tag near-duplicates for removal.
 ## INSTALLATION ##
  
  ```bash
- python3.6 -m pip install -r bifixer/requirements.txt
+ python3.7 -m pip install -r bifixer/requirements.txt
 ```
 Automatic testing was added to ensure that everything is working fine in Bifixer:
 
