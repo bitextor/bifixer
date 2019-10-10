@@ -180,20 +180,24 @@ def fix_sentences(args):
                 new_parts[args.scol-1] = segment["source_segment"]
                 new_parts[args.tcol-1] = segment["target_segment"]
                 
-                if (args.dedup):
-                    #Remove the "/n" at the end of the last item
-                    new_parts[-1]= str(new_parts[-1]).strip("\n")
+                if args.ignore_empty or (new_parts[args.scol-1] and new_parts[args.tcol-1]):  #sentence sides may be empty now because it contained only spaces or similar weird thing
+                    if (args.dedup):
+                        #Remove the "/n" at the end of the last item
+                        new_parts[-1]= str(new_parts[-1]).strip("\n")
                 
-                    new_parts.append(hash) #hash and ranking are added at the end           
-                    new_parts.append(ranking)
-                    args.output.write("\t".join(str(v) for v in new_parts)+"\n")  #Convert to strings
-                    #Remove hash and ranking for next iterations of loop
-                    new_parts.pop()
-                    new_parts.pop()
-                else:                   
-                    #When no deduplicating:
-                    args.output.write("\t".join(str(v) for v in new_parts)+"\n")
-                olines += 1
+                        new_parts.append(hash) #hash and ranking are added at the end           
+                        new_parts.append(ranking)
+                        args.output.write("\t".join(str(v) for v in new_parts)+"\n")  #Convert to strings
+                        #Remove hash and ranking for next iterations of loop
+                        new_parts.pop()
+                        new_parts.pop()
+                    else:                   
+                        #When no deduplicating:
+                        args.output.write("\t".join(str(v) for v in new_parts)+"\n")
+                    olines += 1
+                else:
+                    #empty sides after processing
+                    continue    
                     
         else:
         #source and/or target is empty
