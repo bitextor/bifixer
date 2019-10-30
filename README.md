@@ -116,8 +116,8 @@ Logging:
 ### Parameters ###
 
 * Positional:
-    * INPUT : Input file. Tab-separated bilingual input file. By default, the expected columns are: SRC_URL TRG_URL SRC_SENTENCE TRG_SENTENCE [EXTRA COLUMNS]
-    * OUTPUT : Output file. Tab-separated bilingual output file, being a fixed version of the input file. By default, the output columns are: SRC_URL TRG_URL SRC_SENTENCE TRG_SENTENCE [EXTRA COLUMNS] HASH RANKING
+    * INPUT : Input file. Tab-separated bilingual input file. By default, the expected columns are: SRC_URL TRG_URL SRC_SENTENCE TRG_SENTENCE [EXTRA COLUMNS]. When INPUT is -, reads standard input.
+    * OUTPUT : Output file. Tab-separated bilingual output file, being a fixed version of the input file. By default, the output columns are: SRC_URL TRG_URL SRC_SENTENCE TRG_SENTENCE [EXTRA COLUMNS] HASH RANKING. When OUTPUT is -, writes standard input.
     * SRC LANG : Source language code (2-letter ISO 639-1 code)
     * TRG LANG : Target language code (2-letter ISO 639-1 code)
 * Optional:
