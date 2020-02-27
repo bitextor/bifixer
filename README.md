@@ -167,7 +167,7 @@ INPUT_FILE=$(mktemp)
 
 cat > $INPUT_FILE
 
-python3.6 bifixer.py ${INPUT_FILE} ${INPUT_FILE}.o $1 $2 $3 &>bf.log
+python3.7 bifixer.py ${INPUT_FILE} ${INPUT_FILE}.o $1 $2 $3 &>bf.log
 
 cat ${INPUT_FILE}.o
 
