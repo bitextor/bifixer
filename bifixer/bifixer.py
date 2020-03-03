@@ -155,6 +155,8 @@ def fix_sentences(args):
                 segments = [{"source_segment": corrected_source, "target_segment": corrected_target}]
 
             for segment in segments:
+                if len(segment["source_segment"]) == 0 or len(segment["target_segment"]) == 0:
+                    continue;
                 if args.dedup:
                     if args.aggressive_dedup:
                         normalized_src = unidecode.unidecode(segment["source_segment"].lower().replace(" ", "").translate(str.maketrans('', '', string.punctuation + string.digits)))
