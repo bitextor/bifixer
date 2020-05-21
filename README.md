@@ -13,6 +13,7 @@ Tool to fix bitexts and tag near-duplicates for removal.
   * Currently: Danish, German, English, Spanish, Dutch, Norwegian, Portuguese and Turkish
   * Deactivate this feature with `--ignore_orthography`
 * Removes sentences with empty source or target (deactivate this feature with `--ignore_empty`)
+* Removes sentences that are too long (deactivate this feature with `--ignore_long`)
 * Obtains hahes of parallel sentences, in order to ease the later removal of duplicates (deactivate this feature with `--ignore_duplicates`)
   * Want stronger deduplication? Make this feature to find near-duplicated sentences (ignoring casing, accents, diacritics and digits) by using the  `--aggressive_dedup` flag
   * Learn more in the "Tagging duplicated and near-duplicated sentences" section below.
@@ -61,6 +62,7 @@ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 usage: bifixer.py [-h] [--scol SCOL] [--tcol TCOL] 
                   [--ignore_characters]
                   [--ignore_empty] 
+		  [--ignore_long]
                   [--ignore_orthography]
                   [--ignore_duplicates] [--aggressive_dedup]
                   [--ignore_segmentation] [--words_before_segmenting WORDS_BEFORE_SEGMENTING] [--segmenter {nltk,loomchild}]
@@ -87,6 +89,8 @@ Optional:
                         issues (default: False)
   --ignore_empty        Doesn't remove sentences with empty source or target
                         (default: False)
+  --ignore_long		Doesn't remove too long sentences (source or target over 1024 characters)
+			(default: False)
   --ignore_orthography  Doesn't apply orthography fixing (default: False)
   --ignore_duplicates   Doesn't obtain the hashes of parallel sentences
                         (default: False)
@@ -126,6 +130,7 @@ Logging:
     * --tcol TCOL : Position of the target sentence column (starting in 1). Default: 4
     * --ignore_duplicates : Deactivates deduplication (won't add hash or ranking)
     * --ignore_empty : Doesn't remove sentences with empty source or target
+    * --ignore_long: Doesn't remove too long sentences
     * --ignore_segmentation : Deactivates segmentation of long sentences
     * --segmenter: Segmenter module (`nltk` or `loomchild`)
     * --words_before_segmenting : Maximum allowed amount of words in a sentence, before trying to segment it. Default: 15

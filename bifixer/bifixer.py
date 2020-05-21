@@ -62,13 +62,15 @@ def initialization():
 
     # Empty sides
     groupO.add_argument('--ignore_empty', default=False, action='store_true', help="Doesn't remove sentences with empty source or target")
-
+    
+    # Too long sides
+    groupO.add_argument('--ignore_long', default=False, action='store_true', help="Doesn't remove too long sentences")
+    
     # Orthography
     groupO.add_argument('--ignore_orthography', default=False, action='store_true', help="Doesn't apply orthography fixing")
 
     # Deduplication
     groupO.add_argument('--ignore_duplicates', default=False, action='store_true', help="Doesn't obtain the hashes of parallel sentences")
-
     groupO.add_argument('--aggressive_dedup', default=False, action='store_true', help="Treats similar sentences as duplicates (marking them with the same hash)")
 
     # Segmentation
@@ -133,6 +135,10 @@ def fix_sentences(args):
 
         # None of source or target sentences is empty:
         if args.ignore_empty or (source_sentence and target_sentence):
+            if not args.ignore_long and (len(source_sentence) > 1024 or len(target_sentence) > 1024):
+                #sentence is too long
+                continue;    
+                
             if not args.ignore_characters:
                 fixed_source = restorative_cleaning.fix(source_sentence, args.srclang, chars_slang, charsRe_slang, punctChars_slang, punctRe_slang)
                 fixed_target = restorative_cleaning.fix(target_sentence, args.trglang, chars_tlang, charsRe_tlang, punctChars_tlang, punctRe_tlang)
