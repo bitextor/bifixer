@@ -42,7 +42,6 @@ If you find Bifixer useful, please consider citing the following paper:
   month     = {November},
   address   = {Lisboa, Portugal},
   publisher = {European Association for Machine Translation}
-
 }
 ```
  
