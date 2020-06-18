@@ -22,6 +22,29 @@ Tool to fix bitexts and tag near-duplicates for removal.
   * Choose the minimum length (in words) you want to start segmenting at (default is 15) with `--words_before_segmenting`. Set it to 1 to try to segment all sentences.
   * Deactivate this feature with `--ignore_segmentation`
 
+## Citation 
+
+If you find Bifixer useful, please consider citing the following paper:
+
+> Gema Ramírez-Sánchez, Jaume Zaragoza-Bernabeu, Marta Bañón and Sergio Ortiz Rojas \
+> "[Bifixer and Bicleaner: two open-source tools to clean your parallel data.](https://eamt2020.inesc-id.pt/proceedings-eamt2020.pdf#page=311)",\
+>in *Proceedings of the 22nd Annual Conference of the European Association for Machine Translation*.\
+>Lisboa, Portugal: European Association for Machine Translation, November 2020
+
+```latex
+@InProceedings{prompsit:2020:EAMT,
+  author    = {Gema Ram\'{i}rez-S\'{a}nchez and Jaume Zaragoza-Bernabeu and Marta Ba{\~n}\'{o}n and Sergio Ortiz-Rojas},
+  title     = {Bifixer and Bicleaner: two open-source tools to clean your parallel data.},
+  booktitle = {Proceedings of the 22nd Annual Conference of the European Association for Machine Translation},
+  pages	    = {291--298},
+  isbn      = {978-989-33-0589-8},
+  year	    = {2020},
+  month     = {November},
+  address   = {Lisboa, Portugal},
+  publisher = {European Association for Machine Translation}
+
+}
+```
  
 ## INSTALLATION ##
  
