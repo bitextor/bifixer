@@ -143,8 +143,8 @@ def fix_sentences(args):
                 fixed_source = restorative_cleaning.fix(source_sentence, args.srclang, chars_slang, charsRe_slang, punctChars_slang, punctRe_slang)
                 fixed_target = restorative_cleaning.fix(target_sentence, args.trglang, chars_tlang, charsRe_tlang, punctChars_tlang, punctRe_tlang)
             else:
-                fixed_source = source_sentence
-                fixed_target = target_sentence
+                fixed_source = source_sentence.strip(" \n") 
+                fixed_target = target_sentence.strip(" \n") 
 
             if not args.ignore_orthography:
                 corrected_source = restorative_cleaning.orthofix(fixed_source, replacements_slang)
@@ -161,7 +161,7 @@ def fix_sentences(args):
                 segments = [{"source_segment": corrected_source, "target_segment": corrected_target}]
 
             for segment in segments:
-                if len(segment["source_segment"]) == 0 or len(segment["target_segment"]) == 0:
+                if not args.ignore_empty and (len(segment["source_segment"]) == 0 or len(segment["target_segment"]) == 0):
                     continue;
                 if args.dedup:
                     if args.aggressive_dedup:
