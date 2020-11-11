@@ -29,6 +29,7 @@ class TestEmptySpaces():
     args.ignore_orthography = True
     args.ignore_segmentation = True
     args.ignore_empty = False
+    args.ignore_long = False
     args.input = open("input_test_1.txt", "rt")
     args.dedup = False
     args.output = open("output_test_1.txt", "w+")
@@ -168,6 +169,7 @@ class TestDedup:
     args.ignore_orthography = True
     args.ignore_segmentation = True
     args.ignore_empty = False
+    args.ignore_long = False
 
 class TestAggressiveDedup:
     parser = argparse.ArgumentParser()
@@ -179,6 +181,7 @@ class TestAggressiveDedup:
     args.ignore_orthography = True
     args.ignore_segmentation = True
     args.ignore_empty = False
+    args.ignore_long = False
 
 class TestMulti:
     parser = argparse.ArgumentParser()
@@ -190,6 +193,7 @@ class TestMulti:
     args.ignore_orthography = True
     args.ignore_segmentation = True
     args.ignore_empty = False
+    args.ignore_long = False
 '''
 # if __name__ == "__main__":
 #    unittest.main()
