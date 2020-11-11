@@ -4,6 +4,7 @@ __author__ = "Marta Bañón (mbanon)"
 __version__ = "Version 0.1 # 03/07/2019 # Initial release # Marta Bañón"
 __version__ = "Version 0.2 # 23/08/2019 # Included NLTK segmenter # Marta Bañón"
 
+import signal
 import json
 import os
 import nltk
@@ -64,13 +65,26 @@ class LoomchildSegmenter(ToolWrapper):
         sentence_segments = json.loads(self(sentence))
         return sentence_segments
 
+class myTimeout(Exception):
+    pass
+
+def timeout(signum, frame):
+    raise myTimeout
 
 class NLTKSegmenter:
     def __init__(self, lang):
         try:
             nltk.data.find('tokenizers/punkt')
-        except:
-            nltk.download('punkt', quiet=True)
+        except LookupError:
+            result = None
+            while result is None:
+                signal.signal(signal.SIGALRM, timeout)
+                signal.alarm(5)
+                try:
+                    result = nltk.download('punkt', quiet=True)
+                    signal.alarm(0)
+                except myTimeout:
+                    pass
 
         langname = self.getLanguageName(lang.lower())
 
