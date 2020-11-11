@@ -68,7 +68,7 @@ class LoomchildSegmenter(ToolWrapper):
 class NLTKSegmenter:
     def __init__(self, lang):
         try:
-            nltk.data.find('tokenizer/punkt')
+            nltk.data.find('tokenizers/punkt')
         except:
             nltk.download('punkt', quiet=True)
 
