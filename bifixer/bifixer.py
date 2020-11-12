@@ -64,7 +64,7 @@ def initialization():
     groupO.add_argument('--ignore_empty', default=False, action='store_true', help="Doesn't remove sentences with empty source or target")
     
     # Too long sides
-    groupO.add_argument('--ignore_long', default=False, action='store_true', help="Doesn't remove too long sentences")
+    groupO.add_argument('--ignore_long', default=False, action='store_true', help="Doesn't ignore too long sentences")
     
     # Orthography
     groupO.add_argument('--ignore_orthography', default=False, action='store_true', help="Doesn't apply orthography fixing")
@@ -133,27 +133,28 @@ def fix_sentences(args):
             logging.error("Wrong column index on line " + str(ilines))
             continue
 
+        very_long = False
+
         # None of source or target sentences is empty:
         if args.ignore_empty or (source_sentence and target_sentence):
-            if not args.ignore_long and (len(source_sentence) > 1024 or len(target_sentence) > 1024):
-                #sentence is too long
-                continue;    
-                
-            if not args.ignore_characters:
+            if not args.ignore_long and (len(source_sentence) > 5000 or len(target_sentence) > 5000):
+                very_long = True
+
+            if not args.ignore_characters and not very_long:
                 fixed_source = restorative_cleaning.fix(source_sentence, args.srclang, chars_slang, charsRe_slang, punctChars_slang, punctRe_slang)
                 fixed_target = restorative_cleaning.fix(target_sentence, args.trglang, chars_tlang, charsRe_tlang, punctChars_tlang, punctRe_tlang)
             else:
                 fixed_source = source_sentence.strip(" \n") 
                 fixed_target = target_sentence.strip(" \n") 
 
-            if not args.ignore_orthography:
+            if not args.ignore_orthography and not very_long:
                 corrected_source = restorative_cleaning.orthofix(fixed_source, replacements_slang)
                 corrected_target = restorative_cleaning.orthofix(fixed_target, replacements_tlang)
             else:
                 corrected_source = fixed_source
                 corrected_target = fixed_target
 
-            if not args.ignore_segmentation and (len(fixed_source.split()) > args.words_before_segmenting or len(fixed_target.split()) > args.words_before_segmenting):
+            if not args.ignore_segmentation and (len(fixed_source.split()) > args.words_before_segmenting or len(fixed_target.split()) > args.words_before_segmenting) and not very_long:
                 # The naive_segmenter must return an array of tuples (source sentence, target sentence)
                 segments = segmenter.naive_segmenter(source_segmenter, target_segmenter, corrected_source, corrected_target)
             else:
