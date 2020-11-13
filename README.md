@@ -111,8 +111,7 @@ Optional:
                         issues (default: False)
   --ignore_empty        Doesn't remove sentences with empty source or target
                         (default: False)
-  --ignore_long		Doesn't remove too long sentences (source or target over 1024 characters)
-			(default: False)
+  --ignore_long		Doesn't ignore too long sentences (default: False)
   --ignore_orthography  Doesn't apply orthography fixing (default: False)
   --ignore_duplicates   Doesn't obtain the hashes of parallel sentences
                         (default: False)
@@ -181,25 +180,11 @@ python3.6 bifixer/bifixer.py input-corpus.en-es output-corpus.en-es en es
 Suggested usage: 
 
 ```bash
-cat input-corpus.en-es | parallel -j 25 --pipe -k -l 30000 parallel-bf.sh en es > output-corpus.en-es 
+cat input-corpus.en-es \
+    | parallel -j 25 --pipe -k -l 30000 python3.7 bifixer.py -q - - en es \
+    > output-corpus.en-es 
 ```
-
-with `parallel-bf.sh` being:
-
-```bash
-#!/bin/bash
-
-
-INPUT_FILE=$(mktemp)
-
-cat > $INPUT_FILE
-
-python3.7 bifixer.py ${INPUT_FILE} ${INPUT_FILE}.o $1 $2 $3 &>bf.log
-
-cat ${INPUT_FILE}.o
-
-rm -Rf $INPUT_FILE ${INPUT_FILE}.o
-```
+where the two '`-`' mean read from stdin and write to stdout, and the `-q` tells bifixer to be quiet in order to avoid logging a lot of information messages.
 
 ## TAGGING DUPLICATED AND NEAR-DUPLICATED SENTENCES ##
 
