@@ -76,15 +76,17 @@ class NLTKSegmenter:
         try:
             nltk.data.find('tokenizers/punkt')
         except LookupError:
-            result = None
-            while result is None:
+            for i in range(3):
                 signal.signal(signal.SIGALRM, timeout)
-                signal.alarm(5)
+                signal.alarm(120)
                 try:
                     result = nltk.download('punkt', quiet=True)
                     signal.alarm(0)
+                    break
                 except myTimeout:
                     pass
+            else:
+                raise Exception("Unable to download 'punkt' NLTK data after 3 retries: try to download it manually or check your internet connection.")
 
         langname = self.getLanguageName(lang.lower())
 
