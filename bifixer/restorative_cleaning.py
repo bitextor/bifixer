@@ -636,11 +636,8 @@ def fix(text, lang, chars_rep, chars_pattern, punct_rep, punct_pattern):
     quotesRegex = regex.compile("(?P<start>[[:alpha:]])\'\'(?P<end>(s|S|t|T|m|M|d|D|re|RE|ll|LL|ve|VE|em|EM)\W)")
     collapse_spaced_entities = regex.compile('([&][ ]*[#][ ]*)([0-9]{2,6})([ ]*[;])')
 
-    stripped_text = re.sub(' +', ' ', text.strip()).strip(" \n")  # Collapse multiple spaces
-    collapsed_entities = collapse_spaced_entities.sub("&#\\2;", stripped_text)
-
     # Test encode: fix mojibake
-    ftfy_fixed_text = " ".join([ftfy.fix_text_segment(word, fix_entities=True, uncurl_quotes=False, fix_latin_ligatures=False) for word in collapsed_entities.split()])
+    ftfy_fixed_text = " ".join([ftfy.fix_text_segment(word, fix_entities=True, uncurl_quotes=False, fix_latin_ligatures=False) for word in text.split()])
     # ftfy_fixed_text= ftfy.fix_text_segment(stripped_text, fix_entities=True,uncurl_quotes=False,fix_latin_ligatures=False)
 
     # nicely_encoded_text = htmlEntity.sub(html.unescape, nicely_encoded_text)
@@ -665,7 +662,10 @@ def fix(text, lang, chars_rep, chars_pattern, punct_rep, punct_pattern):
     normalized_text = quotesRegex.sub("\g<start>\'\g<end>", normalized_text)
     normalized_text_with_normalized_punct = punct_pattern.sub(lambda m: punct_rep[re.escape(m.group(0))], normalized_text)
 
-    return normalized_text_with_normalized_punct.strip()
+    collapsed_spaces = re.sub('\s+', ' ', normalized_text_with_normalized_punct)  # Collapse multiple spaces
+    collapsed_entities = collapse_spaced_entities.sub("&#\\2;", collapsed_spaces)
+
+    return collapsed_entities.strip(" \n")
 
 
 def orthofix(text, replacements):
