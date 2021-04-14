@@ -1,5 +1,5 @@
 regex
-ftfy
+ftfy==5.9
 unidecode
 xxhash
 toolwrapper
