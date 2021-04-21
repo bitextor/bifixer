@@ -1,7 +1,7 @@
-regex
-ftfy==5.9
-unidecode
-xxhash
-toolwrapper
-pytest
-nltk
+ftfy==6.0.1
+nltk==3.5
+pytest==6.2.2
+regex==2021.3.17
+toolwrapper==2.1.0
+Unidecode==1.2.0
+xxhash==2.0.0

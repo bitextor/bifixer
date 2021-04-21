@@ -637,7 +637,7 @@ def fix(text, lang, chars_rep, chars_pattern, punct_rep, punct_pattern):
     collapse_spaced_entities = regex.compile('([&][ ]*[#][ ]*)([0-9]{2,6})([ ]*[;])')
 
     # Test encode: fix mojibake
-    ftfy_fixed_text = " ".join([ftfy.fix_text_segment(word, fix_entities=True, uncurl_quotes=False, fix_latin_ligatures=False) for word in text.split()])
+    ftfy_fixed_text = " ".join([ftfy.fix_text_segment(word, uncurl_quotes=False, fix_latin_ligatures=False) for word in text.split()])
     # ftfy_fixed_text= ftfy.fix_text_segment(stripped_text, fix_entities=True,uncurl_quotes=False,fix_latin_ligatures=False)
 
     # nicely_encoded_text = htmlEntity.sub(html.unescape, nicely_encoded_text)
