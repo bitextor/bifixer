@@ -38,6 +38,7 @@ alevin	alevín
 Alevin	Alevín
 algun	algún
 Algun	Algún
+alimentacion  alimentación
 alli	allí
 Alli	Allí
 alla	allá
@@ -492,6 +493,7 @@ Republica	República
 resolucion	resolución
 reivindicacion	reinvindicación
 restaurant	restaurante
+retroalimentacion  retroalimentación
 revizado	revisado
 revizar	revisar
 revolucion	revolución
