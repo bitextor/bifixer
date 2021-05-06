@@ -279,6 +279,8 @@ incluído	incluido
 incluír	incluir
 indice	índice
 Indice	Índice
+informacion	información
+Informacion	Información
 interface	interfaz
 interperie	intemperie
 intrumento	instrumento
@@ -374,6 +376,8 @@ Ningúno	Ninguno
 N°	n.º
 nº	n.º
 ºC	°C
+obstaculo	obstáculo
+Obstaculo	Obstáculo
 oceano	océano
 ºF	°F
 olimpica	olímpica
@@ -406,6 +410,8 @@ pinguino	pingüino
 politica	política
 politicamente	políticamente
 politico	político
+posicion	posición
+Posicion	Posición
 posmortem	post mórtem
 posmorten	post mórtem
 postmorten	post mórtem
