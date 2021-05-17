@@ -56,6 +56,9 @@ def initialization():
     # Format
     groupO.add_argument("--scol", default=3, type=util.check_positive, help="Source sentence column (starting in 1)")
     groupO.add_argument("--tcol", default=4, type=util.check_positive, help="Target sentence column (starting in 1)")
+    groupO.add_argument("--sdeferredcol", default=6, type=util.check_positive, help="Source deferred standoff annotation column (starting in 1)")
+    groupO.add_argument("--tdeferredcol", default=7, type=util.check_positive, help="Target deferred standoff annotation column (starting in 1)")
+       
 
     # Character fixing
     groupO.add_argument('--ignore_characters', default=False, action='store_true', help="Doesn't fix mojibake, orthography, or other character issues")
@@ -161,6 +164,7 @@ def fix_sentences(args):
                 # keep original segmentation
                 segments = [{"source_segment": corrected_source, "target_segment": corrected_target}]
 
+            sent_num = 0
             for segment in segments:
                 if not args.ignore_empty and (len(segment["source_segment"]) == 0 or len(segment["target_segment"]) == 0):
                     continue;
@@ -184,6 +188,15 @@ def fix_sentences(args):
 
                 new_parts[args.scol - 1] = segment["source_segment"]
                 new_parts[args.tcol - 1] = segment["target_segment"]
+                
+                if len(segments) > 1:
+                    sent_num += 1
+                    if "#" in parts[args.sdeferredcol-1]:
+                        if sent_num != int(parts[args.sdeferredcol-1].split('#')[1]):
+                            continue
+                    else:
+                        new_parts[args.sdeferredcol-1] = parts[args.sdeferredcol-1].rstrip("\n")+"#"+str(sent_num)
+                        new_parts[args.tdeferredcol-1] = parts[args.tdeferredcol-1].rstrip("\n")+"#"+str(sent_num)
 
                 if args.ignore_empty or (new_parts[args.scol - 1] and new_parts[args.tcol - 1]):  # sentence sides may be empty now because it contained only spaces or similar weird thing
                     if (args.dedup):
@@ -198,6 +211,7 @@ def fix_sentences(args):
                         new_parts.pop()
                     else:
                         # When no deduplicating:
+                        new_parts[-1] = str(new_parts[-1]).strip("\n")
                         args.output.write("\t".join(str(v) for v in new_parts) + "\n")
                     olines += 1
                 else:
