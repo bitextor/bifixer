@@ -56,8 +56,8 @@ def initialization():
     # Format
     groupO.add_argument("--scol", default=3, type=util.check_positive, help="Source sentence column (starting in 1)")
     groupO.add_argument("--tcol", default=4, type=util.check_positive, help="Target sentence column (starting in 1)")
-    groupO.add_argument("--sdeferredcol", default=6, type=util.check_positive, help="Source deferred standoff annotation column (starting in 1)")
-    groupO.add_argument("--tdeferredcol", default=7, type=util.check_positive, help="Target deferred standoff annotation column (starting in 1)")
+    groupO.add_argument("--sdeferredcol", type=util.check_positive, help="Source deferred standoff annotation column (starting in 1)")
+    groupO.add_argument("--tdeferredcol", type=util.check_positive, help="Target deferred standoff annotation column (starting in 1)")
        
 
     # Character fixing
@@ -191,12 +191,13 @@ def fix_sentences(args):
                 
                 if len(segments) > 1:
                     sent_num += 1
-                    if "#" in parts[args.sdeferredcol-1]:
-                        if sent_num != int(parts[args.sdeferredcol-1].split('#')[1]):
-                            continue
-                    else:
-                        new_parts[args.sdeferredcol-1] = parts[args.sdeferredcol-1].rstrip("\n")+"#"+str(sent_num)
-                        new_parts[args.tdeferredcol-1] = parts[args.tdeferredcol-1].rstrip("\n")+"#"+str(sent_num)
+                    if args.sdeferredcol and args.tdeferredcol:
+                        if "#" in parts[args.sdeferredcol-1]:
+                            if sent_num != int(parts[args.sdeferredcol-1].split('#')[1]):
+                                continue
+                        else:
+                            new_parts[args.sdeferredcol-1] = parts[args.sdeferredcol-1].rstrip("\n")+"#"+str(sent_num)
+                            new_parts[args.tdeferredcol-1] = parts[args.tdeferredcol-1].rstrip("\n")+"#"+str(sent_num)
 
                 if args.ignore_empty or (new_parts[args.scol - 1] and new_parts[args.tcol - 1]):  # sentence sides may be empty now because it contained only spaces or similar weird thing
                     if (args.dedup):
