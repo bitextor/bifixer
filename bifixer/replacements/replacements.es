@@ -1,5 +1,5 @@
 absorver	absorber
-absorcion absorción
+absorcion	absorción
 absorviendo	absorbiendo
 aca	acá
 Aca	Acá
@@ -26,19 +26,19 @@ ahi	ahí
 Ahi	Ahí
 album	álbum
 alcansado	alcanzado
-alergico  alérgico
-alergica  alérgica
-alergicos alérgicos
-alergicas alérgicas
-alergeno  alérgeno
-alergena  alérgena
-alergenos  alérgenos
-alergenas  alérgenas
+alergico	alérgico
+alergica	alérgica
+alergicos	alérgicos
+alergicas	alérgicas
+alergeno	alérgeno
+alergena	alérgena
+alergenos	alérgenos
+alergenas	alérgenas
 alevin	alevín
 Alevin	Alevín
 algun	algún
 Algun	Algún
-alimentacion  alimentación
+alimentacion	alimentación
 alli	allí
 Alli	Allí
 alla	allá
@@ -65,15 +65,15 @@ asi	así
 Asi	Así
 atencion	atención
 Atencion	Atención
-atomo átomo
-atomo átomos
+atomo	átomo
+atomo	átomos
 atlantico	atlántico
 Atlantico	Atlántico
-atmosfera atmósfera
-atmosferico atmosférico
-atmosferica atmosférica
-atmosfericos atmosféricos
-atmosfericas atmosféricas
+atmosfera	atmósfera
+atmosferico	atmosférico
+atmosferica	atmosférica
+atmosfericos	atmosféricos
+atmosfericas	atmosféricas
 atrabesado	atravesado
 atrabezado	atravesado
 atravezado	atravesado
@@ -100,7 +100,7 @@ cancion	canción
 camion	camión
 caracter	carácter
 caracteristica	característica
-caractensticas  características
+caractensticas	características
 carroceria	carrocería
 catastrofe	catástrofe
 Catastrofe	Catástrofe
@@ -108,7 +108,7 @@ catastrofica	catastrófica
 catastrofico	catastrófico
 categoria	categoría
 Categoria	Categoría
-cesped  césped
+cesped	césped
 cién	cien
 Cién	Cien
 cienes	cientos
@@ -133,8 +133,8 @@ compasion	compasión
 comun	común
 comunmente	comúnmente
 Comunmente	Comúnmente
-Concesion Concesión
-concesion concesión
+Concesion	Concesión
+concesion	concesión
 conección	conexión
 consideracion	consideración
 constituída	constituida
@@ -176,7 +176,7 @@ difución	difusión
 difusion	difusión
 dió	dio
 Dio	Dio
-direccion dirección
+direccion	dirección
 discución	discusión
 discucion	discusión
 discusion	discusión
@@ -186,8 +186,8 @@ disolucion	disolución
 distorción	distorsión
 distorcionado	distorsionado
 distribuído	distribuido
-Disposicion Disposición
-disposicion disposición
+Disposicion	Disposición
+disposicion	disposición
 duodecimo	duodécimo
 Duodecimo	Duodécimo
 dolar	dólar
@@ -204,7 +204,7 @@ enbarcacion	embarcación
 enbarcación	embarcación
 empezo	empezó
 Empezo	Empezó
-energia energía
+energia	energía
 enlaze	enlace
 Enlaze	Enlace
 eolico	eólico
@@ -216,7 +216,7 @@ equalización	ecualización
 equalizador	ecualizador
 equalizar	ecualizar
 espiritu	espíritu
-estacion  estación
+estacion	estación
 estadío	estadio
 estan	están
 Estan	Están
@@ -251,7 +251,7 @@ facilmente	fácilmente
 fanatica	fanática
 fanaticamente	fanáticamente
 fanatico	fanático
-farmaco fármaco
+farmaco	fármaco
 fé	fe
 Fé	Fe
 ficcion	ficción
@@ -306,9 +306,9 @@ imágen	imagen
 Imágen	Imagen
 imagenes	imágenes
 Imagenes	Imágenes
-impresion impresión
+impresion	impresión
 IMDB	IMDb
-inalambrico inalámbrico
+inalambrico	inalámbrico
 incluídos	incluido
 incluír	incluir
 indice	índice
@@ -321,7 +321,7 @@ intrumento	instrumento
 intrumentos	instrumentos
 inutil	inútil
 invasion	invasión
-invencion invención
+invencion	invención
 israeli	israelí
 israelies	israelíes
 jardin	jardín
@@ -371,7 +371,7 @@ mayoria	mayoría
 mayuscula	mayúscula
 mayusculo	mayúsculo
 Mejico	Méjico
-metalico  metálico
+metalico	metálico
 metodo	método
 Metodo	Método
 metodologia	metodología
@@ -411,7 +411,7 @@ ningúna	ninguna
 Ningúna	Ninguna
 ningúno	ninguno
 Ningúno	Ninguno
-nitrogeno nitrógeno
+nitrogeno	nitrógeno
 N°	n.º
 nº	n.º
 ºC	°C
@@ -423,8 +423,8 @@ olimpica	olímpica
 olimpicamente	olímpicamente
 olimpico	olímpico
 operacion	operación
-optimo  óptimo
-óptimos óptimos
+optimo	óptimo
+óptimos	óptimos
 oraculo	oráculo
 órden	orden
 organica	orgánica
@@ -462,10 +462,10 @@ postmorten	post mórtem
 practicamente	prácticamente
 prerequisito	prerrequisito
 pre-requisito	prerrequisito
-prediccion  predicción
-Prediccion  Predicción
-presion presión
-Presion Presión
+prediccion	predicción
+Prediccion	Predicción
+presion	presión
+Presion	Presión
 prevencion	prevención
 Prevencion	Prevención
 programacion	programación
@@ -485,7 +485,7 @@ Radiacion	Radiación
 radiacion	radiación
 rapido	rápido
 rapida	rápida
-realizacion realización
+realizacion	realización
 regilla	rejilla
 remplazar	reemplazar
 republica	república
@@ -493,7 +493,7 @@ Republica	República
 resolucion	resolución
 reivindicacion	reinvindicación
 restaurant	restaurante
-retroalimentacion  retroalimentación
+retroalimentacion	retroalimentación
 revizado	revisado
 revizar	revisar
 revolucion	revolución
@@ -504,23 +504,23 @@ rocin	rocín
 ruído	ruido
 sacerdotiza	sacerdotisa
 sazon	sazón
-seccion sección
-Seccion Sección
+seccion	sección
+Seccion	Sección
 séis	seis
 Séis	Seis
 segun	según
 Según	Según
-senal señal
+senal	señal
 sera	será
 Sera	Será
 serpentin	serpentín
 sinembargo	sin embargo
 Sinembargo	sin embargo
 sinfin	sinfín
-sintetico sintético
-sintetica sintética
-sinteticos sintéticos
-sinteticas  sintéticas
+sintetico	sintético
+sintetica	sintética
+sinteticos	sintéticos
+sinteticas	sintéticas
 slogan	eslogan
 sóla	sola
 Sóla	Sola
@@ -539,8 +539,8 @@ supérflua	superflua
 tagea	tajea
 talvez	tal vez
 Talvez	Tal vez
-tamano  tamaño
-Tamano  Tamaño
+tamano	tamaño
+Tamano	Tamaño
 tambien	también
 Tambien	También
 tanbien	también
@@ -562,7 +562,7 @@ tradución	traducción
 traducion	traducción
 traduccion	traducción
 transmision	transmisión
-Transmision Transmisión
+Transmision	Transmisión
 tunel	túnel
 ubicacion	ubicación
 Ubicacion	Ubicación
@@ -583,7 +583,7 @@ Unicamente	Únicamente
 unico	único
 Unico	Único
 util	útil
-utiles  útiles
+utiles	útiles
 vacear	vaciar
 vease	véase
 veintidos	veintidós
