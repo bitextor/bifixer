@@ -7,6 +7,7 @@ __version__ = "Version 0.2 # 23/08/2019 # Included NLTK segmenter # Marta Bañó
 import signal
 import json
 import os
+import importlib.util
 import nltk
 
 from toolwrapper import ToolWrapper
@@ -17,15 +18,25 @@ class LoomchildSegmenter(ToolWrapper):
     """A module for interfacing with a Java sentence segmenter. """
 
     def __init__(self, lang="en"):
-        curpath = os.path.dirname(os.path.abspath(__file__)) + "/"
-        self.lang = lang
 
+        spec = importlib.util.find_spec('bifixer')
+        if (spec is None or spec.submodule_search_locations is None):
+            target_path = os.path.dirname(os.path.abspath(__file__)) + "/../segment/segment-ui/target"
+            srx_path = os.path.dirname(os.path.abspath(__file__)) + "/../segment/srx"
+        else:
+            target_path = os.path.join(spec.submodule_search_locations[0], "data")
+            srx_path = os.path.join(target_path, "srx")
+
+        self.lang = lang
         self.rules = self.getBestRules(lang)
 
+        class_path = f"{target_path}/segment-2.0.2-SNAPSHOT/lib/*"
+        rules_path = f"{srx_path}/{self.rules}"
+
         if self.rules != "DEFAULT":
-            argv = ["java", "-cp", curpath + "../segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:" + curpath + "../segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment", "-l", self.lang, "-s", curpath + "../segment/srx/" + self.rules, "-c"]
+            argv = ["java", "-cp", class_path, "net.loomchild.segment.ui.console.Segment", "-l", self.lang, "-s",  rules_path, "-c"]
         else:
-            argv = ["java", "-cp", curpath + "../segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:" + curpath + "../segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment", "-l", lang, "-c"]
+            argv = ["java", "-cp", class_path, "net.loomchild.segment.ui.console.Segment", "-l", lang, "-c"]
 
         super().__init__(argv)
 
