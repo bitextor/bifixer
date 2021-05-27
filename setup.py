@@ -35,7 +35,7 @@ if __name__=="__main__":
     package_data_list=["replacements/*"] 
 
     if "--install-loomchild" in argv:
-        # argv.remove("--install-loomchild")
+        argv.remove("--install-loomchild")
         compile_loomchild(os.path.dirname(os.path.abspath(__file__)))
         package_data_list.append("data/segment-2.0.2-SNAPSHOT/lib/*.jar")
         package_data_list.append("data/srx/*.srx")
