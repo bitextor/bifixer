@@ -1,0 +1,1 @@
+loomchild-segment @ git+https://github.com/zuny26/loomchild-segment-py.git
