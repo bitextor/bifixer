@@ -48,8 +48,12 @@ If you find Bifixer useful, please consider citing the following paper:
 
 ## INSTALLATION ##
 
- ```bash
- pip install "bifixer @ git+https://github.com/bitextor/bifixer.git"
+Install from source:
+
+```bash
+git clone https://github.com/bitextor/bifixer
+cd bifixer
+pip install .
 ```
 
 Automatic testing was added to ensure that everything is working fine in Bifixer:
@@ -57,6 +61,12 @@ Automatic testing was added to ensure that everything is working fine in Bifixer
 ```bash
 cd bifixer/tests
 pytest
+```
+
+Or install without manually downloading the repo:
+
+```bash
+pip install "bifixer @ git+https://github.com/bitextor/bifixer.git"
 ```
 
 ### Loomchild segmenter ###
