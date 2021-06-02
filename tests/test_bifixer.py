@@ -144,16 +144,15 @@ class TestSegmenters:
 
     def test_Loomchild(self, capsys):
 
-        try:
-            segmenter_es = segmenter.NaiveSegmenter("es", "loomchild")
-            segmenter_en = segmenter.NaiveSegmenter("en", "loomchild")
-            segments = segmenter.naive_segmenter(segmenter_es, segmenter_en, self.text_src, self.text_trg)
-
-        except Exception as ex:
+        if "loomchild.segmenter" not in sys.modules:
             with capsys.disabled():
-                print(ex)
                 print("\n************** Warning: The optional Loomchild Segmenter is not installed. Skipping test.******************\n")
             return
+
+        segmenter_es = segmenter.NaiveSegmenter("es", "loomchild")
+        segmenter_en = segmenter.NaiveSegmenter("en", "loomchild")
+
+        segments = segmenter.naive_segmenter(segmenter_es, segmenter_en, self.text_src, self.text_trg)
 
         assert len(segments) == 7
 
