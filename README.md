@@ -68,6 +68,10 @@ Or install without manually downloading the repo:
 ```bash
 pip install "bifixer @ git+https://github.com/bitextor/bifixer.git"
 ```
+Or even easier, install directly from PyPI:
+```bash
+pip install bifixer
+```
 
 ### Loomchild segmenter ###
 
