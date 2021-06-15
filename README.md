@@ -88,7 +88,7 @@ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 ### Bifixer ###
 
 ```bash
-usage: bifixer.py [-h] [--scol SCOL] [--tcol TCOL] 
+usage: bifixer [-h] [--scol SCOL] [--tcol TCOL] 
                   [--ignore_characters]
                   [--ignore_empty] 
                   [--ignore_long]
@@ -177,18 +177,18 @@ Optional:
 ### Single thread run ###
 
 ```bash
-python3.6 bifixer/bifixer.py input-corpus.en-es output-corpus.en-es en es 
+bifixer input-corpus.en-es output-corpus.en-es en es 
 ```
 
 ### Running in parallel ###
 
-`bifixer.py` can be parallelized by using your favourite method (for example, GNU parallel)
+`bifixer` can be parallelized by using your favourite method (for example, GNU parallel)
 
 Suggested usage:
 
 ```bash
 cat input-corpus.en-es \
-    | parallel -j 25 --pipe -k -l 30000 python3.7 bifixer.py -q - - en es \
+    | parallel -j 25 --pipe -k -l 30000 bifixer -q - - en es \
     > output-corpus.en-es 
 ```
 
