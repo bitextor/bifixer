@@ -4,6 +4,8 @@ __author__ = "Marta Bañón (mbanon)"
 __version__ = "Version 0.1 # 21/06/2019 # Initial release # Marta Bañón"
 __version__ = "Version 0.2 # 23/07/2019 # Non-Redis Bifixer # Marta Bañón"
 __version__ = "Version 0.3 # 20/08/2019 # New feature: Segmentation # Marta Bañón"
+__version__ = "Version 0.4 # 15/06/2021 # Easy install # Elsa Sarrías"
+
 
 import os
 import sys
