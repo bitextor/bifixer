@@ -14,7 +14,7 @@ if __name__=="__main__":
 
     setuptools.setup(
         name="bifixer",
-        version="0.1",
+        version="0.4",
         install_requires=requirements,
         extras_require={"loomchild": extras_requirements},
         license="GNU General Public License v3.0",
