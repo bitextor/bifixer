@@ -8,62 +8,15 @@ import signal
 import json
 import os
 import nltk
+import sys
+import logging
 
-from toolwrapper import ToolWrapper
 from nltk import load
 
-
-class LoomchildSegmenter(ToolWrapper):
-    """A module for interfacing with a Java sentence segmenter. """
-
-    def __init__(self, lang="en"):
-        curpath = os.path.dirname(os.path.abspath(__file__)) + "/"
-        self.lang = lang
-
-        self.rules = self.getBestRules(lang)
-
-        if self.rules != "DEFAULT":
-            argv = ["java", "-cp", curpath + "../segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:" + curpath + "../segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment", "-l", self.lang, "-s", curpath + "../segment/srx/" + self.rules, "-c"]
-        else:
-            argv = ["java", "-cp", curpath + "../segment/segment-ui/target/segment-ui-2.0.2-SNAPSHOT.jar:" + curpath + "../segment/segment-ui/target/segment-2.0.2-SNAPSHOT/lib/*", "net.loomchild.segment.ui.console.Segment", "-l", lang, "-c"]
-
-        super().__init__(argv)
-
-    def __str__(self):
-        return "LoomchildSegmenter()".format()
-
-    def __call__(self, sentence):
-        assert isinstance(sentence, str)
-        sentence = sentence.rstrip("\n")
-        assert "\n" not in sentence
-        if not sentence:
-            return []
-        self.writeline(sentence)
-
-        return self.readline()
-
-    def getBestRules(self, lang):
-        # Based on benchmarks: https://docs.google.com/spreadsheets/d/1mGJ9MSyMlsK0EUDRC2J50uxApiti3ggnlrzAWn8rkMg/edit?usp=sharing
-
-        omegaTLangs = ["bg", "cs", "sl", "sv"]
-        ptdrLangs = ["el", "et", "fi", "hr", "hu", "lt", "lv"]
-        nonAggressiveLangs = ["es", "it", "nb", "nn"]
-        languageToolLangs = ["da", "de", "en", "fr", "nl", "pl", "pt", "ro", "sk", "sr", "uk"]
-
-        if lang in omegaTLangs:
-            return "OmegaT.srx"
-        elif lang in ptdrLangs:
-            return "PTDR.srx"
-        elif lang in nonAggressiveLangs:
-            return "NonAggressive.srx"
-        elif lang in languageToolLangs:
-            return "language_tools.segment.srx"
-        else:
-            return "DEFAULT"
-
-    def get_segmentation(self, sentence):
-        sentence_segments = json.loads(self(sentence))
-        return sentence_segments
+try:
+    from loomchild.segmenter import LoomchildSegmenter
+except ImportError:
+    pass
 
 class myTimeout(Exception):
     pass
@@ -166,7 +119,11 @@ class NLTKSegmenter:
 class NaiveSegmenter:
     def __init__(self, lang, module="nltk"):
         if module == "loomchild":
-            self.segmenter = LoomchildSegmenter(lang)
+            if "loomchild.segmenter" in sys.modules:
+                self.segmenter = LoomchildSegmenter(lang)
+            else:
+                logging.warning("Loomchild segmenter unavailable, falling back to NLTK")
+                self.segmenter = NLTKSegmenter(lang)
         elif module == "nltk":
             self.segmenter = NLTKSegmenter(lang)
         else:
