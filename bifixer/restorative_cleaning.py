@@ -62,6 +62,8 @@ def getCharsReplacements(lang):
         '\u2028': ' ',  # line separators (\n)
         '&#10;': "",  # \n
         '\n': "",
+        '\u000C' : " ", # \v vertical tab
+        '\u000D' : " ", # \f form feed
         '&#xa': "",
         '&#xA': "",
 
