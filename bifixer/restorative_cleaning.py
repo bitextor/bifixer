@@ -301,6 +301,7 @@ def getCharsReplacements(lang):
 
     if lang.lower() not in cyrillic_langs:
         # Cyrilic charcaters replaced to latin characters
+
         chars['Ѐ'] = 'È'
         chars['Ё'] = 'Ë'
         chars['Ѕ'] = 'S'
@@ -359,6 +360,43 @@ def getCharsReplacements(lang):
         chars['Ꚃ'] = 'S'
         chars['ꚃ'] = 'S'
         chars['\u0443'] = 'y'  #
+
+    # Homoglyph Greek replacements for non-greek languages
+    if lang.lower() != 'el':
+        chars['Α'] = 'A'
+        chars['α'] = 'a'
+        chars['Β'] = 'B'
+        chars['β'] = 'B'
+        chars['γ'] = 'Y'
+        chars['Δ'] = 'A'
+        chars['Ε'] = 'E'
+        chars['ε'] = 'e'
+        chars['Ζ'] = 'Z'
+        chars['ζ'] = 'Z'
+        chars['Η'] = 'H'
+        chars['η'] = 'n'
+        chars['Ι'] = 'I'
+        chars['Κ'] = 'K'
+        chars['κ'] = 'K'
+        chars['Λ'] = 'A'
+        chars['Μ'] = 'M'
+        chars['μ'] = 'u'
+        chars['Ν'] = 'N'
+        chars['ν'] = 'v'
+        chars['Ξ'] = 'E'
+        chars['ξ'] = 'E'
+        chars['Ο'] = 'O'
+        chars['ο'] = 'o'
+        chars['Ρ'] = 'P'
+        chars['ρ'] = 'p'
+        chars['Σ'] = 'E'
+        chars['Τ'] = 'T'
+        chars['τ'] = 't'
+        chars['Υ'] = 'Y'
+        chars['υ'] = 'u'
+        chars['Χ'] = 'X'
+        chars['χ'] = 'x'
+        chars['ω'] = 'w'
 
     if lang.lower() == "de":
         # Remove and/or replace certain keys from 'chars' in German
