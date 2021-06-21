@@ -416,6 +416,10 @@ def getCharsReplacements(lang):
         chars['׀'] = '|'
         chars['׃'] = ':'
 
+    # Normalize single quote sometimes used as apostrophe in Maltese
+    if lang.lower() == 'mt':
+        chars['’'] = "'"
+
     if lang.lower() != "el":
         # Greek Letters
         chars['&Alpha;'] = 'A'  # Alpha   Α -> Changed to latin A
