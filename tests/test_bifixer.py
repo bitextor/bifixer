@@ -27,6 +27,7 @@ class TestEmptySpaces():
     args.tcol = 4
     args.ignore_characters = True
     args.ignore_orthography = True
+    args.ignore_detokenization = True
     args.ignore_segmentation = True
     args.ignore_empty = False
     args.ignore_long = False
@@ -120,14 +121,23 @@ class TestOrthoFix:
     def test_orthography_english(self):
         text_1 = "An abandonned puppy accidentaly faciliated a sucesful wokr"
         correct_1 = "An abandoned puppy accidentally facilitated a successful work"
-        fixed_1 = restorative_cleaning.orthofix(text_1, self.replacements_en)
+        fixed_1 = restorative_cleaning.ortho_detok_fix(text_1, self.replacements_en, {})
         assert fixed_1 == correct_1
 
     def test_orthography_spanish(self):
         text_2 = "Una regilla tipicamente supérflua, sinembargo, apesar de los 25 ºC"
         correct_2 = "Una rejilla típicamente superflua, sin embargo, a pesar de los 25 °C"
-        fixed_2 = restorative_cleaning.orthofix(text_2, self.replacements_es)
+        fixed_2 = restorative_cleaning.ortho_detok_fix(text_2, self.replacements_es, {})
         assert fixed_2 == correct_2
+
+class TestDetokFix:
+    detoks_mt = restorative_cleaning.getDetokenizations("mt")
+
+    def test_detokenization_maltese(self):
+        text_1 = "L - aqwa supplimenti għal taħriġ ta ' intervall ma ' intensità għolja"
+        correct_1 = "L-aqwa supplimenti għal taħriġ ta' intervall ma' intensità għolja"
+        fixed_1 = restorative_cleaning.ortho_detok_fix(text_1, {}, self.detoks_mt)
+        assert fixed_1 == correct_1
 
 
 class TestSegmenters:

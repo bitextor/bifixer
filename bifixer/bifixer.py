@@ -77,6 +77,9 @@ def initialization():
     # Orthography
     groupO.add_argument('--ignore_orthography', default=False, action='store_true', help="Doesn't apply orthography fixing")
 
+    # Common detokenization issues
+    groupO.add_argument('--ignore_detokenization', default=False, action='store_true', help="Doesn't fix common tokenization issues")
+
     # Deduplication
     groupO.add_argument('--ignore_duplicates', default=False, action='store_true', help="Doesn't obtain the hashes of parallel sentences")
     groupO.add_argument('--aggressive_dedup', default=False, action='store_true', help="Treats similar sentences as duplicates (marking them with the same hash)")
@@ -125,6 +128,10 @@ def fix_sentences(args):
         replacements_slang = restorative_cleaning.getReplacements(args.srclang)
         replacements_tlang = restorative_cleaning.getReplacements(args.trglang)
 
+    if not args.ignore_detokenization:
+        detoks_slang = restorative_cleaning.getDetokenizations(args.srclang)
+        detoks_tlang = restorative_cleaning.getDetokenizations(args.trglang)
+
     if not args.ignore_segmentation:
         source_segmenter = segmenter.NaiveSegmenter(args.srclang, args.segmenter)
         target_segmenter = segmenter.NaiveSegmenter(args.trglang, args.segmenter)
@@ -156,8 +163,8 @@ def fix_sentences(args):
                 fixed_target = target_sentence.strip(" \n") 
 
             if not args.ignore_orthography and not very_long:
-                corrected_source = restorative_cleaning.orthofix(fixed_source, replacements_slang)
-                corrected_target = restorative_cleaning.orthofix(fixed_target, replacements_tlang)
+                corrected_source = restorative_cleaning.ortho_detok_fix(fixed_source, replacements_slang, detoks_slang)
+                corrected_target = restorative_cleaning.ortho_detok_fix(fixed_target, replacements_tlang, detoks_tlang)
             else:
                 corrected_source = fixed_source
                 corrected_target = fixed_target

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import logging
 import ftfy
 import os
 import regex
@@ -649,10 +650,24 @@ def getReplacements(lang):
     if input_replacements is not None:
         for i in input_replacements:
             field = i.split(u"\t")
-            replacements[field[0].strip()] = field[1].strip()
+            replacements[field[0]] = field[1].rstrip("\n")
 
     return replacements
 
+# Detokenization corrections
+def getDetokenizations(lang):
+    detoks = {}
+    input_detoks = None
+
+    if lang.lower() in ["mt"]:
+        input_detoks = open(os.path.dirname(os.path.realpath(__file__)) + "/detok/detok." + lang.lower(), "r")
+
+    if input_detoks is not None:
+        for i in input_detoks:
+            fields = i.rstrip('\n').split('\t')
+            detoks[fields[0]] = tuple(fields[1:])
+
+    return detoks
 
 def replace_chars(match):
     global global_chars_lang
@@ -708,11 +723,12 @@ def fix(text, lang, chars_rep, chars_pattern, punct_rep, punct_pattern):
     return collapsed_entities.strip(" \n")
 
 
-def orthofix(text, replacements):
-    if len(replacements) > 0:
+def ortho_detok_fix(text, replacements, detoks):
+    if len(replacements) > 0 or len(detoks) > 0:
         last = 0
         line = []
 
+        # Pseudo-tokenization separate words and spaces/punct
         for j in regex.finditer(r"([^-'[:alpha:]](?:[^-[:alpha:]']*[^-'[:alpha:]])?)", text):
             if last != j.start():
                 line.append((text[last:j.start()], "w"))
@@ -721,15 +737,39 @@ def orthofix(text, replacements):
         else:
             if last != len(text):
                 line.append((text[last:], "w"))
+
         fixed_text = ""
-        for j in line:
-            if j[1] == "w":
-                if j[0] in replacements:
-                    fixed_text += replacements[j[0]]
+        skip_space = 0
+        for i, tok in enumerate(line):
+            if tok[1] == "w":
+                # Print replacement if exist, otherwise print word as is
+                if tok[0] in replacements:
+                    fixed_text += replacements[tok[0]]
                 else:
-                    fixed_text += j[0]
+                    fixed_text += tok[0]
+
+                # If it is a tokenization issue, mark next space to be skipped
+                # the current word is in the detok list
+                # the words in detok are present and separated by space
+                if tok[0] in detoks \
+                        and len(line) > i+2 \
+                        and detoks[tok[0]][0] == line[i+2][0] \
+                        and line[i+1][0] == ' ':
+
+                    # Check if the detok requires a second space to be skipped
+                    if len(line) > i+4 \
+                            and len(detoks[tok[0]]) == 2 \
+                            and line[i+3][0] == ' ':
+                        skip_space = 2
+                    else:
+                        skip_space = 1
+
+            # Print spaces if they are not marked to be skipped
+            elif not skip_space:
+                fixed_text += tok[0]
             else:
-                fixed_text += j[0]
+                skip_space -= 1
+
     else:
         fixed_text = text
 
