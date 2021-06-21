@@ -726,6 +726,20 @@ def fix(text, lang, chars_rep, chars_pattern, punct_rep, punct_pattern):
 
     return collapsed_entities.strip(" \n")
 
+def preserve_case(orig, dest):
+    restored = ""
+    if orig[0].isupper():
+        restored = dest[0].upper()
+    else:
+        restored = dest[0]
+
+    if len(orig) > 1:
+        if orig[1:].isupper():
+            restored += dest[1:].upper()
+        else:
+            restored += dest[1:]
+
+    return restored
 
 def ortho_detok_fix(text, replacements, detoks):
     if len(replacements) > 0 or len(detoks) > 0:
@@ -747,7 +761,11 @@ def ortho_detok_fix(text, replacements, detoks):
         for i, tok in enumerate(line):
             if tok[1] == "w":
                 # Print replacement if exist, otherwise print word as is
-                if tok[0] in replacements:
+                # preserve original case if the replacement is lowercase in both sides
+                if tok[0].lower() in replacements and replacements[tok[0].lower()].islower():
+                    replacement = replacements[tok[0].lower()]
+                    fixed_text += preserve_case(tok[0], replacement)
+                elif tok[0] in replacements:
                     fixed_text += replacements[tok[0]]
                 else:
                     fixed_text += tok[0]
