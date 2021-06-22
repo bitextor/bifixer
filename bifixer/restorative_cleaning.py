@@ -371,6 +371,8 @@ def getCharsReplacements(lang):
         chars['Β'] = 'B'
         if lang.lower() != 'de':
             chars['β'] = 'B'
+        else:
+            chars['β'] = 'ß'
         chars['γ'] = 'Y'
         chars['Δ'] = 'A'
         chars['Ε'] = 'E'
