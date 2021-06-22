@@ -964,9 +964,7 @@ invloedsfeer	invloedssfeer
 invloedsferen	invloedssferen
 ipv	i.p.v.
 jacobsladder	jakobsladder
-Jacobsladder	jakobsladder
 jacobsladders	jakobsladders
-Jacobsladders	jakobsladders
 Jakobsladder	jakobsladder
 Jakobsladders	jakobsladders
 Jamaïca	Jamaica
