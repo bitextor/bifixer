@@ -1,3 +1,7 @@
+# Test output files
+tests/output_test_dedup.txt
+tests/output_test_aggr_dedup.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

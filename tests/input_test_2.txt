@@ -1,0 +1,6 @@
+URL1	URL2	— Sí  - respondí.	— Sim - respondi
+URL1	URL2	— Sí  - respondí.	— Sim - respondi
+URL1	URL2	— Sí - respondí.	— Sim - respondi.
+URL3	URL4	– Sí – respondí.	– Sim – respondi.
+URL1	URL2	“¿Qué he hecho yo para merecer esto?”	“What have I done to deserve this?”
+URL5	URL8	"Qué he hecho yo para merecer esto?"	"What have I done to deserve this?"

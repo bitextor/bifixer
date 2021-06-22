@@ -2,6 +2,7 @@
 
 __author__ = "Marta Bañón (mbanon)"
 __version__ = "Version 0.1 # 27/08/2019 # Tests for Bifixer # Marta Bañón"
+__version__ = "Version 0.2 # 22/06/2021 # Dedup tests # Jaume Zaragoza"
 
 import pytest
 # import unittest
@@ -167,31 +168,75 @@ class TestSegmenters:
         assert len(segments) == 7
 
 
-'''
 class TestDedup:
     parser = argparse.ArgumentParser()
     args = parser.parse_args()
 
+    args.scol = 3
+    args.tcol = 4
     args.srclang = "en"
     args.trglang = "es"
     args.ignore_characters = True
     args.ignore_orthography = True
+    args.ignore_detokenization = True
     args.ignore_segmentation = True
-    args.ignore_empty = False
-    args.ignore_long = False
+    args.ignore_empty = True
+    args.ignore_long = True
+    args.dedup = True
+    args.aggressive_dedup = False
+    args.input = open("input_test_2.txt", "rt")
+    args.output = open("output_test_dedup.txt", "w+")
+
+    def test_aggressive_dedup(self):
+        bifixer.fix_sentences(self.args)
+        self.args.input.close()
+        self.args.output.close()
+
+        with open("output_test_dedup.txt") as file_:
+            hashes = []
+            for line in file_:
+                parts = line.rstrip("\n").split("\t")
+                hashes.append(parts[4])
+            assert hashes[0] == hashes[1]
+            assert hashes[1] != hashes[2]
+            assert hashes[2] != hashes[3]
+            assert hashes[4] != hashes[5]
 
 class TestAggressiveDedup:
     parser = argparse.ArgumentParser()
     args = parser.parse_args()
 
+    args.scol = 3
+    args.tcol = 4
     args.srclang = "en"
     args.trglang = "es"
     args.ignore_characters = True
     args.ignore_orthography = True
+    args.ignore_detokenization = True
     args.ignore_segmentation = True
-    args.ignore_empty = False
-    args.ignore_long = False
+    args.ignore_empty = True
+    args.ignore_long = True
+    args.dedup = True
+    args.aggressive_dedup = True
+    args.input = open("input_test_2.txt", "rt")
+    args.output = open("output_test_aggr_dedup.txt", "w+")
 
+    def test_aggressive_dedup(self):
+        bifixer.fix_sentences(self.args)
+        self.args.input.close()
+        self.args.output.close()
+
+        with open("output_test_aggr_dedup.txt") as file_:
+            hashes = []
+            for line in file_:
+                parts = line.rstrip("\n").split("\t")
+                hashes.append(parts[4])
+            assert hashes[0] == hashes[1]
+            assert hashes[1] == hashes[2]
+            assert hashes[2] == hashes[3]
+            assert hashes[4] == hashes[5]
+
+'''
 class TestMulti:
     parser = argparse.ArgumentParser()
     args = parser.parse_args()
