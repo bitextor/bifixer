@@ -2,6 +2,7 @@
 
 __author__ = "Marta Bañón (mbanon)"
 __version__ = "Version 0.1 # 27/08/2019 # Tests for Bifixer # Marta Bañón"
+__version__ = "Version 0.2 # 22/06/2021 # Dedup tests # Jaume Zaragoza"
 
 import pytest
 # import unittest
@@ -27,6 +28,7 @@ class TestEmptySpaces():
     args.tcol = 4
     args.ignore_characters = True
     args.ignore_orthography = True
+    args.ignore_detokenization = True
     args.ignore_segmentation = True
     args.ignore_empty = False
     args.ignore_long = False
@@ -120,14 +122,23 @@ class TestOrthoFix:
     def test_orthography_english(self):
         text_1 = "An abandonned puppy accidentaly faciliated a sucesful wokr"
         correct_1 = "An abandoned puppy accidentally facilitated a successful work"
-        fixed_1 = restorative_cleaning.orthofix(text_1, self.replacements_en)
+        fixed_1 = restorative_cleaning.ortho_detok_fix(text_1, self.replacements_en, {})
         assert fixed_1 == correct_1
 
     def test_orthography_spanish(self):
         text_2 = "Una regilla tipicamente supérflua, sinembargo, apesar de los 25 ºC"
         correct_2 = "Una rejilla típicamente superflua, sin embargo, a pesar de los 25 °C"
-        fixed_2 = restorative_cleaning.orthofix(text_2, self.replacements_es)
+        fixed_2 = restorative_cleaning.ortho_detok_fix(text_2, self.replacements_es, {})
         assert fixed_2 == correct_2
+
+class TestDetokFix:
+    detoks_mt = restorative_cleaning.getDetokenizations("mt")
+
+    def test_detokenization_maltese(self):
+        text_1 = "L - aqwa supplimenti għal taħriġ ta ' intervall ma ' intensità għolja"
+        correct_1 = "L-aqwa supplimenti għal taħriġ ta' intervall ma' intensità għolja"
+        fixed_1 = restorative_cleaning.ortho_detok_fix(text_1, {}, self.detoks_mt)
+        assert fixed_1 == correct_1
 
 
 class TestSegmenters:
@@ -157,31 +168,75 @@ class TestSegmenters:
         assert len(segments) == 7
 
 
-'''
 class TestDedup:
     parser = argparse.ArgumentParser()
     args = parser.parse_args()
 
+    args.scol = 3
+    args.tcol = 4
     args.srclang = "en"
     args.trglang = "es"
     args.ignore_characters = True
     args.ignore_orthography = True
+    args.ignore_detokenization = True
     args.ignore_segmentation = True
-    args.ignore_empty = False
-    args.ignore_long = False
+    args.ignore_empty = True
+    args.ignore_long = True
+    args.dedup = True
+    args.aggressive_dedup = False
+    args.input = open("input_test_2.txt", "rt")
+    args.output = open("output_test_dedup.txt", "w+")
+
+    def test_aggressive_dedup(self):
+        bifixer.fix_sentences(self.args)
+        self.args.input.close()
+        self.args.output.close()
+
+        with open("output_test_dedup.txt") as file_:
+            hashes = []
+            for line in file_:
+                parts = line.rstrip("\n").split("\t")
+                hashes.append(parts[4])
+            assert hashes[0] == hashes[1]
+            assert hashes[1] != hashes[2]
+            assert hashes[2] != hashes[3]
+            assert hashes[4] != hashes[5]
 
 class TestAggressiveDedup:
     parser = argparse.ArgumentParser()
     args = parser.parse_args()
 
+    args.scol = 3
+    args.tcol = 4
     args.srclang = "en"
     args.trglang = "es"
     args.ignore_characters = True
     args.ignore_orthography = True
+    args.ignore_detokenization = True
     args.ignore_segmentation = True
-    args.ignore_empty = False
-    args.ignore_long = False
+    args.ignore_empty = True
+    args.ignore_long = True
+    args.dedup = True
+    args.aggressive_dedup = True
+    args.input = open("input_test_2.txt", "rt")
+    args.output = open("output_test_aggr_dedup.txt", "w+")
 
+    def test_aggressive_dedup(self):
+        bifixer.fix_sentences(self.args)
+        self.args.input.close()
+        self.args.output.close()
+
+        with open("output_test_aggr_dedup.txt") as file_:
+            hashes = []
+            for line in file_:
+                parts = line.rstrip("\n").split("\t")
+                hashes.append(parts[4])
+            assert hashes[0] == hashes[1]
+            assert hashes[1] == hashes[2]
+            assert hashes[2] == hashes[3]
+            assert hashes[4] == hashes[5]
+
+'''
 class TestMulti:
     parser = argparse.ArgumentParser()
     args = parser.parse_args()

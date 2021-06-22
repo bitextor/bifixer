@@ -13,9 +13,9 @@ import argparse
 import time
 import traceback
 import logging
-import unidecode
-import string
 
+from unicodedata import category as cat
+from unidecode import unidecode
 from tempfile import gettempdir
 from timeit import default_timer
 from xxhash import xxh64
@@ -29,6 +29,9 @@ except (ImportError, SystemError):
     import restorative_cleaning
     import segmenter
 
+# Translate table to remove non alphabetic characters
+tbl = [chr(i) for i in range(sys.maxunicode) if not cat(chr(i)).startswith('L')]
+remove_non_alpha = str.maketrans('', '', ''.join(tbl))
 
 def initialization():
     global ilines
@@ -73,6 +76,9 @@ def initialization():
     
     # Orthography
     groupO.add_argument('--ignore_orthography', default=False, action='store_true', help="Doesn't apply orthography fixing")
+
+    # Common detokenization issues
+    groupO.add_argument('--ignore_detokenization', default=False, action='store_true', help="Doesn't fix common tokenization issues")
 
     # Deduplication
     groupO.add_argument('--ignore_duplicates', default=False, action='store_true', help="Doesn't obtain the hashes of parallel sentences")
@@ -122,6 +128,10 @@ def fix_sentences(args):
         replacements_slang = restorative_cleaning.getReplacements(args.srclang)
         replacements_tlang = restorative_cleaning.getReplacements(args.trglang)
 
+    if not args.ignore_detokenization:
+        detoks_slang = restorative_cleaning.getDetokenizations(args.srclang)
+        detoks_tlang = restorative_cleaning.getDetokenizations(args.trglang)
+
     if not args.ignore_segmentation:
         source_segmenter = segmenter.NaiveSegmenter(args.srclang, args.segmenter)
         target_segmenter = segmenter.NaiveSegmenter(args.trglang, args.segmenter)
@@ -153,8 +163,8 @@ def fix_sentences(args):
                 fixed_target = target_sentence.strip(" \n") 
 
             if not args.ignore_orthography and not very_long:
-                corrected_source = restorative_cleaning.orthofix(fixed_source, replacements_slang)
-                corrected_target = restorative_cleaning.orthofix(fixed_target, replacements_tlang)
+                corrected_source = restorative_cleaning.ortho_detok_fix(fixed_source, replacements_slang, detoks_slang)
+                corrected_target = restorative_cleaning.ortho_detok_fix(fixed_target, replacements_tlang, detoks_tlang)
             else:
                 corrected_source = fixed_source
                 corrected_target = fixed_target
@@ -172,8 +182,8 @@ def fix_sentences(args):
                     continue;
                 if args.dedup:
                     if args.aggressive_dedup:
-                        normalized_src = unidecode.unidecode(segment["source_segment"].lower().replace(" ", "").translate(str.maketrans('', '', string.punctuation + string.digits)))
-                        normalized_trg = unidecode.unidecode(segment["target_segment"].lower().replace(" ", "").translate(str.maketrans('', '', string.punctuation + string.digits)))
+                        normalized_src = unidecode(segment["source_segment"].lower().translate(remove_non_alpha))
+                        normalized_trg = unidecode(segment["target_segment"].lower().translate(remove_non_alpha))
 
                         segment_hash = xxh64(normalized_src + "\t" + normalized_trg).hexdigest()
 

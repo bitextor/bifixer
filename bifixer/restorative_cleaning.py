@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import logging
 import ftfy
 import os
 import regex
@@ -62,6 +63,8 @@ def getCharsReplacements(lang):
         '\u2028': ' ',  # line separators (\n)
         '&#10;': "",  # \n
         '\n': "",
+        '\u000C' : " ", # \v vertical tab
+        '\u000D' : " ", # \f form feed
         '&#xa': "",
         '&#xA': "",
 
@@ -301,6 +304,7 @@ def getCharsReplacements(lang):
 
     if lang.lower() not in cyrillic_langs:
         # Cyrilic charcaters replaced to latin characters
+
         chars['Ѐ'] = 'È'
         chars['Ё'] = 'Ë'
         chars['Ѕ'] = 'S'
@@ -360,6 +364,46 @@ def getCharsReplacements(lang):
         chars['ꚃ'] = 'S'
         chars['\u0443'] = 'y'  #
 
+    # Homoglyph Greek replacements for non-greek languages
+    if lang.lower() != 'el':
+        chars['Α'] = 'A'
+        chars['α'] = 'a'
+        chars['Β'] = 'B'
+        if lang.lower() != 'de':
+            chars['β'] = 'B'
+        else:
+            chars['β'] = 'ß'
+        chars['γ'] = 'Y'
+        chars['Δ'] = 'A'
+        chars['Ε'] = 'E'
+        chars['ε'] = 'e'
+        chars['Ζ'] = 'Z'
+        chars['ζ'] = 'Z'
+        chars['Η'] = 'H'
+        chars['η'] = 'n'
+        chars['Ι'] = 'I'
+        chars['Κ'] = 'K'
+        chars['κ'] = 'K'
+        chars['Λ'] = 'A'
+        chars['Μ'] = 'M'
+        chars['μ'] = 'u'
+        chars['Ν'] = 'N'
+        chars['ν'] = 'v'
+        chars['Ξ'] = 'E'
+        chars['ξ'] = 'E'
+        chars['Ο'] = 'O'
+        chars['ο'] = 'o'
+        chars['Ρ'] = 'P'
+        chars['ρ'] = 'p'
+        chars['Σ'] = 'E'
+        chars['Τ'] = 'T'
+        chars['τ'] = 't'
+        chars['Υ'] = 'Y'
+        chars['υ'] = 'u'
+        chars['Χ'] = 'X'
+        chars['χ'] = 'x'
+        chars['ω'] = 'w'
+
     if lang.lower() == "de":
         # Remove and/or replace certain keys from 'chars' in German
         chars['&bdquo;'] = '„'
@@ -374,6 +418,10 @@ def getCharsReplacements(lang):
         chars['־'] = '-'
         chars['׀'] = '|'
         chars['׃'] = ':'
+
+    # Normalize single quote sometimes used as apostrophe in Maltese
+    if lang.lower() == 'mt':
+        chars['’'] = "'"
 
     if lang.lower() != "el":
         # Greek Letters
@@ -609,10 +657,24 @@ def getReplacements(lang):
     if input_replacements is not None:
         for i in input_replacements:
             field = i.split(u"\t")
-            replacements[field[0].strip()] = field[1].strip()
+            replacements[field[0]] = field[1].rstrip("\n")
 
     return replacements
 
+# Detokenization corrections
+def getDetokenizations(lang):
+    detoks = {}
+    input_detoks = None
+
+    if lang.lower() in ["mt"]:
+        input_detoks = open(os.path.dirname(os.path.realpath(__file__)) + "/detok/detok." + lang.lower(), "r")
+
+    if input_detoks is not None:
+        for i in input_detoks:
+            fields = i.rstrip('\n').split('\t')
+            detoks[fields[0]] = tuple(fields[1:])
+
+    return detoks
 
 def replace_chars(match):
     global global_chars_lang
@@ -667,12 +729,27 @@ def fix(text, lang, chars_rep, chars_pattern, punct_rep, punct_pattern):
 
     return collapsed_entities.strip(" \n")
 
+def preserve_case(orig, dest):
+    restored = ""
+    if orig[0].isupper():
+        restored = dest[0].upper()
+    else:
+        restored = dest[0]
 
-def orthofix(text, replacements):
-    if len(replacements) > 0:
+    if len(orig) > 1:
+        if orig[1:].isupper():
+            restored += dest[1:].upper()
+        else:
+            restored += dest[1:]
+
+    return restored
+
+def ortho_detok_fix(text, replacements, detoks):
+    if len(replacements) > 0 or len(detoks) > 0:
         last = 0
         line = []
 
+        # Pseudo-tokenization separate words and spaces/punct
         for j in regex.finditer(r"([^-'[:alpha:]](?:[^-[:alpha:]']*[^-'[:alpha:]])?)", text):
             if last != j.start():
                 line.append((text[last:j.start()], "w"))
@@ -681,15 +758,43 @@ def orthofix(text, replacements):
         else:
             if last != len(text):
                 line.append((text[last:], "w"))
+
         fixed_text = ""
-        for j in line:
-            if j[1] == "w":
-                if j[0] in replacements:
-                    fixed_text += replacements[j[0]]
+        skip_space = 0
+        for i, tok in enumerate(line):
+            if tok[1] == "w":
+                # Print replacement if exist, otherwise print word as is
+                # preserve original case if the replacement is lowercase in both sides
+                if tok[0].lower() in replacements and replacements[tok[0].lower()].islower():
+                    replacement = replacements[tok[0].lower()]
+                    fixed_text += preserve_case(tok[0], replacement)
+                elif tok[0] in replacements:
+                    fixed_text += replacements[tok[0]]
                 else:
-                    fixed_text += j[0]
+                    fixed_text += tok[0]
+
+                # If it is a tokenization issue, mark next space to be skipped
+                # the current word is in the detok list
+                # the words in detok are present and separated by space
+                if tok[0] in detoks \
+                        and len(line) > i+2 \
+                        and detoks[tok[0]][0] == line[i+2][0] \
+                        and line[i+1][0] == ' ':
+
+                    # Check if the detok requires a second space to be skipped
+                    if len(line) > i+4 \
+                            and len(detoks[tok[0]]) == 2 \
+                            and line[i+3][0] == ' ':
+                        skip_space = 2
+                    else:
+                        skip_space = 1
+
+            # Print spaces if they are not marked to be skipped
+            elif not skip_space:
+                fixed_text += tok[0]
             else:
-                fixed_text += j[0]
+                skip_space -= 1
+
     else:
         fixed_text = text
 
