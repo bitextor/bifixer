@@ -132,6 +132,9 @@ class NaiveSegmenter:
     def __call__(self, sentence):
         return self.segmenter.get_segmentation(sentence)
 
+def naive_segmenter_mono(segmenter, sentence):
+    segments = segmenter(sentence)
+    return segments
 
 def naive_segmenter(source_segmenter, target_segmenter, source, target):
     source_segments = source_segmenter(source)

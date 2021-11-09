@@ -14,7 +14,7 @@ if __name__=="__main__":
 
     setuptools.setup(
         name="bifixer",
-        version="0.5",
+        version="0.6",
         install_requires=requirements,
         extras_require={"loomchild": extras_requirements},
         license="GNU General Public License v3.0",
@@ -44,5 +44,5 @@ if __name__=="__main__":
             "Prompsit Language Engineering": "http://www.prompsit.com",
             "Paracrawl": "https://paracrawl.eu/"
              },
-        scripts=["scripts/bifixer"]
+        scripts=["scripts/bifixer", "scripts/monofixer"]
     )
