@@ -163,7 +163,7 @@ Logging:
   * OUTPUT : Output file. Tab-separated bilingual output file, being a fixed version of the input file. By default, the output columns are: SRC_URL TRG_URL SRC_SENTENCE TRG_SENTENCE [EXTRA COLUMNS] HASH RANKING. When OUTPUT is -, writes standard input.
   * SRC LANG : Source language code (2-letter ISO 639-1 code)
   * TRG LANG : Target language code (2-letter ISO 639-1 code)
-Optional:
+* Optional:
   * --tmp_dir TMP_DIR : Directory for temporary files
   * --scol SCOL : Position of the source sentence column (starting in 1). Default: 3
   * --tcol TCOL : Position of the target sentence column (starting in 1). Default: 4
@@ -185,7 +185,7 @@ Optional:
   * --logfile LOGFILE : Stores log into a file
   * -v, --version : Shows version number and exits
   * -h, --help: Shows help and exits
-```
+
 
 ### Monofixer ###
 
@@ -251,7 +251,7 @@ Logging:
   * INPUT : Input file. Tab-separated monolingual input file. By default, the expected columns are: URL SENTENCE [EXTRA COLUMNS]. When INPUT is -, reads standard input.
   * OUTPUT : Output file. Tab-separated monolingual output file, being a fixed version of the input file. By default, the output columns are: URL SENTENCE [EXTRA COLUMNS] HASH RANKING. When OUTPUT is -, writes standard input.
   * LANG : Sentence language code (2-letter ISO 639-1 code)
-Optional:
+* Optional:
   * --tmp_dir TMP_DIR : Directory for temporary files
   * --scol SCOL : Position of the source sentence column (starting in 1). Default: 2
   * --sdeferredcol SDEFERREDCOL  Sentence deferred standoff annotation column (starting in 1). Default: None
