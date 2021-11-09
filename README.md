@@ -22,6 +22,7 @@ Tool to fix bitexts and tag near-duplicates for removal.
   * Choose between [NLTK](https://www.nltk.org/)  or [Loomchild](https://github.com/mbanon/segment) (SRX-rules based) segmenter modules with `--segmenter`  (default is NLTK)
   * Choose the minimum length (in words) you want to start segmenting at (default is 15) with `--words_before_segmenting`. Set it to 1 to try to segment all sentences.
   * Deactivate this feature with `--ignore_segmentation`
+* Got MONOLINGUAL text? Use `monofixer.py` instead.
 
 ## Citation
 
@@ -72,6 +73,7 @@ Or even easier, install directly from PyPI:
 ```bash
 pip install bifixer
 ```
+After installing, two executables (`bifixer` and `monofixer`) will be available to be run.
 
 ### Loomchild segmenter ###
 
@@ -92,19 +94,16 @@ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 ### Bifixer ###
 
 ```bash
-usage: bifixer [-h] [--scol SCOL] [--tcol TCOL] 
-                  [--ignore_characters]
-                  [--ignore_empty] 
-                  [--ignore_long]
-                  [--ignore_orthography]
+usage: bifixer.py [-h] [--scol SCOL] [--tcol TCOL]
+                  [--sdeferredcol SDEFERREDCOL] [--tdeferredcol TDEFERREDCOL]
+                  [--ignore_characters] [--ignore_empty] [--ignore_long]
+                  [--ignore_orthography] [--ignore_detokenization]
                   [--ignore_duplicates] [--aggressive_dedup]
-                  [--ignore_segmentation] [--words_before_segmenting WORDS_BEFORE_SEGMENTING] [--segmenter {nltk,loomchild}]
-                  [--tmp_dir TMP_DIR] 
-                  [-q]
-                  [--debug] [--logfile LOGFILE]
-                  [-v]
+                  [--ignore_segmentation]
+                  [--words_before_segmenting WORDS_BEFORE_SEGMENTING]
+                  [--segmenter {nltk,loomchild}] [--tmp_dir TMP_DIR] [-q]
+                  [--debug] [--logfile LOGFILE] [-v]
                   input output srclang trglang
-
 
 positional arguments:
   input                 Tab-separated files to be bifixed
@@ -118,12 +117,21 @@ optional arguments:
 Optional:
   --scol SCOL           Source sentence column (starting in 1) (default: 3)
   --tcol TCOL           Target sentence column (starting in 1) (default: 4)
+  --sdeferredcol SDEFERREDCOL
+                        Source deferred standoff annotation column (starting
+                        in 1) (default: None)
+  --tdeferredcol TDEFERREDCOL
+                        Target deferred standoff annotation column (starting
+                        in 1) (default: None)
   --ignore_characters   Doesn't fix mojibake, orthography, or other character
                         issues (default: False)
   --ignore_empty        Doesn't remove sentences with empty source or target
                         (default: False)
-  --ignore_long		Doesn't ignore too long sentences (default: False)
+  --ignore_long         Doesn't ignore too long sentences (default: False)
   --ignore_orthography  Doesn't apply orthography fixing (default: False)
+  --ignore_detokenization
+                        Doesn't fix common tokenization issues (default:
+                        False)
   --ignore_duplicates   Doesn't obtain the hashes of parallel sentences
                         (default: False)
   --aggressive_dedup    Treats similar sentences as duplicates (marking them
@@ -135,7 +143,7 @@ Optional:
                         Max words allowed in one side of a parallel sentence
                         before trying to segmentate it. Set to 0 to applicate
                         segmentation on everything. (default: 15)
-  --segmenter {nltk,loomchild} 
+  --segmenter {nltk,loomchild}
                         Segmenter module. (default: nltk)
   --tmp_dir TMP_DIR     Temporary directory where creating the temporary files
                         of this program (default: /tmp)
@@ -146,10 +154,9 @@ Logging:
   --logfile LOGFILE     Store log to a file (default: <_io.TextIOWrapper
                         name='<stderr>' mode='w' encoding='UTF-8'>)
   -v, --version         show version of this script and exit
-
 ```
 
-### Parameters ###
+#### Parameters ####
 
 * Positional:
   * INPUT : Input file. Tab-separated bilingual input file. By default, the expected columns are: SRC_URL TRG_URL SRC_SENTENCE TRG_SENTENCE [EXTRA COLUMNS]. When INPUT is -, reads standard input.
@@ -160,14 +167,17 @@ Optional:
   * --tmp_dir TMP_DIR : Directory for temporary files
   * --scol SCOL : Position of the source sentence column (starting in 1). Default: 3
   * --tcol TCOL : Position of the target sentence column (starting in 1). Default: 4
+  * --sdeferredcol SDEFERREDCOL : Source deferred standoff annotation column (starting in 1). Default: None
+  * --tdeferredcol TDEFERREDCOL : Target deferred standoff annotation column (starting in 1). Default: None
   * --ignore_duplicates : Deactivates deduplication (won't add hash or ranking)
   * --ignore_empty : Doesn't remove sentences with empty source or target
   * --ignore_long: Doesn't remove too long sentences
   * --ignore_segmentation : Deactivates segmentation of long sentences
-  * --segmenter: Segmenter module (`nltk` or `loomchild`)
+  * --segmenter: Segmenter module (`nltk` or `loomchild`). Default: nltk
   * --words_before_segmenting : Maximum allowed amount of words in a sentence, before trying to segment it. Default: 15
   * --ignore_characters : Deactivates text fixing (characters, encoding...)
   * --ignore_orthography  Deactivates orthography fixing
+  * --ignore_detokenization : Doesn't fix common tokenization issues.
   * --aggressive_dedup : Treats near-duplicated sentences as duplicates (normalizes sentences before hashing)
   * --tmp_dir TMP_DIR : Directory for temporary files
   * -q, --quiet : Silent logging mode
@@ -175,6 +185,92 @@ Optional:
   * --logfile LOGFILE : Stores log into a file
   * -v, --version : Shows version number and exits
   * -h, --help: Shows help and exits
+```
+
+### Monofixer ###
+
+```bash
+python3.7 bifixer/monofixer.py --help
+usage: monofixer.py [-h] [--scol SCOL] [--sdeferredcol SDEFERREDCOL]
+                    [--ignore_characters] [--ignore_long]
+                    [--ignore_orthography] [--ignore_detokenization]
+                    [--ignore_duplicates] [--aggressive_dedup]
+                    [--ignore_segmentation]
+                    [--words_before_segmenting WORDS_BEFORE_SEGMENTING]
+                    [--segmenter {nltk,loomchild}] [--tmp_dir TMP_DIR] [-q]
+                    [--debug] [--logfile LOGFILE] [-v]
+                    input output lang
+
+positional arguments:
+  input                 Tab-separated file to be fixed
+  output                Fixed corpus
+  lang                  Language of the input
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+Optional:
+  --scol SCOL           Sentence column (starting in 1) (default: 2)
+  --sdeferredcol SDEFERREDCOL
+                        Source deferred standoff annotation column (starting
+                        in 1) (default: None)
+  --ignore_characters   Doesn't fix mojibake, orthography, or other character
+                        issues (default: False)
+  --ignore_long         Doesn't ignore too long sentences (default: False)
+  --ignore_orthography  Doesn't apply orthography fixing (default: False)
+  --ignore_detokenization
+                        Doesn't fix common tokenization issues (default:
+                        False)
+  --ignore_duplicates   Doesn't obtain the hashes of sentences (default:
+                        False)
+  --aggressive_dedup    Treats similar sentences as duplicates (marking them
+                        with the same hash) (default: False)
+  --ignore_segmentation 
+                        Doesn't change segmentation of long sentences
+                        (default: False)
+  --words_before_segmenting WORDS_BEFORE_SEGMENTING
+                        Max words allowed in a parallel sentence before trying
+                        to segmentate it. Set to 0 to applicate segmentation
+                        on everyt33hing. (default: 15)
+  --segmenter {nltk,loomchild}
+                        Segmenter module. (default: nltk)
+  --tmp_dir TMP_DIR     Temporary directory where creating the temporary files
+                        of this program (default: /tmp)
+
+Logging:
+  -q, --quiet           Silent logging mode (default: False)
+  --debug               Debug logging mode (default: False)
+  --logfile LOGFILE     Store log to a file (default: <_io.TextIOWrapper
+                        name='<stderr>' mode='w' encoding='UTF-8'>)
+  -v, --version         show version of this script and exit
+```
+
+#### Parameters ####
+
+* Positional:
+  * INPUT : Input file. Tab-separated monolingual input file. By default, the expected columns are: URL SENTENCE [EXTRA COLUMNS]. When INPUT is -, reads standard input.
+  * OUTPUT : Output file. Tab-separated monolingual output file, being a fixed version of the input file. By default, the output columns are: URL SENTENCE [EXTRA COLUMNS] HASH RANKING. When OUTPUT is -, writes standard input.
+  * LANG : Sentence language code (2-letter ISO 639-1 code)
+Optional:
+  * --tmp_dir TMP_DIR : Directory for temporary files
+  * --scol SCOL : Position of the source sentence column (starting in 1). Default: 2
+  * --sdeferredcol SDEFERREDCOL  Sentence deferred standoff annotation column (starting in 1). Default: None
+  * --ignore_duplicates : Deactivates deduplication (won't add hash or ranking)
+  * --ignore_long: Doesn't remove too long sentences
+  * --ignore_segmentation : Deactivates segmentation of long sentences
+  * --segmenter: Segmenter module (`nltk` or `loomchild`). Default: nltk
+  * --words_before_segmenting : Maximum allowed amount of words in a sentence, before trying to segment it. Default: 15
+  * --ignore_characters : Deactivates text fixing (characters, encoding...)
+  * --ignore_orthography : Deactivates orthography fixing
+  * --ignore_detokenization : Doesn't fix common tokenization issues.
+  * --aggressive_dedup : Treats near-duplicated sentences as duplicates (normalizes sentences before hashing)
+  * --tmp_dir TMP_DIR : Directory for temporary files
+  * -q, --quiet : Silent logging mode
+  * --debug: Shows debug messages while running
+  * --logfile LOGFILE : Stores log into a file
+  * -v, --version : Shows version number and exits
+  * -h, --help: Shows help and exits
+
 
 ## RUN ##
 
