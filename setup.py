@@ -27,7 +27,7 @@ if __name__=="__main__":
         long_description_content_type="text/markdown",
         url="https://github.com/bitextor/bifixer",
         packages=["bifixer"],
-        package_data={"bifixer": ["replacements/*"]},
+        package_data={"bifixer": ["replacements/*", "detok/*"]},
         classifiers=[
             "Environment :: Console",
             "Intended Audience :: Science/Research",
