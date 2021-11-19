@@ -4,6 +4,7 @@ import sys
 import logging
 import bifixer.util as util
 import bifixer.bifixer as bifixer
+import traceback
 
 def main(argv):
     try:
