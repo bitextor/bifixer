@@ -47,13 +47,12 @@ def initialization():
     parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]), formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
     
     # Mandatory parameters
-    groupM = parser.add_argument_group('Mandatory')
     #Input file
-    groupM.add_argument('input', type=argparse.FileType('rt'), default=None, help="Tab-separated file to be fixed")
+    parser.add_argument('input', type=argparse.FileType('rt'), default=None, help="Tab-separated file to be fixed")
     #Output file (corpus)
-    groupM.add_argument('output', type=argparse.FileType('w'), default=sys.stdout, help="Fixed corpus")
+    parser.add_argument('output', type=argparse.FileType('w'), default=sys.stdout, help="Fixed corpus")
     #Language
-    groupM.add_argument("lang", type=str, help="Language of the input")
+    parser.add_argument("lang", type=str, help="Language of the input")
 
     # Options group
     groupO = parser.add_argument_group('Optional')

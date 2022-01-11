@@ -46,15 +46,14 @@ def initialization():
     parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]), formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
 
     # Mandatory parameters
-    groupM = parser.add_argument_group('Mandatory')
     # Input file
-    groupM.add_argument('input', type=argparse.FileType('rt'), default=None, help="Tab-separated files to be bifixed")
+    parser.add_argument('input', type=argparse.FileType('rt'), default=None, help="Tab-separated files to be bifixed")
     # Output file (corpus)
-    groupM.add_argument('output', type=argparse.FileType('w'), default=sys.stdout, help="Fixed corpus")
+    parser.add_argument('output', type=argparse.FileType('w'), default=sys.stdout, help="Fixed corpus")
     # Source language
-    groupM.add_argument("srclang", type=str, help="Source language (SL) of the input")
+    parser.add_argument("srclang", type=str, help="Source language (SL) of the input")
     # Target language
-    groupM.add_argument("trglang", type=str, help="Target language (TL) of the input")
+    parser.add_argument("trglang", type=str, help="Target language (TL) of the input")
 
     # Options group
     groupO = parser.add_argument_group('Optional')
