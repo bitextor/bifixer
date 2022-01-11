@@ -40,31 +40,30 @@ def initialization():
 
     ilines = 0
     olines = 0
+    header = "--header" in sys.argv
 
     logging.info("Processing arguments...")
     parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]), formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
 
     # Mandatory parameters
-    # Input file
-    parser.add_argument('input', type=argparse.FileType('rt'), default=None, help="Tab-separated files to be bifixed")
-    # Output file (corpus)
-    parser.add_argument('output', type=argparse.FileType('w'), default=sys.stdout, help="Fixed corpus")
-    # Source language
-    parser.add_argument("srclang", type=str, help="Source language (SL) of the input")
-    # Target language
-    parser.add_argument("trglang", type=str, help="Target language (TL) of the input")
-
-    # Mandatory parameters
     groupM = parser.add_argument_group('Mandatory')
+    # Input file
+    groupM.add_argument('input', type=argparse.FileType('rt'), default=None, help="Tab-separated files to be bifixed")
+    # Output file (corpus)
+    groupM.add_argument('output', type=argparse.FileType('w'), default=sys.stdout, help="Fixed corpus")
+    # Source language
+    groupM.add_argument("srclang", type=str, help="Source language (SL) of the input")
+    # Target language
+    groupM.add_argument("trglang", type=str, help="Target language (TL) of the input")
 
     # Options group
     groupO = parser.add_argument_group('Optional')
     # Format
-    groupO.add_argument("--scol", default=3, type=util.check_positive, help="Source sentence column (starting in 1)")
-    groupO.add_argument("--tcol", default=4, type=util.check_positive, help="Target sentence column (starting in 1)")
-    groupO.add_argument("--sdeferredcol", type=util.check_positive, help="Source deferred standoff annotation column (starting in 1)")
-    groupO.add_argument("--tdeferredcol", type=util.check_positive, help="Target deferred standoff annotation column (starting in 1)")
-       
+    groupO.add_argument("--header", action='store_true', help="Input and output file will expect and have a header, respectively")
+    groupO.add_argument("--scol", type=util.check_positive if not header else str, default=3 if not header else "src_text", help="Source sentence column (starting in 1). The name of the field is expected instead of the position if --header is set")
+    groupO.add_argument("--tcol", type=util.check_positive if not header else str, default=4 if not header else "trg_text", help="Target sentence column (starting in 1). The name of the field is expected instead of the position if --header is set")
+    groupO.add_argument("--sdeferredcol", type=util.check_positive if not header else str, help="Source deferred standoff annotation column (starting in 1). The name of the field is expected instead of the position if --header is set")
+    groupO.add_argument("--tdeferredcol", type=util.check_positive if not header else str, help="Target deferred standoff annotation column (starting in 1). The name of the field is expected instead of the position if --header is set")
 
     # Character fixing
     groupO.add_argument('--ignore_characters', default=False, action='store_true', help="Doesn't fix mojibake, orthography, or other character issues")
@@ -136,6 +135,29 @@ def fix_sentences(args):
     if not args.ignore_segmentation:
         source_segmenter = segmenter.NaiveSegmenter(args.srclang, args.segmenter)
         target_segmenter = segmenter.NaiveSegmenter(args.trglang, args.segmenter)
+
+    if args.header:
+        header = next(args.input).strip().split("\t")
+
+        # Transform fields to idxs
+        if args.scol not in header:
+            raise Exception(f"The provided --scol '{args.scol}' is not in the input header")
+        if args.tcol not in header:
+            raise Exception(f"The provided --tcol '{args.tcol}' is not in the input header")
+
+        args.scol = int(header.index(args.scol)) + 1
+        args.tcol = int(header.index(args.tcol)) + 1
+
+        if args.sdeferredcol:
+            if args.sdeferredcol not in header:
+                raise Exception(f"The provided --sdeferredcol '{args.sdeferredcol}' is not in the input header")
+
+            args.sdeferredcol = int(header.index(args.sdeferredcol)) + 1
+        if args.tdeferredcol:
+            if args.tdeferredcol not in header:
+                raise Exception(f"The provided --tdeferredcol '{args.tdeferredcol}' is not in the input header")
+
+            args.tdeferredcol = int(header.index(args.tdeferredcol)) + 1
 
     for i in args.input:
         ilines += 1
