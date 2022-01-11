@@ -58,7 +58,8 @@ def initialization():
     # Options group
     groupO = parser.add_argument_group('Optional')
     #Format
-    groupO.add_argument("--header", action='store_true', help="Input and output file will expect and have a header, respectively")
+    groupO.add_argument("--header", action='store_true', help="Input file will have header")
+    groupO.add_argument("--output_header", help="Output file header (separated by ',')")
     groupO.add_argument("--scol", type=util.check_positive if not header else str, default=2 if not header else "src_text", help ="Sentence column (starting in 1). The name of the field is expected instead of the position if --header is set")
     groupO.add_argument("--sdeferredcol", type=util.check_positive if not header else str, help="Source deferred standoff annotation column (starting in 1). The name of the field is expected instead of the position if --header is set")
 
@@ -148,6 +149,15 @@ def fix_sentences(args):
 
             args.sdeferredcol = int(header.index(args.sdeferredcol)) + 1
 
+    if args.output_header:
+        # Write the output header once
+        args.output.write("\t".join(args.output_header.strip().split(",")))
+
+        if args.dedup:
+            args.output.write("\tbifixer_hash\tbifixer_score")
+
+        args.output.write("\n")
+
     for i in args.input:
         ilines += 1
         parts = i.split("\t")
@@ -186,7 +196,7 @@ def fix_sentences(args):
 
         for segment in segments:
             if len(segment) == 0:
-                continue;
+                continue
             if args.dedup:
                 if args.aggressive_dedup:
                     #normalized_sentence = unidecode.unidecode(segment.lower().replace(" ", "").translate(str.maketrans('', '', string.punctuation+string.digits)))
