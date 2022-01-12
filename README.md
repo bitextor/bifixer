@@ -94,7 +94,8 @@ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 ### Bifixer ###
 
 ```bash
-usage: bifixer.py [-h] [--scol SCOL] [--tcol TCOL]
+usage: bifixer.py [-h] [--header] [--output_header OUTPUT_HEADER]
+                  [--scol SCOL] [--tcol TCOL]
                   [--sdeferredcol SDEFERREDCOL] [--tdeferredcol TDEFERREDCOL]
                   [--ignore_characters] [--ignore_empty] [--ignore_long]
                   [--ignore_orthography] [--ignore_detokenization]
@@ -115,14 +116,23 @@ optional arguments:
   -h, --help            show this help message and exit
 
 Optional:
-  --scol SCOL           Source sentence column (starting in 1) (default: 3)
-  --tcol TCOL           Target sentence column (starting in 1) (default: 4)
+  --header              Input file will have header (default: False)
+  --output_header OUTPUT_HEADER
+                        Output file header (separated by ',') (default: None)
+  --scol SCOL           Source sentence column (starting in 1). The name of
+                        the field is expected instead of the position if
+                        --header is set (default: 3)
+  --tcol TCOL           Target sentence column (starting in 1). The name of
+                        the field is expected instead of the position if
+                        --header is set (default: 4)
   --sdeferredcol SDEFERREDCOL
                         Source deferred standoff annotation column (starting
-                        in 1) (default: None)
+                        in 1). The name of the field is expected instead of
+                        the position if --header is set (default: None)
   --tdeferredcol TDEFERREDCOL
                         Target deferred standoff annotation column (starting
-                        in 1) (default: None)
+                        in 1). The name of the field is expected instead of
+                        the position if --header is set (default: None)
   --ignore_characters   Doesn't fix mojibake, orthography, or other character
                         issues (default: False)
   --ignore_empty        Doesn't remove sentences with empty source or target
@@ -165,8 +175,10 @@ Logging:
   * TRG LANG : Target language code (2-letter ISO 639-1 code)
 * Optional:
   * --tmp_dir TMP_DIR : Directory for temporary files
-  * --scol SCOL : Position of the source sentence column (starting in 1). Default: 3
-  * --tcol TCOL : Position of the target sentence column (starting in 1). Default: 4
+  * --header : Treats the first sentence of the input file as the header row
+  * --output_header OUTPUT_HEADER : Writes the provided fields as the header of the output file and adds additionals fields if necessary (the provided fields will be separated by ',')
+  * --scol SCOL : Position of the source sentence column (starting in 1). If `--header` is set, the expected value will be the name of the field. Default: 3 if `--header` is not set else src_text
+  * --tcol TCOL : Position of the target sentence column (starting in 1). If `--header` is set, the expected value will be the name of the field. Default: 4 if `--header` is not set else trg_text
   * --sdeferredcol SDEFERREDCOL : Source deferred standoff annotation column (starting in 1). Default: None
   * --tdeferredcol TDEFERREDCOL : Target deferred standoff annotation column (starting in 1). Default: None
   * --ignore_duplicates : Deactivates deduplication (won't add hash or ranking)
@@ -191,7 +203,8 @@ Logging:
 
 ```bash
 python3.7 bifixer/monofixer.py --help
-usage: monofixer.py [-h] [--scol SCOL] [--sdeferredcol SDEFERREDCOL]
+usage: monofixer.py [-h] 
+                    [--scol SCOL] [--sdeferredcol SDEFERREDCOL]
                     [--ignore_characters] [--ignore_long]
                     [--ignore_orthography] [--ignore_detokenization]
                     [--ignore_duplicates] [--aggressive_dedup]
@@ -210,10 +223,16 @@ optional arguments:
   -h, --help            show this help message and exit
 
 Optional:
-  --scol SCOL           Sentence column (starting in 1) (default: 2)
+  --header              Input file will have header (default: False)
+  --output_header OUTPUT_HEADER
+                        Output file header (separated by ',') (default: None)
+  --scol SCOL           Sentence column (starting in 1). The name of the
+                        field is expected instead of the position if --header
+                        is set (default: 2)
   --sdeferredcol SDEFERREDCOL
                         Source deferred standoff annotation column (starting
-                        in 1) (default: None)
+                        in 1). The name of the field is expected instead of
+                        the position if --header is set (default: None)
   --ignore_characters   Doesn't fix mojibake, orthography, or other character
                         issues (default: False)
   --ignore_long         Doesn't ignore too long sentences (default: False)
@@ -253,7 +272,9 @@ Logging:
   * LANG : Sentence language code (2-letter ISO 639-1 code)
 * Optional:
   * --tmp_dir TMP_DIR : Directory for temporary files
-  * --scol SCOL : Position of the source sentence column (starting in 1). Default: 2
+  * --header : Treats the first sentence of the input file as the header row
+  * --output_header OUTPUT_HEADER : Writes the provided fields as the header of the output file and adds additionals fields if necessary (the provided fields will be separated by ',')
+  * --scol SCOL : Position of the source sentence column (starting in 1). If `--header` is set, the expected value will be the name of the field. Default: 2 if `--header` is not set else src_text
   * --sdeferredcol SDEFERREDCOL  Sentence deferred standoff annotation column (starting in 1). Default: None
   * --ignore_duplicates : Deactivates deduplication (won't add hash or ranking)
   * --ignore_long: Doesn't remove too long sentences
