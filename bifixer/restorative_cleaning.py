@@ -699,8 +699,7 @@ def fix(text, lang, chars_rep, chars_pattern):
     # htmlEntity=regex.compile(r'[&][[:space:]]*[#][[:space:]]*[0-9]{2,4}[[:space:]]*[;]?',regex.U)
 
     # Test encode: fix mojibake
-    ftfy_fixed_text = " ".join([ftfy.fix_text_segment(word, uncurl_quotes=False, fix_latin_ligatures=False) for word in text.split()])
-    # ftfy_fixed_text= ftfy.fix_text_segment(stripped_text, fix_entities=True,uncurl_quotes=False,fix_latin_ligatures=False)
+    ftfy_fixed_text = ftfy.fix_text_segment(text, uncurl_quotes=False, fix_latin_ligatures=False)
 
     # nicely_encoded_text = htmlEntity.sub(html.unescape, nicely_encoded_text)
     nicely_encoded_text = html.unescape(ftfy_fixed_text)
