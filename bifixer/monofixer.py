@@ -62,6 +62,7 @@ def initialization():
     groupO.add_argument("--scol", default=2, type=util.check_positive, help ="Sentence column (starting in 1)")
 
     groupO.add_argument("--sdeferredcol", type=util.check_positive, help="Source deferred standoff annotation column (starting in 1)")
+    groupO.add_argument("--sparagraphid", type=util.check_positive, help="Source paragraph identification column (starting in 1)")
 
     #Character fixing
     groupO.add_argument('--ignore_characters', default=False, action='store_true', help="Doesn't fix mojibake, orthography, or other character issues")
@@ -142,6 +143,12 @@ def fix_sentences(args):
         try:
             sentence = parts[args.scol-1]
 
+            # Check optional indexes
+            if args.sdeferredcol:
+                parts[args.sdeferredcol-1]
+            if args.sparagraphid:
+                parts[args.sparagraphid-1]
+
         except IndexError:
             logging.error(traceback.format_exc())
             logging.error("Wrong column index on line " + str(ilines))
@@ -202,8 +209,9 @@ def fix_sentences(args):
                             continue
                     else:
                         new_parts[args.sdeferredcol-1] = parts[args.sdeferredcol-1].rstrip("\n")+"#"+str(sent_num)
-                 
 
+                if args.sparagraphid:
+                        new_parts[args.sparagraphid-1] = parts[args.sparagraphid-1].rstrip("\n")+"#"+str(sent_num)
                                 
             if  (new_parts[args.scol-1]):  #sentence may be empty now because it contained only spaces or similar weird thing
                 if (args.dedup):
