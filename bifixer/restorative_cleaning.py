@@ -8,6 +8,11 @@ import html
 
 global_chars_lang = {}
 
+chars3Re = regex.compile("[\uE000-\uFFFF]")
+chars3Re2 = regex.compile("[\u2000-\u200F]")
+chars3Re3 = regex.compile("\u007F|[\u0080-\u00A0]")
+quotesRegex = regex.compile("(?P<start>[[:alpha:]])\'\'(?P<end>(s|S|t|T|m|M|d|D|re|RE|ll|LL|ve|VE|em|EM)\W)")
+collapse_spaced_entities = regex.compile('([&][ ]*[#][ ]*)([0-9]{2,6})([ ]*[;])')
 
 def getCharsReplacements(lang):
     # languages that use cyrillic alphabet
@@ -224,7 +229,7 @@ def getCharsReplacements(lang):
         'Ã<8C>': 'Ì',
         'Ã<8E>': 'Î',
         'ÃŒ': 'Ì',
-        'Ã<8D>': 'Í',
+        #'Ã<8D>': 'Í',
         'ÃŽ': 'Î',
         'Ã<8F>': 'Ï',
         'Ã¬': 'ì',
@@ -687,20 +692,14 @@ def replace_chars3(match):
     return ""
 
 
-def fix(text, lang, chars_rep, chars_pattern, punct_rep, punct_pattern):
+def fix(text, lang, chars_rep, chars_pattern):
     global global_chars_lang
     global_chars_lang = chars_rep
 
     # htmlEntity=regex.compile(r'[&][[:space:]]*[#][[:space:]]*[0-9]{2,4}[[:space:]]*[;]?',regex.U)
-    chars3Re = regex.compile("[\uE000-\uFFFF]")
-    chars3Re2 = regex.compile("[\u2000-\u200F]")
-    chars3Re3 = regex.compile("\u007F|[\u0080-\u00A0]")
-    quotesRegex = regex.compile("(?P<start>[[:alpha:]])\'\'(?P<end>(s|S|t|T|m|M|d|D|re|RE|ll|LL|ve|VE|em|EM)\W)")
-    collapse_spaced_entities = regex.compile('([&][ ]*[#][ ]*)([0-9]{2,6})([ ]*[;])')
 
     # Test encode: fix mojibake
-    ftfy_fixed_text = " ".join([ftfy.fix_text_segment(word, uncurl_quotes=False, fix_latin_ligatures=False) for word in text.split()])
-    # ftfy_fixed_text= ftfy.fix_text_segment(stripped_text, fix_entities=True,uncurl_quotes=False,fix_latin_ligatures=False)
+    ftfy_fixed_text = ftfy.fix_text_segment(text, uncurl_quotes=False, fix_latin_ligatures=False)
 
     # nicely_encoded_text = htmlEntity.sub(html.unescape, nicely_encoded_text)
     nicely_encoded_text = html.unescape(ftfy_fixed_text)
@@ -715,8 +714,10 @@ def fix(text, lang, chars_rep, chars_pattern, punct_rep, punct_pattern):
     #    if newChar != "\n":
     #        nicely_encoded_text = nicely_encoded_text.replace(substring,newChar)
 
-    normalized_text = chars_pattern.sub(replace_chars, nicely_encoded_text)
+    return chars_pattern.sub(replace_chars, nicely_encoded_text)
 
+def normalize(text, lang, punct_rep, punct_pattern):
+    normalized_text = text
     if lang.lower() != "ja":
         normalized_text = chars3Re.sub(replace_chars3, normalized_text)
     normalized_text = chars3Re2.sub(replace_chars3, normalized_text)

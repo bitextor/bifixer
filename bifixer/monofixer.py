@@ -64,6 +64,7 @@ def initialization():
 
     #Character fixing
     groupO.add_argument('--ignore_characters', default=False, action='store_true', help="Doesn't fix mojibake, orthography, or other character issues")
+    groupO.add_argument('--ignore_normalization', default=False, action='store_true', help="Doesn't normalize punctuation and spaces.")
     
     #Empty sides
     #groupO.add_argument('--ignore_empty', default=False, action='store_true', help="Doesn't remove sentences with empty source or target")        
@@ -121,9 +122,9 @@ def fix_sentences(args):
     if not args.ignore_characters:
         chars_lang, charsRe_lang = restorative_cleaning.getCharsReplacements(args.lang)
 
+    if not args.ignore_normalization:
         punctChars_lang, punctRe_lang = restorative_cleaning.getNormalizedPunctReplacements(args.lang)
-       
-    
+
     if not args.ignore_orthography:    
         replacements_lang = restorative_cleaning.getReplacements(args.lang)
       
@@ -183,9 +184,12 @@ def fix_sentences(args):
                 very_long = True
 
         if not args.ignore_characters and not very_long:        
-           fixed_sentence = restorative_cleaning.fix(sentence, args.lang, chars_lang, charsRe_lang, punctChars_lang, punctRe_lang)
+           fixed_sentence = restorative_cleaning.fix(sentence, args.lang, chars_lang, charsRe_lang)
         else:
             fixed_sentence = sentence
+
+        if not args.ignore_normalization:
+            fixed_sentence = restorative_cleaning.normalize(fixed_sentence, args.lang, punctChars_lang, punctRe_lang)
                 
         if not args.ignore_orthography and not very_long:    
             corrected_sentence = restorative_cleaning.ortho_detok_fix(fixed_sentence, replacements_lang, detoks_lang)

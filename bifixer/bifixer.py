@@ -67,6 +67,7 @@ def initialization():
 
     # Character fixing
     groupO.add_argument('--ignore_characters', default=False, action='store_true', help="Doesn't fix mojibake, orthography, or other character issues")
+    groupO.add_argument('--ignore_normalization', default=False, action='store_true', help="Doesn't normalize punctuation and spaces.")
 
     # Empty sides
     groupO.add_argument('--ignore_empty', default=False, action='store_true', help="Doesn't remove sentences with empty source or target")
@@ -121,6 +122,7 @@ def fix_sentences(args):
         chars_slang, charsRe_slang = restorative_cleaning.getCharsReplacements(args.srclang)
         chars_tlang, charsRe_tlang = restorative_cleaning.getCharsReplacements(args.trglang)
 
+    if not args.ignore_normalization:
         punctChars_slang, punctRe_slang = restorative_cleaning.getNormalizedPunctReplacements(args.srclang)
         punctChars_tlang, punctRe_tlang = restorative_cleaning.getNormalizedPunctReplacements(args.trglang)
 
@@ -196,11 +198,15 @@ def fix_sentences(args):
                 very_long = True
 
             if not args.ignore_characters and not very_long:
-                fixed_source = restorative_cleaning.fix(source_sentence, args.srclang, chars_slang, charsRe_slang, punctChars_slang, punctRe_slang)
-                fixed_target = restorative_cleaning.fix(target_sentence, args.trglang, chars_tlang, charsRe_tlang, punctChars_tlang, punctRe_tlang)
+                fixed_source = restorative_cleaning.fix(source_sentence, args.srclang, chars_slang, charsRe_slang)
+                fixed_target = restorative_cleaning.fix(target_sentence, args.trglang, chars_tlang, charsRe_tlang)
             else:
                 fixed_source = source_sentence.strip(" \n") 
                 fixed_target = target_sentence.strip(" \n") 
+
+            if not args.ignore_normalization and not very_long:
+                fixed_source = restorative_cleaning.normalize(fixed_source, args.srclang, punctChars_slang, punctRe_slang)
+                fixed_target = restorative_cleaning.normalize(fixed_target, args.trglang, punctChars_tlang, punctRe_tlang)
 
             if not args.ignore_orthography and not very_long:
                 corrected_source = restorative_cleaning.ortho_detok_fix(fixed_source, replacements_slang, detoks_slang)
