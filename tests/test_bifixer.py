@@ -27,6 +27,7 @@ class TestEmptySpaces():
     args.scol = 3
     args.tcol = 4
     args.ignore_characters = True
+    args.ignore_normalization = True
     args.ignore_orthography = True
     args.ignore_detokenization = True
     args.ignore_segmentation = True
@@ -64,18 +65,19 @@ class TestCharReplacements:
         correct = "¿La cigüeña bebía café?"
         text_1 = "&#191;La cigüe&#241;a bebía café?"
         text_2 = "Â¿La cigÃ¼eÃ±a bebÃ­a cafÃ©?"
-        fixed_1 = restorative_cleaning.fix(text_1, "es", self.chars_es, self.charsRe_es, self.punct_es, self.punctRe_es)
-        fixed_2 = restorative_cleaning.fix(text_2, "es", self.chars_es, self.charsRe_es, self.punct_es, self.punctRe_es)
+        fixed_1 = restorative_cleaning.fix(text_1, "es", self.chars_es, self.charsRe_es)
+        fixed_2 = restorative_cleaning.fix(text_2, "es", self.chars_es, self.charsRe_es)
         assert fixed_1 == correct
         assert fixed_2 == correct
 
     def test_wrong_alphabet(self):
         text_1 = "поехали !"
-        fixed_1 = restorative_cleaning.fix(text_1, "ru", self.chars_ru, self.charsRe_ru, self.punct_ru, self.punctRe_ru)
+        fixed_1 = restorative_cleaning.normalize(text_1, "ru", self.punct_ru, self.punctRe_ru)
         assert fixed_1 == "поехали!"
 
         text_2 = "   вАтСн     "  # This contains cyrillic chars!
-        fixed_2 = restorative_cleaning.fix(text_2, "en", self.chars_en, self.charsRe_en, self.punct_en, self.punctRe_en)
+        fixed_2 = restorative_cleaning.fix(text_2, "en", self.chars_en, self.charsRe_en)
+        fixed_2 = restorative_cleaning.normalize(fixed_2, "en", self.punct_es, self.charsRe_es)
         assert fixed_2 == "BATCH"
 
         # text_3 = "Αντικύθηρα"
@@ -89,23 +91,25 @@ class TestCharReplacements:
         # Carons: ť
         text_5 = "Iťs me, Mario"
         correct = "It's me, Mario"
-        fixed_5 = restorative_cleaning.fix(text_5, "en", self.chars_en, self.charsRe_en, self.punct_en, self.punctRe_en)
-        fixed_cs = restorative_cleaning.fix(text_5, "cs", self.chars_cs, self.charsRe_cs, self.punct_cs, self.punctRe_cs)
+        fixed_5 = restorative_cleaning.fix(text_5, "en", self.chars_en, self.charsRe_en)
+        fixed_cs = restorative_cleaning.fix(text_5, "cs", self.chars_cs, self.charsRe_cs)
         assert fixed_5 == correct
         assert fixed_cs == text_5
 
     def test_html_entities(self):
         correct = "¿La cigüeña bebía café?"
         text_1 = "&iquest;La cig&uuml;e&ntilde;a beb&iacute;a caf&eacute;?"
-        fixed_1 = restorative_cleaning.fix(text_1, "es", self.chars_es, self.charsRe_es, self.punct_es, self.punctRe_es)
+        fixed_1 = restorative_cleaning.fix(text_1, "es", self.chars_es, self.charsRe_es)
         assert fixed_1 == correct
 
     def test_punct(self):
         text_1 = "  Did I pass  the     acid test  ?  "
         correct = "Did I pass the acid test?"
         correct_fr = "Did I pass the acid test ?"
-        fixed_1 = restorative_cleaning.fix(text_1, "es", self.chars_es, self.charsRe_es, self.punct_es, self.punctRe_es)
-        fixed_fr = restorative_cleaning.fix(text_1, "fr", self.chars_fr, self.charsRe_fr, self.punct_fr, self.punctRe_fr)
+        fixed_1 = restorative_cleaning.fix(text_1, "es", self.chars_es, self.charsRe_es)
+        fixed_1 = restorative_cleaning.normalize(fixed_1, "es", self.punct_es, self.punctRe_es)
+        fixed_fr = restorative_cleaning.fix(text_1, "fr", self.chars_fr, self.charsRe_fr)
+        fixed_fr = restorative_cleaning.normalize(fixed_fr, "fr", self.punct_fr, self.punctRe_fr)
         assert fixed_1 == correct
         assert fixed_fr == correct_fr
 
@@ -177,6 +181,7 @@ class TestDedup:
     args.srclang = "en"
     args.trglang = "es"
     args.ignore_characters = True
+    args.ignore_normalization = True
     args.ignore_orthography = True
     args.ignore_detokenization = True
     args.ignore_segmentation = True
@@ -211,6 +216,7 @@ class TestAggressiveDedup:
     args.srclang = "en"
     args.trglang = "es"
     args.ignore_characters = True
+    args.ignore_normalization = True
     args.ignore_orthography = True
     args.ignore_detokenization = True
     args.ignore_segmentation = True
