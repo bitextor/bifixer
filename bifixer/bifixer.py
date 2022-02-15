@@ -222,10 +222,14 @@ def fix_sentences(args):
                     sent_num += 1
 
                     if args.sdeferredcol and args.tdeferredcol:
-                        if "#" in parts[args.sdeferredcol - 1]:
+                        if "#" in parts[args.sdeferredcol - 1] or "#" in parts[args.tdeferredcol - 1]:
                             # Reconstruction
-                            if sent_num != int(parts[args.sdeferredcol - 1].split('#')[1]):
-                                continue
+                            if "#" in parts[args.sdeferredcol - 1]:
+                                if sent_num != int(parts[args.sdeferredcol - 1].split('#')[1]):
+                                    continue
+                            elif "#" in parts[args.tdeferredcol - 1]:
+                                if sent_num != int(parts[args.tdeferredcol - 1].split('#')[1]):
+                                    continue
                         else:
                             new_parts[args.sdeferredcol - 1] = parts[args.sdeferredcol - 1].rstrip("\n") + "#" + str(sent_num)
                             new_parts[args.tdeferredcol - 1] = parts[args.tdeferredcol - 1].rstrip("\n") + "#" + str(sent_num)
