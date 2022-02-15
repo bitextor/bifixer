@@ -211,6 +211,9 @@ def fix_sentences(args):
                         new_parts[args.sdeferredcol-1] = parts[args.sdeferredcol-1].rstrip("\n")+"#"+str(sent_num)
 
                 if args.sparagraphid:
+                    if "#" in parts[args.sparagraphid-1]:
+                        new_parts[args.sparagraphid-1] = parts[args.sparagraphid-1].rstrip("\n").split("#")[0]+"#"+str(sent_num)
+                    else:
                         new_parts[args.sparagraphid-1] = parts[args.sparagraphid-1].rstrip("\n")+"#"+str(sent_num)
                                 
             if  (new_parts[args.scol-1]):  #sentence may be empty now because it contained only spaces or similar weird thing
