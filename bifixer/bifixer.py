@@ -11,7 +11,7 @@ __version__ = "Version 0.5 # 22/06/2021 # Replacements improvements and fix toke
 import os
 import sys
 import argparse
-import time
+import copy
 import traceback
 import logging
 
@@ -213,7 +213,7 @@ def fix_sentences(args):
                         ranking = 1
                 # if  dedupping: Add extra columnsn with hash and ranking in output file
                 # Restored parts object, with the fixed segment, overwritten for each pair of extra segments,
-                new_parts = parts
+                new_parts = copy.deepcopy(parts)
 
                 new_parts[args.scol - 1] = segment["source_segment"]
                 new_parts[args.tcol - 1] = segment["target_segment"]
@@ -224,7 +224,6 @@ def fix_sentences(args):
                     if args.sdeferredcol and args.tdeferredcol:
                         if "#" in parts[args.sdeferredcol - 1]:
                             # Reconstruction
-
                             if sent_num != int(parts[args.sdeferredcol - 1].split('#')[1]):
                                 continue
                         else:

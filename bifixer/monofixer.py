@@ -10,7 +10,7 @@ __version__ = "Version 0.4 # 03/02/2020 # Monofixer # Marta Bañón"
 import os
 import sys
 import argparse
-import time
+import copy
 import traceback
 import logging 
 
@@ -198,23 +198,21 @@ def fix_sentences(args):
                     ranking = 1
             #if  dedupping: Add extra columnsn with hash and ranking in output file
             #Restored parts object, with the fixed segment, overwritten for each extra segment
-            new_parts = parts                
+            new_parts = copy.deepcopy(parts)
             new_parts[args.scol-1] = segment
             
             if len(segments) > 1:
                 sent_num += 1
                 if args.sdeferredcol:
                     if "#" in parts[args.sdeferredcol-1]:
+                        # Reconstruction
                         if sent_num != int(parts[args.sdeferredcol-1].split('#')[1]):
                             continue
                     else:
                         new_parts[args.sdeferredcol-1] = parts[args.sdeferredcol-1].rstrip("\n")+"#"+str(sent_num)
 
                 if args.sparagraphid:
-                    if "#" in parts[args.sparagraphid-1]:
-                        new_parts[args.sparagraphid-1] = parts[args.sparagraphid-1].rstrip("\n").split("#")[0]+"#"+str(sent_num)
-                    else:
-                        new_parts[args.sparagraphid-1] = parts[args.sparagraphid-1].rstrip("\n")+"#"+str(sent_num)
+                    new_parts[args.sparagraphid-1] = parts[args.sparagraphid-1].rstrip("\n")+"#"+str(sent_num)
                                 
             if  (new_parts[args.scol-1]):  #sentence may be empty now because it contained only spaces or similar weird thing
                 if (args.dedup):
