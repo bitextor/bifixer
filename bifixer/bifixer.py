@@ -12,7 +12,7 @@ __version__ = "Version 0.7 # 15/02/2022 # Disable punctuation normalization # Ja
 import os
 import sys
 import argparse
-import time
+import copy
 import traceback
 import logging
 
@@ -65,6 +65,8 @@ def initialization():
     groupO.add_argument("--tcol", default=4, type=util.check_positive, help="Target sentence column (starting in 1)")
     groupO.add_argument("--sdeferredcol", type=util.check_positive, help="Source deferred standoff annotation column (starting in 1)")
     groupO.add_argument("--tdeferredcol", type=util.check_positive, help="Target deferred standoff annotation column (starting in 1)")
+    groupO.add_argument("--sparagraphid", type=util.check_positive, help="Source paragraph identification column (starting in 1)")
+    groupO.add_argument("--tparagraphid", type=util.check_positive, help="Target paragraph identification column (starting in 1)")
        
 
     # Character fixing
@@ -147,6 +149,14 @@ def fix_sentences(args):
         try:
             source_sentence = parts[args.scol - 1]
             target_sentence = parts[args.tcol - 1]
+
+            # Check optional indexes
+            if args.sdeferredcol and args.tdeferredcol:
+                parts[args.sdeferredcol - 1]
+                parts[args.tdeferredcol - 1]
+            if args.sparagraphid and args.tparagraphid:
+                parts[args.sparagraphid - 1]
+                parts[args.tparagraphid - 1]
         except IndexError:
             logging.error(traceback.format_exc())
             logging.error("Wrong column index on line " + str(ilines))
@@ -204,20 +214,29 @@ def fix_sentences(args):
                         ranking = 1
                 # if  dedupping: Add extra columnsn with hash and ranking in output file
                 # Restored parts object, with the fixed segment, overwritten for each pair of extra segments,
-                new_parts = parts
+                new_parts = copy.deepcopy(parts)
 
                 new_parts[args.scol - 1] = segment["source_segment"]
                 new_parts[args.tcol - 1] = segment["target_segment"]
-                
+
                 if len(segments) > 1:
                     sent_num += 1
+
                     if args.sdeferredcol and args.tdeferredcol:
-                        if "#" in parts[args.sdeferredcol-1]:
-                            if sent_num != int(parts[args.sdeferredcol-1].split('#')[1]):
-                                continue
+                        if "#" in parts[args.sdeferredcol - 1] or "#" in parts[args.tdeferredcol - 1]:
+                            # Reconstruction
+                            if "#" in parts[args.sdeferredcol - 1]:
+                                if sent_num != int(parts[args.sdeferredcol - 1].split('#')[1]):
+                                    continue
+                            elif "#" in parts[args.tdeferredcol - 1]:
+                                if sent_num != int(parts[args.tdeferredcol - 1].split('#')[1]):
+                                    continue
                         else:
-                            new_parts[args.sdeferredcol-1] = parts[args.sdeferredcol-1].rstrip("\n")+"#"+str(sent_num)
-                            new_parts[args.tdeferredcol-1] = parts[args.tdeferredcol-1].rstrip("\n")+"#"+str(sent_num)
+                            new_parts[args.sdeferredcol - 1] = parts[args.sdeferredcol - 1].rstrip("\n") + "#" + str(sent_num)
+                            new_parts[args.tdeferredcol - 1] = parts[args.tdeferredcol - 1].rstrip("\n") + "#" + str(sent_num)
+                    if args.sparagraphid and args.tparagraphid:
+                        new_parts[args.sparagraphid - 1] = parts[args.sparagraphid - 1].rstrip("\n") + "#" + str(sent_num)
+                        new_parts[args.tparagraphid - 1] = parts[args.tparagraphid - 1].rstrip("\n") + "#" + str(sent_num)
 
                 if args.ignore_empty or (new_parts[args.scol - 1] and new_parts[args.tcol - 1]):  # sentence sides may be empty now because it contained only spaces or similar weird thing
                     if (args.dedup):
