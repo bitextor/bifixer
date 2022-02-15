@@ -31,6 +31,10 @@ class TestEmptySpaces():
     args.ignore_orthography = True
     args.ignore_detokenization = True
     args.ignore_segmentation = True
+    args.sdeferredcol = None
+    args.tdeferredcol = None
+    args.sparagraphid = None
+    args.tparagraphid = None
     args.ignore_empty = False
     args.ignore_long = False
     args.input = open("input_test_1.txt", "rt")
@@ -188,6 +192,10 @@ class TestDedup:
     args.ignore_empty = True
     args.ignore_long = True
     args.dedup = True
+    args.sdeferredcol = None
+    args.tdeferredcol = None
+    args.sparagraphid = None
+    args.tparagraphid = None
     args.aggressive_dedup = False
     args.input = open("input_test_2.txt", "rt")
     args.output = open("output_test_dedup.txt", "w+")
@@ -223,6 +231,10 @@ class TestAggressiveDedup:
     args.ignore_empty = True
     args.ignore_long = True
     args.dedup = True
+    args.sdeferredcol = None
+    args.tdeferredcol = None
+    args.sparagraphid = None
+    args.tparagraphid = None
     args.aggressive_dedup = True
     args.input = open("input_test_2.txt", "rt")
     args.output = open("output_test_aggr_dedup.txt", "w+")
