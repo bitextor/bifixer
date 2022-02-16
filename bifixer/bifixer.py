@@ -6,12 +6,13 @@ __version__ = "Version 0.2 # 23/07/2019 # Non-Redis Bifixer # Marta Bañón"
 __version__ = "Version 0.3 # 20/08/2019 # New feature: Segmentation # Marta Bañón"
 __version__ = "Version 0.4 # 15/06/2021 # Easy install # Elsa Sarrías"
 __version__ = "Version 0.5 # 22/06/2021 # Replacements improvements and fix tokenization for Maltese # Jaume Zaragoza"
+__version__ = "Version 0.7 # 15/02/2022 # Disable punctuation normalization # Jaume Zaragoza"
 
 
 import os
 import sys
 import argparse
-import time
+import copy
 import traceback
 import logging
 
@@ -64,6 +65,8 @@ def initialization():
     groupO.add_argument("--tcol", type=util.check_positive if not header else str, default=4 if not header else "trg_text", help="Target sentence column (starting in 1). The name of the field is expected instead of the position if --header is set")
     groupO.add_argument("--sdeferredcol", type=util.check_positive if not header else str, help="Source deferred standoff annotation column (starting in 1). The name of the field is expected instead of the position if --header is set")
     groupO.add_argument("--tdeferredcol", type=util.check_positive if not header else str, help="Target deferred standoff annotation column (starting in 1). The name of the field is expected instead of the position if --header is set")
+    groupO.add_argument("--sparagraphid", type=util.check_positive if not header else str, help="Source paragraph identification column (starting in 1). The name of the field is expected instead of the position if --header is set")
+    groupO.add_argument("--tparagraphid", type=util.check_positive if not header else str, help="Target paragraph identification column (starting in 1). The name of the field is expected instead of the position if --header is set")
 
     # Character fixing
     groupO.add_argument('--ignore_characters', default=False, action='store_true', help="Doesn't fix mojibake, orthography, or other character issues")
@@ -160,6 +163,16 @@ def fix_sentences(args):
                 raise Exception(f"The provided --tdeferredcol '{args.tdeferredcol}' is not in the input header")
 
             args.tdeferredcol = int(header.index(args.tdeferredcol)) + 1
+        if args.sparagraphid:
+            if args.sparagraphid not in header:
+                raise Exception(f"The provided --sparagraphid '{args.sparagraphid}' is not in the input header")
+
+            args.sparagraphid = int(header.index(args.sparagraphid)) + 1
+        if args.tparagraphid:
+            if args.tparagraphid not in header:
+                raise Exception(f"The provided --tparagraphid '{args.tparagraphid}' is not in the input header")
+
+            args.tparagraphid = int(header.index(args.tparagraphid)) + 1
 
     if args.output_header:
         if args.header:
@@ -185,6 +198,14 @@ def fix_sentences(args):
         try:
             source_sentence = parts[args.scol - 1]
             target_sentence = parts[args.tcol - 1]
+
+            # Check optional indexes
+            if args.sdeferredcol and args.tdeferredcol:
+                parts[args.sdeferredcol - 1]
+                parts[args.tdeferredcol - 1]
+            if args.sparagraphid and args.tparagraphid:
+                parts[args.sparagraphid - 1]
+                parts[args.tparagraphid - 1]
         except IndexError:
             logging.error(traceback.format_exc())
             logging.error("Wrong column index on line " + str(ilines))
@@ -242,20 +263,29 @@ def fix_sentences(args):
                         ranking = 1
                 # if  dedupping: Add extra columnsn with hash and ranking in output file
                 # Restored parts object, with the fixed segment, overwritten for each pair of extra segments,
-                new_parts = parts
+                new_parts = copy.deepcopy(parts)
 
                 new_parts[args.scol - 1] = segment["source_segment"]
                 new_parts[args.tcol - 1] = segment["target_segment"]
-                
+
                 if len(segments) > 1:
                     sent_num += 1
+
                     if args.sdeferredcol and args.tdeferredcol:
-                        if "#" in parts[args.sdeferredcol-1]:
-                            if sent_num != int(parts[args.sdeferredcol-1].split('#')[1]):
-                                continue
+                        if "#" in parts[args.sdeferredcol - 1] or "#" in parts[args.tdeferredcol - 1]:
+                            # Reconstruction
+                            if "#" in parts[args.sdeferredcol - 1]:
+                                if sent_num != int(parts[args.sdeferredcol - 1].split('#')[1]):
+                                    continue
+                            elif "#" in parts[args.tdeferredcol - 1]:
+                                if sent_num != int(parts[args.tdeferredcol - 1].split('#')[1]):
+                                    continue
                         else:
-                            new_parts[args.sdeferredcol-1] = parts[args.sdeferredcol-1].rstrip("\n")+"#"+str(sent_num)
-                            new_parts[args.tdeferredcol-1] = parts[args.tdeferredcol-1].rstrip("\n")+"#"+str(sent_num)
+                            new_parts[args.sdeferredcol - 1] = parts[args.sdeferredcol - 1].rstrip("\n") + "#" + str(sent_num)
+                            new_parts[args.tdeferredcol - 1] = parts[args.tdeferredcol - 1].rstrip("\n") + "#" + str(sent_num)
+                    if args.sparagraphid and args.tparagraphid:
+                        new_parts[args.sparagraphid - 1] = parts[args.sparagraphid - 1].rstrip("\n") + "#" + str(sent_num)
+                        new_parts[args.tparagraphid - 1] = parts[args.tparagraphid - 1].rstrip("\n") + "#" + str(sent_num)
 
                 if args.ignore_empty or (new_parts[args.scol - 1] and new_parts[args.tcol - 1]):  # sentence sides may be empty now because it contained only spaces or similar weird thing
                     if (args.dedup):

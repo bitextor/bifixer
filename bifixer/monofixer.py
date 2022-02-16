@@ -10,7 +10,7 @@ __version__ = "Version 0.4 # 03/02/2020 # Monofixer # Marta Bañón"
 import os
 import sys
 import argparse
-import time
+import copy
 import traceback
 import logging 
 
@@ -61,6 +61,7 @@ def initialization():
     groupO.add_argument("--output_header", action='store_true' if header else None, help="Output file header (separated by ','). If --header is set, those values will be used if this flag is set")
     groupO.add_argument("--scol", type=util.check_positive if not header else str, default=2 if not header else "src_text", help ="Sentence column (starting in 1). The name of the field is expected instead of the position if --header is set")
     groupO.add_argument("--sdeferredcol", type=util.check_positive if not header else str, help="Source deferred standoff annotation column (starting in 1). The name of the field is expected instead of the position if --header is set")
+    groupO.add_argument("--sparagraphid", type=util.check_positive if not header else str, help="Source paragraph identification column (starting in 1). The name of the field is expected instead of the position if --header is set")
 
     #Character fixing
     groupO.add_argument('--ignore_characters', default=False, action='store_true', help="Doesn't fix mojibake, orthography, or other character issues")
@@ -148,6 +149,11 @@ def fix_sentences(args):
                 raise Exception(f"The provided --sdeferredcol '{args.sdeferredcol}' is not in the input header")
 
             args.sdeferredcol = int(header.index(args.sdeferredcol)) + 1
+        if args.sparagraphid:
+            if args.sparagraphid not in header:
+                raise Exception(f"The provided --sparagraphid '{args.sparagraphid}' is not in the input header")
+
+            args.sparagraphid = int(header.index(args.sparagraphid)) + 1
 
     if args.output_header:
         if args.header:
@@ -172,6 +178,12 @@ def fix_sentences(args):
 
         try:
             sentence = parts[args.scol-1]
+
+            # Check optional indexes
+            if args.sdeferredcol:
+                parts[args.sdeferredcol-1]
+            if args.sparagraphid:
+                parts[args.sparagraphid-1]
 
         except IndexError:
             logging.error(traceback.format_exc())
@@ -222,19 +234,21 @@ def fix_sentences(args):
                     ranking = 1
             #if  dedupping: Add extra columnsn with hash and ranking in output file
             #Restored parts object, with the fixed segment, overwritten for each extra segment
-            new_parts = parts                
+            new_parts = copy.deepcopy(parts)
             new_parts[args.scol-1] = segment
             
             if len(segments) > 1:
                 sent_num += 1
                 if args.sdeferredcol:
                     if "#" in parts[args.sdeferredcol-1]:
+                        # Reconstruction
                         if sent_num != int(parts[args.sdeferredcol-1].split('#')[1]):
                             continue
                     else:
                         new_parts[args.sdeferredcol-1] = parts[args.sdeferredcol-1].rstrip("\n")+"#"+str(sent_num)
-                 
 
+                if args.sparagraphid:
+                    new_parts[args.sparagraphid-1] = parts[args.sparagraphid-1].rstrip("\n")+"#"+str(sent_num)
                                 
             if  (new_parts[args.scol-1]):  #sentence may be empty now because it contained only spaces or similar weird thing
                 if (args.dedup):
