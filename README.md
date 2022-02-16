@@ -94,8 +94,7 @@ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 ### Bifixer ###
 
 ```bash
-usage: bifixer.py [-h] [--header] [--output_header OUTPUT_HEADER]
-                  [--scol SCOL] [--tcol TCOL]
+usage: bifixer.py [-h] [--header] [--scol SCOL] [--tcol TCOL]
                   [--sdeferredcol SDEFERREDCOL] [--tdeferredcol TDEFERREDCOL]
                   [--ignore_characters] [--ignore_empty] [--ignore_long]
                   [--ignore_orthography] [--ignore_detokenization]
@@ -117,8 +116,6 @@ optional arguments:
 
 Optional:
   --header              Input file will have header (default: False)
-  --output_header OUTPUT_HEADER
-                        Output file header (separated by ',') (default: None)
   --scol SCOL           Source sentence column (starting in 1). The name of
                         the field is expected instead of the position if
                         --header is set (default: 3)
@@ -175,8 +172,7 @@ Logging:
   * TRG LANG : Target language code (2-letter ISO 639-1 code)
 * Optional:
   * --tmp_dir TMP_DIR : Directory for temporary files
-  * --header : Treats the first sentence of the input file as the header row
-  * --output_header OUTPUT_HEADER : Writes the provided fields as the header of the output file and adds additionals fields if necessary (the provided fields will be separated by ',')
+  * --header : Treats the first sentence of the input file as the header row. If set, the output will contain a header as well
   * --scol SCOL : Position of the source sentence column (starting in 1). If `--header` is set, the expected value will be the name of the field. Default: 3 if `--header` is not set else src_text
   * --tcol TCOL : Position of the target sentence column (starting in 1). If `--header` is set, the expected value will be the name of the field. Default: 4 if `--header` is not set else trg_text
   * --sdeferredcol SDEFERREDCOL : Source deferred standoff annotation column (starting in 1). Default: None
@@ -224,8 +220,6 @@ optional arguments:
 
 Optional:
   --header              Input file will have header (default: False)
-  --output_header OUTPUT_HEADER
-                        Output file header (separated by ',') (default: None)
   --scol SCOL           Sentence column (starting in 1). The name of the
                         field is expected instead of the position if --header
                         is set (default: 2)
@@ -272,8 +266,7 @@ Logging:
   * LANG : Sentence language code (2-letter ISO 639-1 code)
 * Optional:
   * --tmp_dir TMP_DIR : Directory for temporary files
-  * --header : Treats the first sentence of the input file as the header row
-  * --output_header OUTPUT_HEADER : Writes the provided fields as the header of the output file and adds additionals fields if necessary (the provided fields will be separated by ',')
+  * --header : Treats the first sentence of the input file as the header row. If set, the output will contain a header as well
   * --scol SCOL : Position of the source sentence column (starting in 1). If `--header` is set, the expected value will be the name of the field. Default: 2 if `--header` is not set else src_text
   * --sdeferredcol SDEFERREDCOL  Sentence deferred standoff annotation column (starting in 1). Default: None
   * --ignore_duplicates : Deactivates deduplication (won't add hash or ranking)

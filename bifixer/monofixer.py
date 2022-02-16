@@ -58,7 +58,6 @@ def initialization():
     groupO = parser.add_argument_group('Optional')
     #Format
     groupO.add_argument("--header", action='store_true', help="Input file will have header")
-    groupO.add_argument("--output_header", action='store_true' if header else None, help="Output file header (separated by ','). If --header is set, those values will be used if this flag is set")
     groupO.add_argument("--scol", type=util.check_positive if not header else str, default=2 if not header else "src_text", help ="Sentence column (starting in 1). The name of the field is expected instead of the position if --header is set")
     groupO.add_argument("--sdeferredcol", type=util.check_positive if not header else str, help="Source deferred standoff annotation column (starting in 1). The name of the field is expected instead of the position if --header is set")
     groupO.add_argument("--sparagraphid", type=util.check_positive if not header else str, help="Source paragraph identification column (starting in 1). The name of the field is expected instead of the position if --header is set")
@@ -155,17 +154,8 @@ def fix_sentences(args):
 
             args.sparagraphid = int(header.index(args.sparagraphid)) + 1
 
-    if args.output_header:
-        if args.header:
-            if not 'header' in locals():
-                raise Exception("Unexpected: 'header' should be defined")
-
-            output_header = header
-        else:
-            output_header = args.output_header.strip().split(",")
-
         # Write the output header once
-        args.output.write("\t".join(output_header))
+        args.output.write("\t".join(header))
 
         if args.dedup:
             args.output.write("\tbifixer_hash\tbifixer_score")
