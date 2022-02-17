@@ -650,6 +650,10 @@ def getNormalizedPunctReplacements(lang):
             "¿ ": "¿",
             "¡ ": "¡"
         }
+    if lang.lower() == 'sl':
+        del replacements[' ...']
+        del replacements[' :']
+
     rep = dict((re.escape(k), v) for k, v in replacements.items())
     pattern = re.compile("|".join(rep.keys()))
     return rep, pattern
