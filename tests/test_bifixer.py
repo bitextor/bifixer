@@ -35,6 +35,7 @@ class TestEmptySpaces():
     args.tdeferredcol = None
     args.sparagraphid = None
     args.tparagraphid = None
+    args.header = None
     args.ignore_empty = False
     args.ignore_long = False
     args.input = open("input_test_1.txt", "rt")
@@ -196,6 +197,7 @@ class TestDedup:
     args.tdeferredcol = None
     args.sparagraphid = None
     args.tparagraphid = None
+    args.header = None
     args.aggressive_dedup = False
     args.input = open("input_test_2.txt", "rt")
     args.output = open("output_test_dedup.txt", "w+")
@@ -235,6 +237,7 @@ class TestAggressiveDedup:
     args.tdeferredcol = None
     args.sparagraphid = None
     args.tparagraphid = None
+    args.header = None
     args.aggressive_dedup = True
     args.input = open("input_test_2.txt", "rt")
     args.output = open("output_test_aggr_dedup.txt", "w+")
