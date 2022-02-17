@@ -58,6 +58,7 @@ class TestCharReplacements:
     chars_fr, charsRe_fr = restorative_cleaning.getCharsReplacements("fr")
     # chars_el, charsRe_el = restorative_cleaning.getCharsReplacements("el")
     chars_cs, charsRe_cs = restorative_cleaning.getCharsReplacements("cs")
+    chars_sl, charsRe_sl = restorative_cleaning.getCharsReplacements("sl")
 
     punct_en, punctRe_en = restorative_cleaning.getNormalizedPunctReplacements("en")
     punct_ru, punctRe_ru = restorative_cleaning.getNormalizedPunctReplacements("ru")
@@ -74,6 +75,16 @@ class TestCharReplacements:
         fixed_2 = restorative_cleaning.fix(text_2, "es", self.chars_es, self.charsRe_es)
         assert fixed_1 == correct
         assert fixed_2 == correct
+
+    def test_encoding(self):
+        correct_1 = "Brošure"
+        text_1 = "BroĹĄure"
+        correct_2 = "Možnost polnjenja doma (110-240V) in v avtu (12V). Uporaba za nas... več o tem 3"
+        text_2 = "MoĹľnost polnjenja doma (110-240V) in v avtu (12V). Uporaba za nas... veÄŤ o tem 3"
+        fixed_1 = restorative_cleaning.fix(text_1, "sl", self.chars_sl, self.charsRe_sl)
+        fixed_2 = restorative_cleaning.fix(text_2, "sl", self.chars_sl, self.charsRe_sl)
+        assert fixed_1 == correct_1
+        assert fixed_2 == correct_2
 
     def test_wrong_alphabet(self):
         text_1 = "поехали !"
