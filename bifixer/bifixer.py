@@ -41,6 +41,7 @@ def initialization():
 
     ilines = 0
     olines = 0
+    header = "--header" in sys.argv
 
     logging.info("Processing arguments...")
     parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]), formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
@@ -55,19 +56,16 @@ def initialization():
     # Target language
     parser.add_argument("trglang", type=str, help="Target language (TL) of the input")
 
-    # Mandatory parameters
-    groupM = parser.add_argument_group('Mandatory')
-
     # Options group
     groupO = parser.add_argument_group('Optional')
     # Format
-    groupO.add_argument("--scol", default=3, type=util.check_positive, help="Source sentence column (starting in 1)")
-    groupO.add_argument("--tcol", default=4, type=util.check_positive, help="Target sentence column (starting in 1)")
-    groupO.add_argument("--sdeferredcol", type=util.check_positive, help="Source deferred standoff annotation column (starting in 1)")
-    groupO.add_argument("--tdeferredcol", type=util.check_positive, help="Target deferred standoff annotation column (starting in 1)")
-    groupO.add_argument("--sparagraphid", type=util.check_positive, help="Source paragraph identification column (starting in 1)")
-    groupO.add_argument("--tparagraphid", type=util.check_positive, help="Target paragraph identification column (starting in 1)")
-       
+    groupO.add_argument("--header", action='store_true', help="Input file will have header")
+    groupO.add_argument("--scol", type=util.check_positive if not header else str, default=3 if not header else "src_text", help="Source sentence column (starting in 1). The name of the field is expected instead of the position if --header is set")
+    groupO.add_argument("--tcol", type=util.check_positive if not header else str, default=4 if not header else "trg_text", help="Target sentence column (starting in 1). The name of the field is expected instead of the position if --header is set")
+    groupO.add_argument("--sdeferredcol", type=util.check_positive if not header else str, help="Source deferred standoff annotation column (starting in 1). The name of the field is expected instead of the position if --header is set")
+    groupO.add_argument("--tdeferredcol", type=util.check_positive if not header else str, help="Target deferred standoff annotation column (starting in 1). The name of the field is expected instead of the position if --header is set")
+    groupO.add_argument("--sparagraphid", type=util.check_positive if not header else str, help="Source paragraph identification column (starting in 1). The name of the field is expected instead of the position if --header is set")
+    groupO.add_argument("--tparagraphid", type=util.check_positive if not header else str, help="Target paragraph identification column (starting in 1). The name of the field is expected instead of the position if --header is set")
 
     # Character fixing
     groupO.add_argument('--ignore_characters', default=False, action='store_true', help="Doesn't fix mojibake, orthography, or other character issues")
@@ -142,6 +140,47 @@ def fix_sentences(args):
         source_segmenter = segmenter.NaiveSegmenter(args.srclang, args.segmenter)
         target_segmenter = segmenter.NaiveSegmenter(args.trglang, args.segmenter)
 
+    if args.header:
+        header = next(args.input).strip().split("\t")
+
+        # Transform fields to idxs
+        if args.scol not in header:
+            raise Exception(f"The provided --scol '{args.scol}' is not in the input header")
+        if args.tcol not in header:
+            raise Exception(f"The provided --tcol '{args.tcol}' is not in the input header")
+
+        args.scol = int(header.index(args.scol)) + 1
+        args.tcol = int(header.index(args.tcol)) + 1
+
+        if args.sdeferredcol:
+            if args.sdeferredcol not in header:
+                raise Exception(f"The provided --sdeferredcol '{args.sdeferredcol}' is not in the input header")
+
+            args.sdeferredcol = int(header.index(args.sdeferredcol)) + 1
+        if args.tdeferredcol:
+            if args.tdeferredcol not in header:
+                raise Exception(f"The provided --tdeferredcol '{args.tdeferredcol}' is not in the input header")
+
+            args.tdeferredcol = int(header.index(args.tdeferredcol)) + 1
+        if args.sparagraphid:
+            if args.sparagraphid not in header:
+                raise Exception(f"The provided --sparagraphid '{args.sparagraphid}' is not in the input header")
+
+            args.sparagraphid = int(header.index(args.sparagraphid)) + 1
+        if args.tparagraphid:
+            if args.tparagraphid not in header:
+                raise Exception(f"The provided --tparagraphid '{args.tparagraphid}' is not in the input header")
+
+            args.tparagraphid = int(header.index(args.tparagraphid)) + 1
+
+        # Write the output header once
+        args.output.write("\t".join(header))
+
+        if args.dedup:
+            args.output.write("\tbifixer_hash\tbifixer_score")
+
+        args.output.write("\n")
+
     for i in args.input:
         ilines += 1
         parts = i.split("\t")
@@ -197,7 +236,7 @@ def fix_sentences(args):
             sent_num = 0
             for segment in segments:
                 if not args.ignore_empty and (len(segment["source_segment"]) == 0 or len(segment["target_segment"]) == 0):
-                    continue;
+                    continue
                 if args.dedup:
                     if args.aggressive_dedup:
                         normalized_src = unidecode(segment["source_segment"].lower().translate(remove_non_alpha))

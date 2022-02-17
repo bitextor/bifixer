@@ -41,28 +41,26 @@ def initialization():
     
     ilines = 0    
     olines = 0
+    header = "--header" in sys.argv
     
     logging.info("Processing arguments...")
     parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]), formatter_class=argparse.ArgumentDefaultsHelpFormatter, description=__doc__)
     
     # Mandatory parameters
     #Input file
-    parser.add_argument('input', type=argparse.FileType('rt'), default=None, help="Tab-separated file to be fixed")  
+    parser.add_argument('input', type=argparse.FileType('rt'), default=None, help="Tab-separated file to be fixed")
     #Output file (corpus)
-    parser.add_argument('output', type=argparse.FileType('w'), default=sys.stdout, help="Fixed corpus")        
+    parser.add_argument('output', type=argparse.FileType('w'), default=sys.stdout, help="Fixed corpus")
     #Language
     parser.add_argument("lang", type=str, help="Language of the input")
-
-    #Mandatory parameters
-    groupM = parser.add_argument_group('Mandatory')
 
     # Options group
     groupO = parser.add_argument_group('Optional')
     #Format
-    groupO.add_argument("--scol", default=2, type=util.check_positive, help ="Sentence column (starting in 1)")
-
-    groupO.add_argument("--sdeferredcol", type=util.check_positive, help="Source deferred standoff annotation column (starting in 1)")
-    groupO.add_argument("--sparagraphid", type=util.check_positive, help="Source paragraph identification column (starting in 1)")
+    groupO.add_argument("--header", action='store_true', help="Input file will have header")
+    groupO.add_argument("--scol", type=util.check_positive if not header else str, default=2 if not header else "src_text", help ="Sentence column (starting in 1). The name of the field is expected instead of the position if --header is set")
+    groupO.add_argument("--sdeferredcol", type=util.check_positive if not header else str, help="Source deferred standoff annotation column (starting in 1). The name of the field is expected instead of the position if --header is set")
+    groupO.add_argument("--sparagraphid", type=util.check_positive if not header else str, help="Source paragraph identification column (starting in 1). The name of the field is expected instead of the position if --header is set")
 
     #Character fixing
     groupO.add_argument('--ignore_characters', default=False, action='store_true', help="Doesn't fix mojibake, orthography, or other character issues")
@@ -136,6 +134,34 @@ def fix_sentences(args):
     if not args.ignore_segmentation:
         lang_segmenter = segmenter.NaiveSegmenter(args.lang, args.segmenter)
 
+    if args.header:
+        header = next(args.input).strip().split("\t")
+
+        # Transform fields to idxs
+        if args.scol not in header:
+            raise Exception(f"The provided --scol '{args.scol}' is not in the input header")
+
+        args.scol = int(header.index(args.scol)) + 1
+
+        if args.sdeferredcol:
+            if args.sdeferredcol not in header:
+                raise Exception(f"The provided --sdeferredcol '{args.sdeferredcol}' is not in the input header")
+
+            args.sdeferredcol = int(header.index(args.sdeferredcol)) + 1
+        if args.sparagraphid:
+            if args.sparagraphid not in header:
+                raise Exception(f"The provided --sparagraphid '{args.sparagraphid}' is not in the input header")
+
+            args.sparagraphid = int(header.index(args.sparagraphid)) + 1
+
+        # Write the output header once
+        args.output.write("\t".join(header))
+
+        if args.dedup:
+            args.output.write("\tbifixer_hash\tbifixer_score")
+
+        args.output.write("\n")
+
     for i in args.input:
         ilines += 1
         parts = i.split("\t")
@@ -183,7 +209,7 @@ def fix_sentences(args):
 
         for segment in segments:
             if len(segment) == 0:
-                continue;
+                continue
             if args.dedup:
                 if args.aggressive_dedup:
                     #normalized_sentence = unidecode.unidecode(segment.lower().replace(" ", "").translate(str.maketrans('', '', string.punctuation+string.digits)))
