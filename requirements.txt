@@ -1,6 +1,6 @@
-ftfy>=6.0.1
+ftfy>=6
 nltk>=3.5
-pytest>=5.1.2
-regex>=2019.8.19
-Unidecode==1.2.0
+pytest
+regex
+Unidecode
 xxhash>=2.0.0
