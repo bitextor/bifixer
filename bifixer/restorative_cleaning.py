@@ -648,6 +648,7 @@ def getNormalizedPunctReplacements(lang):
             "{ ": "{",
             "[ ": "[",
             "¿ ": "¿",
+            ",,.": ".",
             "¡ ": "¡"
         }
     if lang.lower() == 'sl':
