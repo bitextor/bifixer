@@ -277,7 +277,9 @@ def fix_sentences(args):
                         new_parts[args.sparagraphid - 1] = parts[args.sparagraphid - 1].rstrip("\n") + "#" + str(sent_num)
                         new_parts[args.tparagraphid - 1] = parts[args.tparagraphid - 1].rstrip("\n") + "#" + str(sent_num)
 
-                if args.ignore_empty or (new_parts[args.scol - 1] and new_parts[args.tcol - 1]):  # sentence sides may be empty now because it contained only spaces or similar weird thing
+                # sentence sides may be empty now because it contained only spaces or similar weird thing
+                # for sentences containing only spaces but not normalized, strip them
+                if args.ignore_empty or (new_parts[args.scol - 1].strip() and new_parts[args.tcol - 1].strip()):
                     if (args.dedup):
                         # Remove the "/n" at the end of the last item
                         new_parts[-1] = str(new_parts[-1]).strip("\n")

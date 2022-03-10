@@ -239,8 +239,9 @@ def fix_sentences(args):
 
                 if args.sparagraphid:
                     new_parts[args.sparagraphid-1] = parts[args.sparagraphid-1].rstrip("\n")+"#"+str(sent_num)
-                                
-            if  (new_parts[args.scol-1]):  #sentence may be empty now because it contained only spaces or similar weird thing
+            # sentence may be empty now because it contained only spaces or similar weird thing
+            # for a sentence containing only spaces but not normalized, strip it
+            if  (new_parts[args.scol-1].strip()):
                 if (args.dedup):
                     #Remove the "/n" at the end of the last item
                     new_parts[-1]= str(new_parts[-1]).strip("\n")
