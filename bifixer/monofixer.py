@@ -217,7 +217,10 @@ def fix_sentences(args):
                     hash = xxh64(normalized_sentence).hexdigest()
                         
                     charsum = sum(ord(ch) for ch in segment)
-                    ranking = round(charsum/len(segment),2)
+                    if len(segment) == 0:
+                        ranking = 0.0
+                    else:
+                        ranking = round(charsum/len(segment),2)
 
                 else:
                     hash = xxh64(segment).hexdigest()
