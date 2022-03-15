@@ -67,7 +67,7 @@ def initialization():
     groupO.add_argument('--ignore_normalization', default=False, action='store_true', help="Doesn't normalize punctuation and spaces.")
     
     #Empty sides
-    #groupO.add_argument('--ignore_empty', default=False, action='store_true', help="Doesn't remove sentences with empty source or target")        
+    groupO.add_argument('--ignore_empty', default=False, action='store_true', help="Doesn't remove empty sentences")
 
     # Too long sentences
     groupO.add_argument('--ignore_long', default=False, action='store_true', help="Doesn't ignore too long sentences")
@@ -208,7 +208,7 @@ def fix_sentences(args):
         sent_num = 0        
 
         for segment in segments:
-            if len(segment) == 0:
+            if not args.ignore_empty and len(segment) == 0:
                 continue
             if args.dedup:
                 if args.aggressive_dedup:
@@ -217,7 +217,10 @@ def fix_sentences(args):
                     hash = xxh64(normalized_sentence).hexdigest()
                         
                     charsum = sum(ord(ch) for ch in segment)
-                    ranking = round(charsum/len(segment),2)
+                    if len(segment) == 0:
+                        ranking = 0.0
+                    else:
+                        ranking = round(charsum/len(segment),2)
 
                 else:
                     hash = xxh64(segment).hexdigest()
@@ -239,8 +242,9 @@ def fix_sentences(args):
 
                 if args.sparagraphid:
                     new_parts[args.sparagraphid-1] = parts[args.sparagraphid-1].rstrip("\n")+"#"+str(sent_num)
-                                
-            if  (new_parts[args.scol-1]):  #sentence may be empty now because it contained only spaces or similar weird thing
+            # sentence may be empty now because it contained only spaces or similar weird thing
+            # for a sentence containing only spaces but not normalized, strip it
+            if args.ignore_empty or (new_parts[args.scol-1].strip()):
                 if (args.dedup):
                     #Remove the "/n" at the end of the last item
                     new_parts[-1]= str(new_parts[-1]).strip("\n")
