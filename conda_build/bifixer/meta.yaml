@@ -1,5 +1,5 @@
 
-{% set rdir = ".." %}
+{% set rdir = "../.." %}
 {% set data = load_setup_py_data(setup_file=''+rdir+'/setup.py', from_recipe_dir=True) %}
 
 package:
