@@ -73,6 +73,13 @@ Or even easier, install directly from PyPI:
 ```bash
 pip install bifixer
 ```
+
+Also, you can install the conda package:
+
+```bash
+conda install -c bitextor bifixer
+```
+
 After installing, two executables (`bifixer` and `monofixer`) will be available to be run.
 
 ### Loomchild segmenter ###
