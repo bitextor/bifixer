@@ -66,7 +66,10 @@ def getCharsReplacements(lang):
     # Annoying characters, common for all languages
     chars = {
         '\u2028': ' ',  # line separators (\n)
-        '&#10;': "",  # \n
+        '&#10;': " ",  # \n
+        '&#9;': " ",  # \t
+        '&#10': " ",  # \n
+        '&#9': " ",  # \t
         '\n': "",
         '\u000C' : " ", # \v vertical tab
         '\u000D' : " ", # \f form feed
@@ -715,25 +718,11 @@ def fix(text, lang, chars_rep, chars_pattern):
     global global_chars_lang
     global_chars_lang = chars_rep
 
-    # htmlEntity=regex.compile(r'[&][[:space:]]*[#][[:space:]]*[0-9]{2,4}[[:space:]]*[;]?',regex.U)
-
-    # Test encode: fix mojibake
     ftfy_fixed_text = ftfy.fix_text_segment(text, uncurl_quotes=False, fix_latin_ligatures=False)
 
-    # nicely_encoded_text = htmlEntity.sub(html.unescape, nicely_encoded_text)
-    nicely_encoded_text = html.unescape(ftfy_fixed_text)
+    replaced_text = chars_pattern.sub(replace_chars, ftfy_fixed_text)
 
-    # First replacing all HTML entities
-    # for substring in htmlEntity.findall(nicely_encoded_text):
-    #    code=substring.replace(' ','')[2:].replace(';','')
-    #    try:
-    #        newChar=chr(int(code))
-    #    except ValueError:
-    #        newChar=code    
-    #    if newChar != "\n":
-    #        nicely_encoded_text = nicely_encoded_text.replace(substring,newChar)
-
-    return chars_pattern.sub(replace_chars, nicely_encoded_text)
+    return html.unescape(replaced_text)
 
 def normalize(text, lang, punct_rep, punct_pattern):
     normalized_text = text
