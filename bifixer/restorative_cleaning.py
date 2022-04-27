@@ -14,6 +14,14 @@ chars3Re3 = regex.compile("\u007F|[\u0080-\u00A0]")
 quotesRegex = regex.compile("(?P<start>[[:alpha:]])\'\'(?P<end>(s|S|t|T|m|M|d|D|re|RE|ll|LL|ve|VE|em|EM)\W)")
 collapse_spaced_entities = regex.compile('([&][ ]*[#][ ]*)([0-9]{2,6})([ ]*[;])')
 
+#https://en.wikipedia.org/wiki/CJK_Symbols_and_Punctuation
+cjk_langs = [
+    "ja", #japanese
+    "ko", #korean
+    "zh", #chinese
+    "zh-hant" #traditional chinese
+]
+
 def getCharsReplacements(lang):
     # languages that use cyrillic alphabet
     # Check https://www.tug.org/TUGboat/tb17-2/tb51pisk.pdf and/or
@@ -62,6 +70,8 @@ def getCharsReplacements(lang):
         "sr",  # serbian
         "yo"  # yoruba
     ]
+    
+
 
     # Annoying characters, common for all languages
     chars = {
@@ -578,7 +588,7 @@ def getCharsReplacements(lang):
         chars['&piv;'] = 'ϖ'  # pi symbol ϖ
         chars['\u03BF'] = 'ο'  # GREEK SMALL LETTER OMICRON
 
-    if lang.lower() != "ja":
+    if lang.lower() not in cjk_langs:
         chars['\uFF5B'] = '{'  # ｛
         chars['\uFF5D'] = '}'  # ｝
         chars['\uFF08'] = '('  # （
@@ -726,7 +736,7 @@ def fix(text, lang, chars_rep, chars_pattern):
 
 def normalize(text, lang, punct_rep, punct_pattern):
     normalized_text = text
-    if lang.lower() != "ja":
+    if lang.lower() not in cjk_langs:
         normalized_text = chars3Re.sub(replace_chars3, normalized_text)
     normalized_text = chars3Re2.sub(replace_chars3, normalized_text)
     normalized_text = chars3Re3.sub(replace_chars3, normalized_text)
