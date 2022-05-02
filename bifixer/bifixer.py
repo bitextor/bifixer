@@ -48,7 +48,7 @@ def initialization():
 
     # Mandatory parameters
     # Input file
-    parser.add_argument('input', type=argparse.FileType('rt'), default=None, help="Tab-separated files to be bifixed")
+    parser.add_argument('input', type=argparse.FileType('rt', encoding='UTF-8'), default=None, help="Tab-separated files to be bifixed")
     # Output file (corpus)
     parser.add_argument('output', type=argparse.FileType('w'), default=sys.stdout, help="Fixed corpus")
     # Source language
