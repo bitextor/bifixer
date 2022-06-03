@@ -609,6 +609,7 @@ def getCharsReplacements(lang):
         chars['\uFF1E'] = '>'  # ＞
         chars['\uFF3F'] = '_'  # ＿
         chars['\uFF40'] = "'"  # ｀
+        '''
     else:
         chars['{'] = '\uFF5B'  # ｛
         chars['}'] = '\uFF5D'  # ｝
@@ -632,6 +633,7 @@ def getCharsReplacements(lang):
         chars['>'] = '\uFF1E'  # ＞
         chars['_'] = '\uFF3F'  # ＿
         chars["'"] = '\uFF40'  # ｀
+        '''
 
     charsRe = re.compile("(\\" + '|\\'.join(chars.keys()) + ")")
 
