@@ -11,6 +11,7 @@ Tool to fix bitexts and tag near-duplicates for removal.
   * Replaces characters from wrong alphabets with the correct ones
   * Deactivate this feature with `--ignore_characters` 
 * Normalizes punctuation and spaces (deactivate this feature with `--ignore_normalization`)
+* Removes HTML tags (deactivate this feature with `--ignore_html`)
 * Fixes common orthographic errors for some languages:
   * Currently: Danish, German, English, Spanish, Dutch, Norwegian, Portuguese and Turkish
   * Deactivate this feature with `--ignore_orthography`
@@ -108,7 +109,7 @@ usage: bifixer.py [-h] [--header] [--scol SCOL] [--tcol TCOL]
                   [--ignore_characters] [--ignore_empty] [--ignore_long]
                   [--ignore_orthography] [--ignore_detokenization]
                   [--ignore_duplicates] [--aggressive_dedup]
-                  [--ignore_segmentation]
+                  [--ignore_segmentation] [--ignore_html]
                   [--words_before_segmenting WORDS_BEFORE_SEGMENTING]
                   [--segmenter {nltk,loomchild}] [--tmp_dir TMP_DIR] [-q]
                   [--debug] [--logfile LOGFILE] [-v]
@@ -145,6 +146,7 @@ Optional:
                         (default: False)
   --ignore_long         Doesn't ignore too long sentences (default: False)
   --ignore_orthography  Doesn't apply orthography fixing (default: False)
+  --ignore_html		Doesn't remove HTML tags (default: False)
   --ignore_detokenization
                         Doesn't fix common tokenization issues (default:
                         False)
@@ -189,6 +191,7 @@ Logging:
   * --ignore_duplicates : Deactivates deduplication (won't add hash or ranking)
   * --ignore_empty : Doesn't remove sentences with empty source or target
   * --ignore_long: Doesn't remove too long sentences
+  * --ignore_html: Doesn't remove HTML tags
   * --ignore_segmentation : Deactivates segmentation of long sentences
   * --segmenter: Segmenter module (`nltk` or `loomchild`). Default: nltk
   * --words_before_segmenting : Maximum allowed amount of words in a sentence, before trying to segment it. Default: 15
@@ -213,7 +216,7 @@ usage: monofixer.py [-h]
                     [--ignore_characters] [--ignore_long]
                     [--ignore_orthography] [--ignore_detokenization]
                     [--ignore_duplicates] [--aggressive_dedup]
-                    [--ignore_segmentation]
+                    [--ignore_segmentation] [--ignore_html]
                     [--words_before_segmenting WORDS_BEFORE_SEGMENTING]
                     [--segmenter {nltk,loomchild}] [--tmp_dir TMP_DIR] [-q]
                     [--debug] [--logfile LOGFILE] [-v]
@@ -243,6 +246,7 @@ Optional:
   --ignore_detokenization
                         Doesn't fix common tokenization issues (default:
                         False)
+  --ignore_html		Doesn't remove HTML tags (default: False)
   --ignore_duplicates   Doesn't obtain the hashes of sentences (default:
                         False)
   --aggressive_dedup    Treats similar sentences as duplicates (marking them
@@ -280,6 +284,7 @@ Logging:
   * --sdeferredcol SDEFERREDCOL  Sentence deferred standoff annotation column (starting in 1). Default: None
   * --ignore_duplicates : Deactivates deduplication (won't add hash or ranking)
   * --ignore_long: Doesn't remove too long sentences
+  * --ignore_html: Doesn't remove HTML tags
   * --ignore_segmentation : Deactivates segmentation of long sentences
   * --segmenter: Segmenter module (`nltk` or `loomchild`). Default: nltk
   * --words_before_segmenting : Maximum allowed amount of words in a sentence, before trying to segment it. Default: 15

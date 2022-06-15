@@ -65,7 +65,10 @@ def initialization():
     #Character fixing
     groupO.add_argument('--ignore_characters', default=False, action='store_true', help="Doesn't fix mojibake, orthography, or other character issues")
     groupO.add_argument('--ignore_normalization', default=False, action='store_true', help="Doesn't normalize punctuation and spaces.")
-    
+
+    # HTML tags
+    groupO.add_argument('--ignore_html', default=False, action='store_true', help="Doesn't remove HTML tags")
+  
     #Empty sides
     groupO.add_argument('--ignore_empty', default=False, action='store_true', help="Doesn't remove empty sentences")
 
@@ -190,6 +193,9 @@ def fix_sentences(args):
         else:
             fixed_sentence = sentence
 
+        if not args.ignore_html and not very_long:
+                fixed_sentence = restorative_cleaning.remove_html_tags(fixed_sentence)
+                
         if not args.ignore_normalization:
             fixed_sentence = restorative_cleaning.normalize(fixed_sentence, args.lang, punctChars_lang, punctRe_lang)
                 
