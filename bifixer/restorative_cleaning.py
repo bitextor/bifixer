@@ -649,7 +649,6 @@ def getNormalizedPunctReplacements(lang):
             " ]": "]",
             #            " \""      :       "\"",          
             " ...": "...",
-
             "( ": "(",
             "{ ": "{",
             "[ ": "["
@@ -657,6 +656,7 @@ def getNormalizedPunctReplacements(lang):
 
     else:
         replacements = {
+            " .":".",
             " !": "!",
             " ?": "?",
             " :": ":",
@@ -743,9 +743,10 @@ def normalize(text, lang, punct_rep, punct_pattern):
     normalized_text = chars3Re2.sub(replace_chars3, normalized_text)
     normalized_text = chars3Re3.sub(replace_chars3, normalized_text)
     normalized_text = quotesRegex.sub("\g<start>\'\g<end>", normalized_text)
-    normalized_text_with_normalized_punct = punct_pattern.sub(lambda m: punct_rep[re.escape(m.group(0))], normalized_text)
+    collapsed_spaces_with_collapsed_spaces = re.sub('\s+', ' ', normalized_text)  # Collapse multiple spaces
+    normalized_text_with_normalized_punct = punct_pattern.sub(lambda m: punct_rep[re.escape(m.group(0))], collapsed_spaces_with_collapsed_spaces)
 
-    collapsed_spaces = re.sub('\s+', ' ', normalized_text_with_normalized_punct)  # Collapse multiple spaces
+    collapsed_spaces = re.sub('\s+', ' ', normalized_text_with_normalized_punct)  # Collapse multiple spaces again
     collapsed_entities = collapse_spaced_entities.sub("&#\\2;", collapsed_spaces)
 
     return collapsed_entities.strip(" \n")
