@@ -13,6 +13,7 @@ chars3Re2 = regex.compile("[\u2000-\u200F]")
 chars3Re3 = regex.compile("\u007F|[\u0080-\u00A0]")
 quotesRegex = regex.compile("(?P<start>[[:alpha:]])\'\'(?P<end>(s|S|t|T|m|M|d|D|re|RE|ll|LL|ve|VE|em|EM)\W)")
 collapse_spaced_entities = regex.compile('([&][ ]*[#][ ]*)([0-9]{2,6})([ ]*[;])')
+html_tags_regex = re.compile('<.*?>') 
 
 #https://en.wikipedia.org/wiki/CJK_Symbols_and_Punctuation
 cjk_langs = [
@@ -821,3 +822,7 @@ def ortho_detok_fix(text, replacements, detoks):
         fixed_text = text
 
     return fixed_text
+
+
+def remove_html_tags(text):
+    return re.sub(html_tags_regex, ' ', text).strip()

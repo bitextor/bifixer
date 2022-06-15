@@ -7,7 +7,7 @@ __version__ = "Version 0.3 # 20/08/2019 # New feature: Segmentation # Marta Bañ
 __version__ = "Version 0.4 # 15/06/2021 # Easy install # Elsa Sarrías"
 __version__ = "Version 0.5 # 22/06/2021 # Replacements improvements and fix tokenization for Maltese # Jaume Zaragoza"
 __version__ = "Version 0.7 # 15/02/2022 # Disable punctuation normalization # Jaume Zaragoza"
-
+__version__ = "Version 0.8 # 15/06/2022 # Remove HTML tags # Marta Bañón"
 
 import os
 import sys
@@ -68,8 +68,11 @@ def initialization():
     groupO.add_argument("--tparagraphid", type=util.check_positive if not header else str, help="Target paragraph identification column (starting in 1). The name of the field is expected instead of the position if --header is set")
 
     # Character fixing
-    groupO.add_argument('--ignore_characters', default=False, action='store_true', help="Doesn't fix mojibake, orthography, or other character issues")
+    groupO.add_argument('--ignore_characters', default=False, action='store_true', help="Doesn't fix mojibake or other character issues")
     groupO.add_argument('--ignore_normalization', default=False, action='store_true', help="Doesn't normalize punctuation and spaces.")
+
+    # HTML tags
+    groupO.add_argument('--ignore_html', default=False, action='store_true', help="Doesn't remove HTML tags")
 
     # Empty sides
     groupO.add_argument('--ignore_empty', default=False, action='store_true', help="Doesn't remove sentences with empty source or target")
@@ -127,7 +130,7 @@ def fix_sentences(args):
     if not args.ignore_normalization:
         punctChars_slang, punctRe_slang = restorative_cleaning.getNormalizedPunctReplacements(args.srclang)
         punctChars_tlang, punctRe_tlang = restorative_cleaning.getNormalizedPunctReplacements(args.trglang)
-
+        
     if not args.ignore_orthography:
         replacements_slang = restorative_cleaning.getReplacements(args.srclang)
         replacements_tlang = restorative_cleaning.getReplacements(args.trglang)
@@ -215,6 +218,10 @@ def fix_sentences(args):
                 fixed_source = source_sentence.strip(" \n") 
                 fixed_target = target_sentence.strip(" \n") 
 
+            if not args.ignore_html and not very_long:
+                fixed_source = restorative_cleaning.remove_html_tags(fixed_source)
+                fixed_target = restorative_cleaning.remove_html_tags(fixed_target)            
+                
             if not args.ignore_normalization and not very_long:
                 fixed_source = restorative_cleaning.normalize(fixed_source, args.srclang, punctChars_slang, punctRe_slang)
                 fixed_target = restorative_cleaning.normalize(fixed_target, args.trglang, punctChars_tlang, punctRe_tlang)
