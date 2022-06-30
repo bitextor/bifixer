@@ -10,7 +10,8 @@ global_chars_lang = {}
 
 chars3Re = regex.compile("[\uE000-\uFFFF]")
 chars3Re2 = regex.compile("[\u2000-\u200F]")
-chars3Re3 = regex.compile("\u007F|[\u0080-\u00A0]")
+chars3Re3 = regex.compile("\u007F|[\u0080-\u009F]")
+chars3_nbsp = regex.compile("\u00A0")
 quotesRegex = regex.compile("(?P<start>[[:alpha:]])\'\'(?P<end>(s|S|t|T|m|M|d|D|re|RE|ll|LL|ve|VE|em|EM)\W)")
 collapse_spaced_entities = regex.compile('([&][ ]*[#][ ]*)([0-9]{2,6})([ ]*[;])')
 html_tags_regex = re.compile('<.*?>') 
@@ -726,6 +727,10 @@ def replace_chars3(match):
     char = match.group(0)
     return ""
 
+def replace_with_space(match):
+    char = match.group(0)
+    return " "
+
 
 def fix(text, lang, chars_rep, chars_pattern):
     global global_chars_lang
@@ -741,8 +746,9 @@ def normalize(text, lang, punct_rep, punct_pattern):
     normalized_text = text
     if lang.lower() not in cjk_langs:
         normalized_text = chars3Re.sub(replace_chars3, normalized_text)
-    normalized_text = chars3Re2.sub(replace_chars3, normalized_text)
+    normalized_text = chars3Re2.sub(replace_with_space, normalized_text)
     normalized_text = chars3Re3.sub(replace_chars3, normalized_text)
+    normalized_text = chars3_nbsp.sub(replace_with_space, normalized_text)
     normalized_text = quotesRegex.sub("\g<start>\'\g<end>", normalized_text)
     collapsed_spaces_with_collapsed_spaces = re.sub('\s+', ' ', normalized_text)  # Collapse multiple spaces
     normalized_text_with_normalized_punct = punct_pattern.sub(lambda m: punct_rep[re.escape(m.group(0))], collapsed_spaces_with_collapsed_spaces)
