@@ -38,15 +38,16 @@ class TestEmptySpaces():
     args.header = None
     args.ignore_empty = False
     args.ignore_long = False
-    args.input = open("input_test_1.txt", "rt")
+    args.input = open("tests/input_test_1.txt", "rt")
     args.dedup = False
-    args.output = open("output_test_1.txt", "w+")
+    args.output = open("tests/output_test_1.txt", "w+")
+    args.ignore_html = False
 
     def test__empty(self):
         bifixer.fix_sentences(self.args)
         self.args.output.close()
 
-        with open("output_expected_1.txt", "rt") as expected, open("output_test_1.txt", "rt") as test:
+        with open("tests/output_expected_1.txt", "rt") as expected, open("tests/output_test_1.txt", "rt") as test:
             for e, t in zip(expected, test):
                 assert e == t
 
@@ -126,13 +127,14 @@ class TestCharReplacements:
         fixed_1 = restorative_cleaning.normalize(fixed_1, "es", self.punct_es, self.punctRe_es)
         fixed_fr = restorative_cleaning.fix(text_1, "fr", self.chars_fr, self.charsRe_fr)
         fixed_fr = restorative_cleaning.normalize(fixed_fr, "fr", self.punct_fr, self.punctRe_fr)
-        #assert fixed_1 == correct
-        #assert fixed_fr == correct_fr 
+        assert fixed_1 == correct
+        assert fixed_fr == correct_fr 
 
         text_2 = "  {  ¡  Party hard , die young  !   }   "
-        correct = "{¡Party hard, die young!}"
+        correct = "{¡Party hard, die young!}"                        
         fixed_2 = restorative_cleaning.fix(text_2, "en", self.chars_en, self.charsRe_en)
-        #assert fixed_2 == correct
+        fixed_en = restorative_cleaning.normalize(fixed_2, "en", self.punct_en, self.punctRe_en)
+        assert fixed_en == correct
 
 
 class TestOrthoFix:
@@ -210,15 +212,16 @@ class TestDedup:
     args.tparagraphid = None
     args.header = None
     args.aggressive_dedup = False
-    args.input = open("input_test_2.txt", "rt")
-    args.output = open("output_test_dedup.txt", "w+")
+    args.input = open("tests/input_test_2.txt", "rt")
+    args.output = open("tests/output_test_dedup.txt", "w+")
+    args.ignore_html = False
 
     def test_aggressive_dedup(self):
         bifixer.fix_sentences(self.args)
         self.args.input.close()
         self.args.output.close()
 
-        with open("output_test_dedup.txt") as file_:
+        with open("tests/output_test_dedup.txt") as file_:
             hashes = []
             for line in file_:
                 parts = line.rstrip("\n").split("\t")
@@ -250,15 +253,16 @@ class TestAggressiveDedup:
     args.tparagraphid = None
     args.header = None
     args.aggressive_dedup = True
-    args.input = open("input_test_2.txt", "rt")
-    args.output = open("output_test_aggr_dedup.txt", "w+")
+    args.input = open("tests/input_test_2.txt", "rt")
+    args.output = open("tests/output_test_aggr_dedup.txt", "w+")
+    args.ignore_html = False
 
     def test_aggressive_dedup(self):
         bifixer.fix_sentences(self.args)
         self.args.input.close()
         self.args.output.close()
 
-        with open("output_test_aggr_dedup.txt") as file_:
+        with open("tests/output_test_aggr_dedup.txt") as file_:
             hashes = []
             for line in file_:
                 parts = line.rstrip("\n").split("\t")
