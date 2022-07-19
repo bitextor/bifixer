@@ -111,7 +111,7 @@ usage: bifixer.py [-h] [--header] [--scol SCOL] [--tcol TCOL]
                   [--ignore_duplicates] [--aggressive_dedup]
                   [--ignore_segmentation] [--ignore_html]
                   [--words_before_segmenting WORDS_BEFORE_SEGMENTING]
-                  [--segmenter {nltk,loomchild}] [--tmp_dir TMP_DIR] [-q]
+                  [--segmenter {nltk,loomchild}] [--annotated_output] [--tmp_dir TMP_DIR] [-q]
                   [--debug] [--logfile LOGFILE] [-v]
                   input output srclang trglang
 
@@ -163,6 +163,9 @@ Optional:
                         segmentation on everything. (default: 15)
   --segmenter {nltk,loomchild}
                         Segmenter module. (default: nltk)
+  --annotated_output    Adds an extra column indicating if the sentence pair was modified
+			 ('bifixed' if it was modified, otherwise None) (default: False)
+
   --tmp_dir TMP_DIR     Temporary directory where creating the temporary files
                         of this program (default: /tmp)
 
@@ -199,6 +202,7 @@ Logging:
   * --ignore_orthography  Deactivates orthography fixing
   * --ignore_detokenization : Doesn't fix common tokenization issues.
   * --aggressive_dedup : Treats near-duplicated sentences as duplicates (normalizes sentences before hashing)
+  *  --annotated_output    Adds an extra column indicating if the sentence pair was modified ('bifixed' if it was modified, otherwise None). Default: False
   * --tmp_dir TMP_DIR : Directory for temporary files
   * -q, --quiet : Silent logging mode
   * --debug: Shows debug messages while running
@@ -218,7 +222,7 @@ usage: monofixer.py [-h]
                     [--ignore_duplicates] [--aggressive_dedup]
                     [--ignore_segmentation] [--ignore_html]
                     [--words_before_segmenting WORDS_BEFORE_SEGMENTING]
-                    [--segmenter {nltk,loomchild}] [--tmp_dir TMP_DIR] [-q]
+                    [--segmenter {nltk,loomchild}] [--annotated_output] [--tmp_dir TMP_DIR] [-q]
                     [--debug] [--logfile LOGFILE] [-v]
                     input output lang
 
@@ -260,6 +264,9 @@ Optional:
                         on everyt33hing. (default: 15)
   --segmenter {nltk,loomchild}
                         Segmenter module. (default: nltk)
+  --annotated_output    Adds an extra column indicating if the sentence  was
+			 modified ('bifixed' if it was modified, otherwise empty)
+			 (default: False)
   --tmp_dir TMP_DIR     Temporary directory where creating the temporary files
                         of this program (default: /tmp)
 
@@ -292,6 +299,7 @@ Logging:
   * --ignore_orthography : Deactivates orthography fixing
   * --ignore_detokenization : Doesn't fix common tokenization issues.
   * --aggressive_dedup : Treats near-duplicated sentences as duplicates (normalizes sentences before hashing)
+  * --annotated_output    Adds an extra column indicating if the sentence was modified ('bifixed' if it was modified, otherwise empty). Default: False
   * --tmp_dir TMP_DIR : Directory for temporary files
   * -q, --quiet : Silent logging mode
   * --debug: Shows debug messages while running

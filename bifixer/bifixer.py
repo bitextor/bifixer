@@ -95,6 +95,9 @@ def initialization():
     groupO.add_argument('--words_before_segmenting', default=15, type=util.check_positive, help="Max words allowed in one side of a parallel sentence before trying to segmentate it. Set to 0 to applicate segmentation on everything.")
     groupO.add_argument('--segmenter', default="nltk", type=str, choices=["nltk", "loomchild"], help="Segmenter module.")
     groupO.add_argument('--tmp_dir', default=gettempdir(), help="Temporary directory where creating the temporary files of this program")
+    
+    # Annotation
+    groupO.add_argument('--annotated_output', default=False, action='store_true', help="Adds an extra column indicating if the sentence pair was modified ('bifixed' if it was modified, otherwise empty)")
 
     # Logging group
     groupL = parser.add_argument_group('Logging')
@@ -181,7 +184,8 @@ def fix_sentences(args):
 
         if args.dedup:
             args.output.write("\tbifixer_hash\tbifixer_score")
-
+        if args.annotated_output:
+            args.output.write("\tbifixed")
         args.output.write("\n")
 
     for i in args.input:
@@ -293,14 +297,29 @@ def fix_sentences(args):
 
                         new_parts.append(segment_hash)  # hash and ranking are added at the end
                         new_parts.append(ranking)
+                        if args.annotated_output:
+                            if (new_parts[args.scol - 1] != source_sentence or new_parts[args.tcol - 1] != target_sentence.strip("\n")) :
+                                new_parts.append("bifixed")
+                            else:
+                                new_parts.append(None)
+                                                        
                         args.output.write("\t".join(str(v) for v in new_parts) + "\n")  # Convert to strings
-                        # Remove hash and ranking for next iterations of loop
+                        # Remove hash, ranking and bifixed for next iterations of loop
                         new_parts.pop()
                         new_parts.pop()
+                        if args.annotated_output:
+                            new_parts.pop()
                     else:
                         # When no deduplicating:
                         new_parts[-1] = str(new_parts[-1]).strip("\n")
+                        if args.annotated_output:
+                            if (new_parts[args.scol - 1] != source_sentence or new_parts[args.tcol - 1] != target_sentence.strip("\n")) :
+                                new_parts.append("bifixed")
+                            else:
+                                new_parts.append(None)
                         args.output.write("\t".join(str(v) for v in new_parts) + "\n")
+                        if args.annotated_output:
+                            new_parts.pop()
                     olines += 1
                 else:
                     # empty sides after processing
