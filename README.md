@@ -164,7 +164,7 @@ Optional:
   --segmenter {nltk,loomchild}
                         Segmenter module. (default: nltk)
   --annotated_output    Adds an extra column indicating if the sentence pair was modified
-			 ('bifixed' if it was modified, otherwise None) (default: False)
+			 ('Yes' if it was modified, otherwise 'No') (default: False)
 
   --tmp_dir TMP_DIR     Temporary directory where creating the temporary files
                         of this program (default: /tmp)
@@ -202,7 +202,7 @@ Logging:
   * --ignore_orthography  Deactivates orthography fixing
   * --ignore_detokenization : Doesn't fix common tokenization issues.
   * --aggressive_dedup : Treats near-duplicated sentences as duplicates (normalizes sentences before hashing)
-  *  --annotated_output    Adds an extra column indicating if the sentence pair was modified ('bifixed' if it was modified, otherwise None). Default: False
+  *  --annotated_output    Adds an extra column indicating if the sentence pair was modified ('Yes' if it was modified, otherwise 'No'). Default: False
   * --tmp_dir TMP_DIR : Directory for temporary files
   * -q, --quiet : Silent logging mode
   * --debug: Shows debug messages while running
@@ -265,7 +265,7 @@ Optional:
   --segmenter {nltk,loomchild}
                         Segmenter module. (default: nltk)
   --annotated_output    Adds an extra column indicating if the sentence  was
-			 modified ('bifixed' if it was modified, otherwise empty)
+			 modified ('Yes' if it was modified, otherwise 'No')
 			 (default: False)
   --tmp_dir TMP_DIR     Temporary directory where creating the temporary files
                         of this program (default: /tmp)
@@ -299,7 +299,7 @@ Logging:
   * --ignore_orthography : Deactivates orthography fixing
   * --ignore_detokenization : Doesn't fix common tokenization issues.
   * --aggressive_dedup : Treats near-duplicated sentences as duplicates (normalizes sentences before hashing)
-  * --annotated_output    Adds an extra column indicating if the sentence was modified ('bifixed' if it was modified, otherwise empty). Default: False
+  * --annotated_output    Adds an extra column indicating if the sentence was modified ('Yes' if it was modified, otherwise 'No'). Default: False
   * --tmp_dir TMP_DIR : Directory for temporary files
   * -q, --quiet : Silent logging mode
   * --debug: Shows debug messages while running

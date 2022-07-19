@@ -95,7 +95,7 @@ def initialization():
 
 
     # Annotation
-    groupO.add_argument('--annotated_output', default=False, action='store_true', help="Adds an extra column indicating if the sentence was modified ('bifixed' if it was modified, otherwise empty)")
+    groupO.add_argument('--annotated_output', default=False, action='store_true', help="Adds an extra column indicating if the sentence was modified ('Yes' if it was modified, otherwise 'No')")
     
     # Logging group
     groupL = parser.add_argument_group('Logging')
@@ -267,9 +267,9 @@ def fix_sentences(args):
                     
                     if args.annotated_output:
                         if (new_parts[args.scol -1].strip("\n") != sentence.strip("\n")):
-                            new_parts.append("bifixed")
+                            new_parts.append("Yes")
                         else:
-                            new_parts.append(None)
+                            new_parts.append("No")
                                 
                     
                     args.output.write("\t".join(str(v) for v in new_parts)+"\n")  #Convert to strings
@@ -282,9 +282,9 @@ def fix_sentences(args):
                     #When no deduplicating:
                     if args.annotated_output:
                         if (new_parts[args.scol -1].strip("\n") != sentence.strip("\n")):
-                            new_parts.append("bifixed")
+                            new_parts.append("Yes")
                         else:
-                            new_parts.append(None)
+                            new_parts.append("No")
                     args.output.write("\t".join(str(v) for v in new_parts)+"\n")
                     if args.annotated_output:
                         new_parts.pop()

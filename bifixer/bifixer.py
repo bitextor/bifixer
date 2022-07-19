@@ -97,7 +97,7 @@ def initialization():
     groupO.add_argument('--tmp_dir', default=gettempdir(), help="Temporary directory where creating the temporary files of this program")
     
     # Annotation
-    groupO.add_argument('--annotated_output', default=False, action='store_true', help="Adds an extra column indicating if the sentence pair was modified ('bifixed' if it was modified, otherwise empty)")
+    groupO.add_argument('--annotated_output', default=False, action='store_true', help="Adds an extra column indicating if the sentence pair was modified ('Yes' if it was modified, otherwise 'No')")
 
     # Logging group
     groupL = parser.add_argument_group('Logging')
@@ -299,9 +299,9 @@ def fix_sentences(args):
                         new_parts.append(ranking)
                         if args.annotated_output:
                             if (new_parts[args.scol - 1] != source_sentence or new_parts[args.tcol - 1] != target_sentence.strip("\n")) :
-                                new_parts.append("bifixed")
+                                new_parts.append('Yes')
                             else:
-                                new_parts.append(None)
+                                new_parts.append('No')
                                                         
                         args.output.write("\t".join(str(v) for v in new_parts) + "\n")  # Convert to strings
                         # Remove hash, ranking and bifixed for next iterations of loop
@@ -314,9 +314,9 @@ def fix_sentences(args):
                         new_parts[-1] = str(new_parts[-1]).strip("\n")
                         if args.annotated_output:
                             if (new_parts[args.scol - 1] != source_sentence or new_parts[args.tcol - 1] != target_sentence.strip("\n")) :
-                                new_parts.append("bifixed")
+                                new_parts.append('Yes')
                             else:
-                                new_parts.append(None)
+                                new_parts.append('No')
                         args.output.write("\t".join(str(v) for v in new_parts) + "\n")
                         if args.annotated_output:
                             new_parts.pop()
