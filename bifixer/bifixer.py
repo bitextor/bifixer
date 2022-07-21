@@ -256,8 +256,7 @@ def fix_sentences(args):
                         segment_hash = xxh64(normalized_src + "\t" + normalized_trg).hexdigest()
 
                         charsum = sum(ord(ch) for ch in segment["source_segment"] + segment["target_segment"])
-
-                        ranking = round(charsum / len(segment["source_segment"] + segment["target_segment"]), 2)
+                        ranking = round(charsum / (float(len(segment["source_segment"] + segment["target_segment"]))+0.00001), 2) #the  0.00001 is for the case that length is 0 :D
 
                     else:
                         segment_hash = xxh64(segment["source_segment"] + "\t" + segment["target_segment"]).hexdigest()
