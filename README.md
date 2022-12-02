@@ -16,7 +16,6 @@ Tool to fix bitexts and tag near-duplicates for removal.
   * Currently: Danish, German, English, Spanish, Dutch, Norwegian, Portuguese and Turkish
   * Deactivate this feature with `--ignore_orthography`
 * Removes sentences with empty source or target (deactivate this feature with `--ignore_empty`)
-* Removes sentences that are too long (deactivate this feature with `--ignore_long`)
 * Fixes common tokenization issues (deactivate this feature with `--ignore_detokenization`)
 * Obtains hahes of parallel sentences, in order to ease the later removal of duplicates (deactivate this feature with `--ignore_duplicates`)
   * Want stronger deduplication? Make this feature to find near-duplicated sentences (ignoring casing, accents, diacritics and digits) by using the  `--aggressive_dedup` flag
