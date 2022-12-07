@@ -42,6 +42,7 @@ class TestEmptySpaces():
     args.dedup = False
     args.output = open("tests/output_test_1.txt", "w+")
     args.ignore_html = False
+    args.annotated_output = False
 
     def test__empty(self):
         bifixer.fix_sentences(self.args)
@@ -215,6 +216,7 @@ class TestDedup:
     args.input = open("tests/input_test_2.txt", "rt")
     args.output = open("tests/output_test_dedup.txt", "w+")
     args.ignore_html = False
+    args.annotated_output = False
 
     def test_aggressive_dedup(self):
         bifixer.fix_sentences(self.args)
@@ -256,6 +258,7 @@ class TestAggressiveDedup:
     args.input = open("tests/input_test_2.txt", "rt")
     args.output = open("tests/output_test_aggr_dedup.txt", "w+")
     args.ignore_html = False
+    args.annotated_output = False
 
     def test_aggressive_dedup(self):
         bifixer.fix_sentences(self.args)
