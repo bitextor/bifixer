@@ -255,13 +255,14 @@ def fix_sentences(args):
 
                 if args.sparagraphid:
                     new_parts[args.sparagraphid-1] = parts[args.sparagraphid-1].rstrip("\n")+"#"+str(sent_num)
+
+            #Remove the "/n" at the end of the last item
+            new_parts[-1]= str(new_parts[-1]).strip("\n")
+
             # sentence may be empty now because it contained only spaces or similar weird thing
             # for a sentence containing only spaces but not normalized, strip it
             if args.ignore_empty or (new_parts[args.scol-1].strip()):
                 if (args.dedup):
-                    #Remove the "/n" at the end of the last item
-                    new_parts[-1]= str(new_parts[-1]).strip("\n")
-                
                     new_parts.append(hash) #hash and ranking are added at the end           
                     new_parts.append(ranking)
                     
