@@ -87,6 +87,7 @@ def getCharsReplacements(lang):
         '\u000D' : " ", # \f form feed
         '&#xa': "",
         '&#xA': "",
+        '&NewLine;': " ",
 
         '\u000D': "",  # carriage returns (\r)
         '&#13;': " ",
