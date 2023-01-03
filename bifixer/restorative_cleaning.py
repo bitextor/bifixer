@@ -39,11 +39,14 @@ def getCharsReplacements(lang):
         "bg",  # bulgarian
         "bs",  # bosnian
         "ce",  # chechen
+        "cnr", # montenegrin
         "cv",  # chuvash
+        "hbs", # serbo-croatian
         "kk",  # kazakh
         "ku",  # kurdish
         "kv",  # komi
         "ky",  # kirghiz/kyrgyz
+        "me",  # montenegrin
         "mk",  # macedonian
         "mn",  # mongolian
         "os",  # ossetic/ossetian
