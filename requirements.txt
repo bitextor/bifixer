@@ -1,6 +1,0 @@
-ftfy>=6
-nltk>=3.5
-pytest
-regex
-Unidecode
-xxhash>=2.0.0
