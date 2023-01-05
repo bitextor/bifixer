@@ -48,9 +48,9 @@ def initialization():
     
     # Mandatory parameters
     #Input file
-    parser.add_argument('input', type=argparse.FileType('rt'), default=None, help="Tab-separated file to be fixed")
+    parser.add_argument('input', type=argparse.FileType('rt', encoding='UTF-8'), default=None, help="Tab-separated file to be fixed")
     #Output file (corpus)
-    parser.add_argument('output', type=argparse.FileType('w'), default=sys.stdout, help="Fixed corpus")
+    parser.add_argument('output', type=argparse.FileType('w', encoding='UTF-8'), default=sys.stdout, help="Fixed corpus")
     #Language
     parser.add_argument("lang", type=str, help="Language of the input")
 

@@ -50,7 +50,7 @@ def initialization():
     # Input file
     parser.add_argument('input', type=argparse.FileType('rt', encoding='UTF-8'), default=None, help="Tab-separated files to be bifixed")
     # Output file (corpus)
-    parser.add_argument('output', type=argparse.FileType('w'), default=sys.stdout, help="Fixed corpus")
+    parser.add_argument('output', type=argparse.FileType('w', encoding='UTF-8'), default=sys.stdout, help="Fixed corpus")
     # Source language
     parser.add_argument("srclang", type=str, help="Source language (SL) of the input")
     # Target language
