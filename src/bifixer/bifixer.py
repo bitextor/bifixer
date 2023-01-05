@@ -349,18 +349,13 @@ def perform_fixing(args):
     logging.info("Output file: {0}".format(os.path.abspath(args.output.name)))
 
 
-def main(args):
+def main():
+    util.logging_setup()
+    args = initialization()  # Parsing parameters
     logging.info("Executing main program...")
     perform_fixing(args)
     logging.info("Program finished")
 
 
 if __name__ == '__main__':
-    try:
-        util.logging_setup()
-        args = initialization()  # Parsing parameters
-        main(args)  # Running main program
-    except Exception as ex:
-        tb = traceback.format_exc()
-        logging.error(tb)
-        sys.exit(1)
+    main()  # Running main program
