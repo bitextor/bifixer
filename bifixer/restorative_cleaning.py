@@ -42,6 +42,8 @@ def getCharsReplacements(lang):
         "cnr", # montenegrin
         "cv",  # chuvash
         "hbs", # serbo-croatian
+        "hbs_cyrillic", # serbo-croatian
+        "hbs_latin", # serbo-croatian latin as it can contain cyrillic we don't want to replace
         "kk",  # kazakh
         "ku",  # kurdish
         "kv",  # komi
