@@ -1,0 +1,52 @@
+[project]
+name = "bifixer"
+version = "0.8.4"
+authors = [
+    { name="Prompsit Language Engineering", email="info@prompsit.com" },
+]
+maintainers = [
+    { name="Marta Bañón", email="mbanon@prompsit.com" },
+    { name="Jaume Zaragoza", email="jzaragoza@prompsit.com" },
+]
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+    "ftfy>=6",
+    "nltk>=3.5",
+    "pytest",
+    "regex",
+    "Unidecode",
+    "xxhash>=2.0.0",
+]
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3.7",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: POSIX :: Linux",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Text Processing :: Linguistic",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Filters"
+]
+[project.optional-dependencies]
+loomchild = [ "loomchild-segment==2.0.2", ]
+
+[build-system]
+requires = [
+    "setuptools>=61",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[tools.setuptools.package-data]
+bifixer = [ "replacements/*", "detok/*" ]
+
+[project.scripts]
+bifixer = "bifixer.bifixer:main"
+monofixer = "bifixer.monofixer:main"
+
+[project.urls]
+"Bifixer on GitHub" = "https://github.com/bitextor/bifixer"
+"Prompsit Language Engineering" = "http://www.prompsit.com"
+"Paracrawl" = "https://paracrawl.eu/"
