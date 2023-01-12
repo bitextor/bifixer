@@ -15,6 +15,7 @@ import argparse
 import copy
 import traceback
 import logging
+from importlib.metadata import version
 
 from unicodedata import category as cat
 from unidecode import unidecode
@@ -104,7 +105,7 @@ def initialization():
     groupL.add_argument('-q', '--quiet', action='store_true', help='Silent logging mode')
     groupL.add_argument('--debug', action='store_true', help='Debug logging mode')
     groupL.add_argument('--logfile', type=argparse.FileType('a'), default=sys.stderr, help="Store log to a file")
-    groupL.add_argument('-v', '--version', action='version', version="%(prog)s " + __version__, help="show version of this script and exit")
+    groupL.add_argument('-v', '--version', action='version', version="%(prog)s " + version('bifixer'), help="show version of this script and exit")
 
     # Validating & parsing
     args = parser.parse_args()

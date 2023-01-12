@@ -1,18 +1,12 @@
-#!/usr/bin/env python     
-
-__author__ = "Marta Bañón (mbanon)"
-__version__ = "Version 0.1 # 21/06/2019 # Initial release # Marta Bañón"
-__version__ = "Version 0.2 # 23/07/2019 # Non-Redis Bifixer # Marta Bañón"
-__version__ = "Version 0.3 # 20/08/2019 # New feature: Segmentation # Marta Bañón"
-__version__ = "Version 0.4 # 03/02/2020 # Monofixer # Marta Bañón"
-
+#!/usr/bin/env python
 
 import os
 import sys
 import argparse
 import copy
 import traceback
-import logging 
+import logging
+from importlib.metadata import version
 
 from unicodedata import category as cat
 from unidecode import unidecode
@@ -102,7 +96,7 @@ def initialization():
     groupL.add_argument('-q', '--quiet', action='store_true', help='Silent logging mode')
     groupL.add_argument('--debug', action='store_true', help='Debug logging mode')
     groupL.add_argument('--logfile', type=argparse.FileType('a'), default=sys.stderr, help="Store log to a file")
-    groupL.add_argument('-v', '--version', action='version', version="%(prog)s " + __version__, help="show version of this script and exit")
+    groupL.add_argument('-v', '--version', action='version', version="%(prog)s " + version('bifixer'), help="show version of this script and exit")
  
     # Validating & parsing
     args = parser.parse_args()
