@@ -89,7 +89,7 @@ After installing, two executables (`bifixer` and `monofixer`) will be available 
 Please note that, in order to use the optional `loomchild` segmenter module in Java, it has to be specified as an optional dependency during installation:
 
 ```bash
-pip install "bifixer[loomchild] @ git+https://github.com/bitextor/bifixer.git"
+pip install bifixer[loomchild]
 ```
 
 In case you are not using Java 8 as default, download it and overwrite the 'JAVA_HOME' variable before installing, for example:
