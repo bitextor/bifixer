@@ -41,6 +41,9 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+include-package-data = true
+
 [tools.setuptools.package-data]
 bifixer = [ "replacements/*", "detok/*" ]
 
