@@ -87,6 +87,8 @@ def getCharsReplacements(lang):
         '&#9;': " ",  # \t
         '&#10': " ",  # \n
         '&#9': " ",  # \t
+        '&Tab;': " ",
+        '\t': " ", # when normalization is disabled and &amp;Tab; is unescaped by ftfy, creating poisonous \t
         '\n': "",
         '\u000C' : " ", # \v vertical tab
         '\u000D' : " ", # \f form feed
