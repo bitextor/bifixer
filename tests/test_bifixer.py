@@ -120,6 +120,11 @@ class TestCharReplacements:
         fixed_1 = restorative_cleaning.fix(text_1, "es", self.chars_es, self.charsRe_es)
         assert fixed_1 == correct
 
+        correct_2 = "This is  a very triccky   sentence  "
+        text_2 = "This&#9;is &amp;#13a very&#9triccky&amp;NewLine;\n sentence&amp;#13;&amp;Tab;"
+        fixed_2 = restorative_cleaning.fix(text_2, "en", self.chars_en, self.charsRe_en)
+        assert fixed_2 == correct_2
+
     def test_punct(self):
         text_1 = "  Did I pass  the     acid test  ?  "
         correct = "Did I pass the acid test?"

@@ -15,6 +15,7 @@ chars3_nbsp = regex.compile("\u00A0")
 quotesRegex = regex.compile("(?P<start>[[:alpha:]])\'\'(?P<end>(s|S|t|T|m|M|d|D|re|RE|ll|LL|ve|VE|em|EM)\W)")
 collapse_spaced_entities = regex.compile('([&][ ]*[#][ ]*)([0-9]{2,6})([ ]*[;])')
 html_tags_regex = re.compile('<.*?>') 
+remove_tabs_endlines = str.maketrans({k:' ' for k in '\r\n\t'})
 
 #https://en.wikipedia.org/wiki/CJK_Symbols_and_Punctuation
 cjk_langs = [
@@ -82,25 +83,6 @@ def getCharsReplacements(lang):
 
     # Annoying characters, common for all languages
     chars = {
-        '\u2028': ' ',  # line separators (\n)
-        '&#10;': " ",  # \n
-        '&#9;': " ",  # \t
-        '&#10': " ",  # \n
-        '&#9': " ",  # \t
-        '&Tab;': " ",
-        '\t': " ", # when normalization is disabled and &amp;Tab; is unescaped by ftfy, creating poisonous \t
-        '\n': "",
-        '\u000C' : " ", # \v vertical tab
-        '\u000D' : " ", # \f form feed
-        '&#xa': "",
-        '&#xA': "",
-        '&NewLine;': " ",
-
-        '\u000D': "",  # carriage returns (\r)
-        '&#13;': " ",
-        '&#xd;': " ",
-        '&#xD;': " ",
-
         # unicode ligatures
         '\uFB00': 'ff',
         '\uFB01': 'fi',
@@ -748,7 +730,7 @@ def fix(text, lang, chars_rep, chars_pattern):
 
     replaced_text = chars_pattern.sub(replace_chars, ftfy_fixed_text)
 
-    return html.unescape(replaced_text)
+    return html.unescape(replaced_text).translate(remove_tabs_endlines)
 
 def normalize(text, lang, punct_rep, punct_pattern):
     normalized_text = text
