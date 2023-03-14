@@ -1,6 +1,6 @@
 [project]
 name = "bifixer"
-version = "0.8.7"
+version = "0.8.8"
 license = {file = "LICENSE"}
 authors = [
     { name="Prompsit Language Engineering", email="info@prompsit.com" },
