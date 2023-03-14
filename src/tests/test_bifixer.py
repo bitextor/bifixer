@@ -38,9 +38,9 @@ class TestEmptySpaces():
     args.header = None
     args.ignore_empty = False
     args.ignore_long = False
-    args.input = open("tests/input_test_1.txt", "rt")
+    args.input = open("src/tests/input_test_1.txt", "rt")
     args.dedup = False
-    args.output = open("tests/output_test_1.txt", "w+")
+    args.output = open("src/tests/output_test_1.txt", "w+")
     args.ignore_html = False
     args.annotated_output = False
 
@@ -48,7 +48,7 @@ class TestEmptySpaces():
         bifixer.fix_sentences(self.args)
         self.args.output.close()
 
-        with open("tests/output_expected_1.txt", "rt") as expected, open("tests/output_test_1.txt", "rt") as test:
+        with open("src/tests/output_expected_1.txt", "rt") as expected, open("src/tests/output_test_1.txt", "rt") as test:
             for e, t in zip(expected, test):
                 assert e == t
 
@@ -218,8 +218,8 @@ class TestDedup:
     args.tparagraphid = None
     args.header = None
     args.aggressive_dedup = False
-    args.input = open("tests/input_test_2.txt", "rt")
-    args.output = open("tests/output_test_dedup.txt", "w+")
+    args.input = open("src/tests/input_test_2.txt", "rt")
+    args.output = open("src/tests/output_test_dedup.txt", "w+")
     args.ignore_html = False
     args.annotated_output = False
 
@@ -228,7 +228,7 @@ class TestDedup:
         self.args.input.close()
         self.args.output.close()
 
-        with open("tests/output_test_dedup.txt") as file_:
+        with open("src/tests/output_test_dedup.txt") as file_:
             hashes = []
             for line in file_:
                 parts = line.rstrip("\n").split("\t")
@@ -260,8 +260,8 @@ class TestAggressiveDedup:
     args.tparagraphid = None
     args.header = None
     args.aggressive_dedup = True
-    args.input = open("tests/input_test_2.txt", "rt")
-    args.output = open("tests/output_test_aggr_dedup.txt", "w+")
+    args.input = open("src/tests/input_test_2.txt", "rt")
+    args.output = open("src/tests/output_test_aggr_dedup.txt", "w+")
     args.ignore_html = False
     args.annotated_output = False
 
@@ -270,7 +270,7 @@ class TestAggressiveDedup:
         self.args.input.close()
         self.args.output.close()
 
-        with open("tests/output_test_aggr_dedup.txt") as file_:
+        with open("src/tests/output_test_aggr_dedup.txt") as file_:
             hashes = []
             for line in file_:
                 parts = line.rstrip("\n").split("\t")

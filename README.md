@@ -62,7 +62,7 @@ pip install .
 Automatic testing was added to ensure that everything is working fine in Bifixer:
 
 ```bash
-cd bifixer/tests
+cd bifixer
 pytest
 ```
 
