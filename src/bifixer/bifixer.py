@@ -142,6 +142,9 @@ def fix_sentences(args):
     if not args.ignore_detokenization:
         detoks_slang = restorative_cleaning.getDetokenizations(args.srclang)
         detoks_tlang = restorative_cleaning.getDetokenizations(args.trglang)
+    else:
+        detoks_slang = {}
+        detoks_tlang = {}
 
     if not args.ignore_segmentation:
         source_segmenter = segmenter.NaiveSegmenter(args.srclang, args.segmenter)
