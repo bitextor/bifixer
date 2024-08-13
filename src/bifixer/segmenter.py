@@ -27,26 +27,28 @@ def timeout(signum, frame):
 class NLTKSegmenter:
     def __init__(self, lang):
         try:
-            nltk.data.find('tokenizers/punkt')
+            nltk.data.find('tokenizers/punkt_tab')
         except LookupError:
             for i in range(3):
                 signal.signal(signal.SIGALRM, timeout)
                 signal.alarm(120)
                 try:
-                    result = nltk.download('punkt', quiet=True)
+                    result = nltk.download('punkt_tab')#, quiet=True)
                     signal.alarm(0)
                     break
                 except myTimeout:
                     pass
             else:
-                raise Exception("Unable to download 'punkt' NLTK data after 3 retries: try to download it manually or check your internet connection.")
+                raise Exception("Unable to download 'punkt_tab' NLTK data after 3 retries: try to download it manually or check your internet connection.")
 
         langname = self.getLanguageName(lang.lower())
 
         try:
-            self.segmenter = load('tokenizers/punkt/{0}.pickle'.format(langname))
+            #self.segmenter = load('tokenizers/punkt/{0}.pickle'.format(langname))
+            self.segmenter = nltk.PunktTokenizer(langname)
         except:
-            self.segmenter = load('tokenizers/punkt/english.pickle')
+            #self.segmenter = load('tokenizers/punkt/english.pickle')
+            self.segmenter = nltk.PunkTokenizer("english")
 
     def get_segmentation(self, sentence):
         sentence_segments = json.loads(json.dumps(self.segmenter.tokenize(sentence)))
