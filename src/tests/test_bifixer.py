@@ -61,6 +61,7 @@ class TestCharReplacements:
     chars_el, charsRe_el = restorative_cleaning.getCharsReplacements("el")
     chars_cs, charsRe_cs = restorative_cleaning.getCharsReplacements("cs")
     chars_sl, charsRe_sl = restorative_cleaning.getCharsReplacements("sl")
+    chars_zh, charsRe_zh = restorative_cleaning.getCharsReplacements("zh")
 
     punct_en, punctRe_en = restorative_cleaning.getNormalizedPunctReplacements("en")
     punct_ru, punctRe_ru = restorative_cleaning.getNormalizedPunctReplacements("ru")
@@ -68,6 +69,7 @@ class TestCharReplacements:
     punct_fr, punctRe_fr = restorative_cleaning.getNormalizedPunctReplacements("fr")
     punct_el, punctRe_el = restorative_cleaning.getNormalizedPunctReplacements("el")
     punct_cs, punctRe_cs = restorative_cleaning.getNormalizedPunctReplacements("cs")
+    punct_zh, punctRe_zh = restorative_cleaning.getNormalizedPunctReplacements("zh")
 
     def test_mojibake(self):
         correct = "¿La cigüeña bebía café?"
@@ -77,6 +79,16 @@ class TestCharReplacements:
         fixed_2 = restorative_cleaning.fix(text_2, "es", self.chars_es, self.charsRe_es)
         assert fixed_1 == correct
         assert fixed_2 == correct
+
+    def test_cjk_punct(self):
+        text_1 = "直接煎出来就是一面带着焦焦脆片的\uff1f"
+        text_2 = "直接煎出来就是一面带着焦焦脆片的\uff01"
+        fixed_1 = restorative_cleaning.fix(text_1, "zh", self.chars_zh, self.charsRe_zh)
+        fixed_1 = restorative_cleaning.normalize(fixed_1, "zh", self.punct_zh, self.punctRe_zh)
+        fixed_2 = restorative_cleaning.fix(text_2, "zh", self.chars_zh, self.charsRe_zh)
+        fixed_2 = restorative_cleaning.normalize(fixed_2, "zh", self.punct_zh, self.punctRe_zh)
+        assert fixed_1 == text_1
+        assert fixed_2 == text_2
 
     def test_encoding(self):
         correct_1 = "Brošure"

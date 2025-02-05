@@ -726,7 +726,10 @@ def fix(text, lang, chars_rep, chars_pattern):
     global global_chars_lang
     global_chars_lang = chars_rep
 
-    ftfy_fixed_text = ftfy.fix_text_segment(text, uncurl_quotes=False, fix_latin_ligatures=False)
+    ftfy_fixed_text = ftfy.fix_text_segment(text,
+            uncurl_quotes=False,
+            fix_latin_ligatures=False,
+            fix_character_width=lang.lower() not in cjk_langs)
 
     replaced_text = chars_pattern.sub(replace_chars, ftfy_fixed_text)
 
