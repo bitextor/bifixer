@@ -48,7 +48,7 @@ class NLTKSegmenter:
             self.segmenter = nltk.PunktTokenizer(langname)
         except:
             #self.segmenter = load('tokenizers/punkt/english.pickle')
-            self.segmenter = nltk.PunkTokenizer("english")
+            self.segmenter = nltk.PunktTokenizer("english")
 
     def get_segmentation(self, sentence):
         sentence_segments = json.loads(json.dumps(self.segmenter.tokenize(sentence)))
@@ -82,7 +82,7 @@ class NLTKSegmenter:
             return "finnish"
 
         elif lang == "fr":
-            return "frech"
+            return "french"
 
         elif lang == "it":
             return "italian"
